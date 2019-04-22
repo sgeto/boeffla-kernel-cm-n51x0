@@ -22,7 +22,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: siutils.c 434466 2013-11-06 12:34:26Z $
+=======
+ * $Id: siutils.c 347632 2012-07-27 11:00:35Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <bcm_cfg.h>
@@ -124,7 +128,10 @@ si_t *
 si_kattach(osl_t *osh)
 {
 	static bool ksii_attached = FALSE;
+<<<<<<< HEAD
 	si_cores_info_t *cores_info;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (!ksii_attached) {
 		void *regs = NULL;
@@ -383,8 +390,13 @@ si_doattach(si_info_t *sii, uint devid, osl_t *osh, void *regs,
 	chipcregs_t *cc;
 	char *pvars = NULL;
 	uint origidx;
+<<<<<<< HEAD
 #if !defined(_CFEZ_) || defined(CFG_WL)
 #endif 
+=======
+
+	ASSERT(GOODREGS(regs));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	ASSERT(GOODREGS(regs));
 
@@ -460,12 +472,8 @@ si_doattach(si_info_t *sii, uint devid, osl_t *osh, void *regs,
 	if (CHIPTYPE(sii->pub.socitype) == SOCI_SB) {
 		SI_MSG(("Found chip type SB (0x%08x)\n", w));
 		sb_scan(&sii->pub, regs, devid);
-	} else if ((CHIPTYPE(sii->pub.socitype) == SOCI_AI) ||
-		(CHIPTYPE(sii->pub.socitype) == SOCI_NAI)) {
-		if (CHIPTYPE(sii->pub.socitype) == SOCI_AI)
-			SI_MSG(("Found chip type AI (0x%08x)\n", w));
-		else
-			SI_MSG(("Found chip type NAI (0x%08x)\n", w));
+	} else if (CHIPTYPE(sii->pub.socitype) == SOCI_AI) {
+		SI_MSG(("Found chip type AI (0x%08x)\n", w));
 		/* pass chipc address instead of original core base */
 		ai_scan(&sii->pub, (void *)(uintptr)cc, devid);
 	} else if (CHIPTYPE(sii->pub.socitype) == SOCI_UBUS) {
@@ -488,7 +496,6 @@ si_doattach(si_info_t *sii, uint devid, osl_t *osh, void *regs,
 		goto exit;
 	}
 
-#if !defined(_CFEZ_) || defined(CFG_WL)
 	if (CHIPID(sih->chip) == BCM4322_CHIP_ID && (((sih->chipst & CST4322_SPROM_OTP_SEL_MASK)
 		>> CST4322_SPROM_OTP_SEL_SHIFT) == (CST4322_OTP_PRESENT |
 		CST4322_SPROM_PRESENT))) {
@@ -517,6 +524,7 @@ si_doattach(si_info_t *sii, uint devid, osl_t *osh, void *regs,
 	if (bustype == PCI_BUS) {
 
 	}
+<<<<<<< HEAD
 #endif 
 #ifdef BCM_SDRBL
 	/* 4360 rom bootloader in PCIE case, if the SDR is enabled, But preotection is
@@ -538,6 +546,8 @@ si_doattach(si_info_t *sii, uint devid, osl_t *osh, void *regs,
 		}
 	}
 #endif /* BCM_SDRBL */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	pvars = NULL;
 	BCM_REFERENCE(pvars);
@@ -656,7 +666,7 @@ si_intflag(si_t *sih)
 
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_intflag(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return R_REG(sii->osh, ((uint32 *)(uintptr)
 			    (sii->oob_router + OOB_STATUSA)));
 	else {
@@ -670,7 +680,7 @@ si_flag(si_t *sih)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_flag(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_flag(sih);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_flag(sih);
@@ -696,7 +706,7 @@ si_setint(si_t *sih, int siflag)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		sb_setint(sih, siflag);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		ai_setint(sih, siflag);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		ub_setint(sih, siflag);
@@ -753,7 +763,7 @@ si_corevendor(si_t *sih)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_corevendor(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_corevendor(sih);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_corevendor(sih);
@@ -774,7 +784,7 @@ si_corerev(si_t *sih)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_corerev(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_corerev(sih);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_corerev(sih);
@@ -876,7 +886,7 @@ si_setcore(si_t *sih, uint coreid, uint coreunit)
 
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_setcoreidx(sih, idx);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_setcoreidx(sih, idx);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_setcoreidx(sih, idx);
@@ -891,7 +901,7 @@ si_setcoreidx(si_t *sih, uint coreidx)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_setcoreidx(sih, coreidx);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_setcoreidx(sih, coreidx);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_setcoreidx(sih, coreidx);
@@ -947,7 +957,7 @@ si_numaddrspaces(si_t *sih)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_numaddrspaces(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_numaddrspaces(sih);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_numaddrspaces(sih);
@@ -962,7 +972,7 @@ si_addrspace(si_t *sih, uint asidx)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_addrspace(sih, asidx);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_addrspace(sih, asidx);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_addrspace(sih, asidx);
@@ -977,7 +987,7 @@ si_addrspacesize(si_t *sih, uint asidx)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_addrspacesize(sih, asidx);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_addrspacesize(sih, asidx);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_addrspacesize(sih, asidx);
@@ -991,7 +1001,7 @@ void
 si_coreaddrspaceX(si_t *sih, uint asidx, uint32 *addr, uint32 *size)
 {
 	/* Only supported for SOCI_AI */
-	if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		ai_coreaddrspaceX(sih, asidx, addr, size);
 	else
 		*size = 0;
@@ -1002,7 +1012,7 @@ si_core_cflags(si_t *sih, uint32 mask, uint32 val)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_core_cflags(sih, mask, val);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_core_cflags(sih, mask, val);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_core_cflags(sih, mask, val);
@@ -1017,7 +1027,7 @@ si_core_cflags_wo(si_t *sih, uint32 mask, uint32 val)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		sb_core_cflags_wo(sih, mask, val);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		ai_core_cflags_wo(sih, mask, val);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		ub_core_cflags_wo(sih, mask, val);
@@ -1030,7 +1040,7 @@ si_core_sflags(si_t *sih, uint32 mask, uint32 val)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_core_sflags(sih, mask, val);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_core_sflags(sih, mask, val);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_core_sflags(sih, mask, val);
@@ -1045,7 +1055,7 @@ si_iscoreup(si_t *sih)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_iscoreup(sih);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_iscoreup(sih);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_iscoreup(sih);
@@ -1059,7 +1069,7 @@ uint
 si_wrapperreg(si_t *sih, uint32 offset, uint32 mask, uint32 val)
 {
 	/* only for AI back plane chips */
-	if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return (ai_wrap_reg(sih, offset, mask, val));
 	return 0;
 }
@@ -1069,7 +1079,7 @@ si_corereg(si_t *sih, uint coreidx, uint regoff, uint mask, uint val)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		return sb_corereg(sih, coreidx, regoff, mask, val);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		return ai_corereg(sih, coreidx, regoff, mask, val);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		return ub_corereg(sih, coreidx, regoff, mask, val);
@@ -1105,7 +1115,7 @@ si_core_disable(si_t *sih, uint32 bits)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		sb_core_disable(sih, bits);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		ai_core_disable(sih, bits);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		ub_core_disable(sih, bits);
@@ -1116,7 +1126,7 @@ si_core_reset(si_t *sih, uint32 bits, uint32 resetbits)
 {
 	if (CHIPTYPE(sih->socitype) == SOCI_SB)
 		sb_core_reset(sih, bits, resetbits);
-	else if ((CHIPTYPE(sih->socitype) == SOCI_AI) || (CHIPTYPE(sih->socitype) == SOCI_NAI))
+	else if (CHIPTYPE(sih->socitype) == SOCI_AI)
 		ai_core_reset(sih, bits, resetbits);
 	else if (CHIPTYPE(sih->socitype) == SOCI_UBUS)
 		ub_core_reset(sih, bits, resetbits);
@@ -1326,7 +1336,6 @@ si_watchdog(si_t *sih, uint ticks)
 
 	if (PMUCTL_ENAB(sih)) {
 
-#if !defined(_CFEZ_) || defined(CFG_WL)
 		if ((CHIPID(sih->chip) == BCM4319_CHIP_ID) &&
 		    (CHIPREV(sih->chiprev) == 0) && (ticks != 0)) {
 			si_corereg(sih, SI_CC_IDX, OFFSETOF(chipcregs_t, clk_ctl_st), ~0, 0x2);
@@ -1334,7 +1343,6 @@ si_watchdog(si_t *sih, uint ticks)
 			si_core_disable(sih, 1);
 			si_setcore(sih, CC_CORE_ID, 0);
 		}
-#endif 
 
 			nb = (sih->ccrev < 26) ? 16 : ((sih->ccrev >= 37) ? 32 : 24);
 		/* The mips compiler uses the sllv instruction,
@@ -1496,8 +1504,6 @@ si_clkctl_init(si_t *sih)
 		        (ILP_DIV_1MHZ << SYCC_CD_SHIFT));
 
 	si_clkctl_setdelay(sii, (void *)(uintptr)cc);
-
-	OSL_DELAY(20000);
 
 	if (!fast)
 		si_setcoreidx(sih, origidx);
@@ -2293,7 +2299,6 @@ done:
 }
 
 
-#if !defined(_CFEZ_) || defined(CFG_WL)
 void
 si_btcgpiowar(si_t *sih)
 {
@@ -2476,7 +2481,6 @@ si_chipcontrl_epa4331_wowl(si_t *sih, bool enter_wowl)
 	}
 	si_setcoreidx(sih, origidx);
 }
-#endif 
 
 uint
 si_pll_reset(si_t *sih)
@@ -2508,6 +2512,7 @@ si_clk_pmu_htavail_set(si_t *sih, bool set_clear)
 {
 }
 
+<<<<<<< HEAD
 /** Re-enable synth_pwrsw resource in min_res_mask for 4313 */
 void
 si_pmu_synth_pwrsw_4313_war(si_t *sih)
@@ -2515,6 +2520,9 @@ si_pmu_synth_pwrsw_4313_war(si_t *sih)
 }
 
 /** WL/BT control for 4313 btcombo boards >= P250 */
+=======
+/* WL/BT control for 4313 btcombo boards >= P250 */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 void
 si_btcombo_p250_4313_war(si_t *sih)
 {
@@ -2632,13 +2640,13 @@ si_is_sprom_available(si_t *sih)
 		return ((sih->chipst & CST43239_SPROM_MASK) &&
 			!(sih->chipst & CST43239_SFLASH_MASK));
 	case BCM4324_CHIP_ID:
-	case BCM43242_CHIP_ID:
 		return ((sih->chipst & CST4324_SPROM_MASK) &&
 			!(sih->chipst & CST4324_SFLASH_MASK));
 	case BCM4335_CHIP_ID:
 	case BCM4345_CHIP_ID:
 		return ((sih->chipst & CST4335_SPROM_MASK) &&
 			!(sih->chipst & CST4335_SFLASH_MASK));
+<<<<<<< HEAD
 	case BCM4350_CHIP_ID:
 	case BCM4354_CHIP_ID:
 	case BCM43556_CHIP_ID:
@@ -2649,6 +2657,8 @@ si_is_sprom_available(si_t *sih)
 		return (sih->chipst & CST4350_SPROM_PRESENT) != 0;
 	case BCM43602_CHIP_ID:
 		return (sih->chipst & CST43602_SPROM_PRESENT) != 0;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	case BCM43131_CHIP_ID:
 	case BCM43217_CHIP_ID:
 	case BCM43227_CHIP_ID:
@@ -2698,6 +2708,7 @@ int si_set_sromctl(si_t *sih, uint32 value)
 	return BCME_OK;
 
 }
+<<<<<<< HEAD
 
 uint
 si_core_wrapperreg(si_t *sih, uint32 coreidx, uint32 offset, uint32 mask, uint32 val)
@@ -2813,3 +2824,5 @@ void
 si_pcie_ltr_war(si_t *sih)
 {
 }
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

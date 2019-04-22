@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmdefs.h 433011 2013-10-30 09:19:54Z $
+=======
+ * $Id: bcmdefs.h 316830 2012-02-23 20:29:22Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_bcmdefs_h_
@@ -76,6 +80,7 @@
 #undef BCM47XX_CA9
 
 #ifndef BCMFASTPATH
+<<<<<<< HEAD
 #if defined(BCM47XX_CA9)
 #define BCMFASTPATH		__attribute__ ((__section__ (".text.fastpath")))
 #define BCMFASTPATH_HOST	__attribute__ ((__section__ (".text.fastpath_host")))
@@ -84,6 +89,11 @@
 #define BCMFASTPATH_HOST
 #endif
 #endif /* BCMFASTPATH */
+=======
+#define BCMFASTPATH
+#define BCMFASTPATH_HOST
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 /* Use the BCMRAMFN() macro to tag functions in source that must be included in RAM (excluded from
@@ -221,6 +231,7 @@ typedef struct {
  */
 
 #if defined(BCM_RPC_NOCOPY) || defined(BCM_RCP_TXNOCOPY)
+<<<<<<< HEAD
 /* add 40 bytes to allow for extra RPC header and info  */
 #define BCMEXTRAHDROOM 260
 #else /* BCM_RPC_NOCOPY || BCM_RPC_TXNOCOPY */
@@ -230,6 +241,14 @@ typedef struct {
 #define BCMEXTRAHDROOM 204
 #endif /* linux && BCM47XX_CA9 */
 #endif /* BCM_RPC_NOCOPY || BCM_RPC_TXNOCOPY */
+=======
+
+#define BCMEXTRAHDROOM 220
+#else 
+#define BCMEXTRAHDROOM 172
+#endif 
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Packet alignment for most efficient SDIO (can change based on platform) */
 #ifndef SDALIGN

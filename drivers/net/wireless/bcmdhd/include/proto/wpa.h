@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wpa.h 384536 2013-02-12 04:13:09Z $
+=======
+ * $Id: wpa.h 261155 2011-05-23 23:51:32Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _proto_wpa_h_
@@ -34,6 +38,7 @@
 /* This marks the start of a packed structure section. */
 #include <packed_section_start.h>
 
+<<<<<<< HEAD
 /* Reason Codes */
 
 /* 13 through 23 taken from IEEE Std 802.11i-2004 */
@@ -50,6 +55,22 @@
 #define DOT11_RC_BAD_WPA_VERSION	21	/* Unsupported WPA version */
 #define DOT11_RC_INVALID_WPA_CAP	22	/* Invalid WPA IE capabilities */
 #define DOT11_RC_8021X_AUTH_FAIL	23	/* 802.1X authentication failure */
+=======
+#include <dhd_sec_feature.h>
+
+
+#define DOT11_RC_INVALID_WPA_IE		13	
+#define DOT11_RC_MIC_FAILURE		14	
+#define DOT11_RC_4WH_TIMEOUT		15	
+#define DOT11_RC_GTK_UPDATE_TIMEOUT	16	
+#define DOT11_RC_WPA_IE_MISMATCH	17	
+#define DOT11_RC_INVALID_MC_CIPHER	18	
+#define DOT11_RC_INVALID_UC_CIPHER	19	
+#define DOT11_RC_INVALID_AKMP		20	
+#define DOT11_RC_BAD_WPA_VERSION	21	
+#define DOT11_RC_INVALID_WPA_CAP	22	
+#define DOT11_RC_8021X_AUTH_FAIL	23	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define WPA2_PMKID_LEN	16
 
@@ -118,9 +139,15 @@ typedef BWL_PRE_PACKED_STRUCT struct
 #define WPA_CIPHER_BIP		6	/* WEP (104-bit) */
 #define WPA_CIPHER_TPK		7	/* Group addressed traffic not allowed */
 #ifdef BCMCCX
+<<<<<<< HEAD
 #define WPA_CIPHER_CKIP		8	/* KP with no MIC */
 #define WPA_CIPHER_CKIP_MMH	9	/* KP with MIC ("CKIP/MMH", "CKIP+CMIC") */
 #define WPA_CIPHER_WEP_MMH	10	/* MIC with no KP ("WEP/MMH", "CMIC") */
+=======
+#define WPA_CIPHER_CKIP		8
+#define WPA_CIPHER_CKIP_MMH	9
+#define WPA_CIPHER_WEP_MMH	10
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define IS_CCX_CIPHER(cipher)	((cipher) == WPA_CIPHER_CKIP || \
 				 (cipher) == WPA_CIPHER_CKIP_MMH || \
@@ -172,10 +199,15 @@ typedef BWL_PRE_PACKED_STRUCT struct
 #define RSN_CAP_2_REPLAY_CNTRS		1
 #define RSN_CAP_4_REPLAY_CNTRS		2
 #define RSN_CAP_16_REPLAY_CNTRS		3
+#ifdef MFP
 #define RSN_CAP_MFPR			0x0040
 #define RSN_CAP_MFPC			0x0080
+<<<<<<< HEAD
 #define RSN_CAP_SPPC			0x0400
 #define RSN_CAP_SPPR			0x0800
+=======
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* WPA capabilities defined in 802.11i */
 #define WPA_CAP_4_REPLAY_CNTRS		RSN_CAP_4_REPLAY_CNTRS

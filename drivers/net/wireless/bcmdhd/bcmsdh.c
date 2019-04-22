@@ -22,7 +22,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh.c 455573 2014-02-14 17:49:31Z $
+=======
+ * $Id: bcmsdh.c 347614 2012-07-27 10:24:51Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 /**
@@ -44,6 +48,11 @@
 #include <sbsdio.h>	/* SDIO device core hardware definitions. */
 #include <sdio.h>	/* SDIO Device and Protocol Specs */
 
+<<<<<<< HEAD
+=======
+#include <dhd_sec_feature.h>
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define SDIOH_API_ACCESS_RETRY_LIMIT	2
 const uint bcmsdh_msglevel = BCMSDH_ERROR_VAL;
 
@@ -753,3 +762,35 @@ bcmsdh_gpioout(void *sdh, uint32 gpio, bool enab)
 
 	return sdioh_gpioout(sd, gpio, enab);
 }
+<<<<<<< HEAD
+=======
+
+#ifdef BCMSDIOH_TXGLOM
+void
+bcmsdh_glom_post(void *sdh, uint8 *frame, uint len)
+{
+	bcmsdh_info_t *bcmsdh = (bcmsdh_info_t *)sdh;
+	sdioh_glom_post(bcmsdh->sdioh, frame, len);
+}
+
+void
+bcmsdh_glom_clear(void *sdh)
+{
+	bcmsdh_info_t *bcmsdh = (bcmsdh_info_t *)sdh;
+	sdioh_glom_clear(bcmsdh->sdioh);
+}
+
+uint
+bcmsdh_set_mode(void *sdh, uint mode)
+{
+	bcmsdh_info_t *bcmsdh = (bcmsdh_info_t *)sdh;
+	return (sdioh_set_mode(bcmsdh->sdioh, mode));
+}
+
+bool
+bcmsdh_glom_enabled(void)
+{
+	return (sdioh_glom_enabled());
+}
+#endif /* BCMSDIOH_TXGLOM */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

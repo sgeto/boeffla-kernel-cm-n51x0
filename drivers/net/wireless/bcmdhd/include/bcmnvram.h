@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmnvram.h 428512 2013-10-09 02:12:11Z $
+=======
+ * $Id: bcmnvram.h 320632 2012-03-12 19:22:42Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _bcmnvram_h_
@@ -65,7 +69,6 @@ extern void nvram_restore_var(char *prefix, char *name);
  * platforms.
  */
 extern int nvram_init(void *sih);
-extern int nvram_deinit(void *sih);
 
 
 /*
@@ -121,7 +124,7 @@ nvram_safe_get(const char *name)
  *		to match or FALSE otherwise
  */
 static INLINE int
-nvram_match(const char *name, const char *match)
+nvram_match(char *name, char *match)
 {
 	const char *value = nvram_get(name);
 	return (value && !strcmp(value, match));
@@ -135,7 +138,7 @@ nvram_match(const char *name, const char *match)
  *		equal to invmatch or FALSE otherwise
  */
 static INLINE int
-nvram_invmatch(const char *name, const char *invmatch)
+nvram_invmatch(char *name, char *invmatch)
 {
 	const char *value = nvram_get(name);
 	return (value && strcmp(value, invmatch));
@@ -192,10 +195,16 @@ extern int nvram_getall(char *nvram_buf, int count);
  */
 uint8 nvram_calc_crc(struct nvram_header * nvh);
 
+<<<<<<< HEAD
 extern int nvram_space;
 #endif /* _LANGUAGE_ASSEMBLY */
 
 /* The NVRAM version number stored as an NVRAM variable */
+=======
+#endif 
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define NVRAM_SOFTWARE_VERSION	"1"
 
 #define NVRAM_MAGIC		0x48534C46	/* 'FLSH' */
@@ -205,6 +214,7 @@ extern int nvram_space;
 #define NVRAM_HEADER_SIZE	20
 /* This definition is for precommit staging, and will be removed */
 #define NVRAM_SPACE		0x8000
+<<<<<<< HEAD
 /* For CFE builds this gets passed in thru the makefile */
 #ifndef MAX_NVRAM_SPACE
 #define MAX_NVRAM_SPACE		0x10000
@@ -212,6 +222,8 @@ extern int nvram_space;
 #define DEF_NVRAM_SPACE		0x8000
 #define ROM_ENVRAM_SPACE	0x1000
 #define NVRAM_LZMA_MAGIC	0x4c5a4d41	/* 'LZMA' */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define NVRAM_MAX_VALUE_LEN 255
 #define NVRAM_MAX_PARAM_LEN 64

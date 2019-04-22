@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd_dbg.h 424863 2013-09-19 20:06:14Z $
+=======
+ * $Id: dhd_dbg.h 353490 2012-08-27 21:10:02Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _dhd_dbg_
@@ -74,8 +78,11 @@
 #define DHD_ISCAN_ON()		(dhd_msg_level & DHD_ISCAN_VAL)
 #define DHD_ARPOE_ON()		(dhd_msg_level & DHD_ARPOE_VAL)
 #define DHD_REORDER_ON()	(dhd_msg_level & DHD_REORDER_VAL)
+<<<<<<< HEAD
 #define DHD_NOCHECKDIED_ON()	(dhd_msg_level & DHD_NOCHECKDIED_VAL)
 #define DHD_PNO_ON()		(dhd_msg_level & DHD_PNO_VAL)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #else /* defined(BCMDBG) || defined(DHD_DEBUG) */
 
@@ -117,9 +124,12 @@
 #define DHD_ISCAN_ON()		0
 #define DHD_ARPOE_ON()		0
 #define DHD_REORDER_ON()	0
+<<<<<<< HEAD
 #define DHD_NOCHECKDIED_ON()	0
 #define DHD_PNO_ON()		0
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif 
 
 #define DHD_LOG(args)

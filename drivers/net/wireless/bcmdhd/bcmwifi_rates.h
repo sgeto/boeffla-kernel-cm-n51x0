@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: bcmwifi_rates.h 5187 2012-06-29 06:17:50Z $
+ * $Id: bcmwifi_rates.h 252708 2011-04-12 06:45:56Z $
  */
 
 #ifndef _bcmwifi_rates_h_
@@ -65,8 +65,7 @@ typedef enum wl_tx_mode {
 	WL_TX_MODE_NONE,
 	WL_TX_MODE_STBC,
 	WL_TX_MODE_CDD,
-	WL_TX_MODE_TXBF,
-	WL_NUM_TX_MODES
+	WL_TX_MODE_SDM
 } wl_tx_mode_t;
 
 
@@ -209,10 +208,15 @@ typedef enum clm_rates {
 	WL_RATE_2X2_VHT8SS2        = 62,
 	WL_RATE_2X2_VHT9SS2        = 63,
 
+<<<<<<< HEAD
 	/************
 	* 3 chains *
 	************
 	*/
+=======
+
+	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	/* 1 Stream expanded + 2 */
 	WL_RATE_1X3_DSSS_1         = 64,
@@ -311,6 +315,7 @@ typedef enum clm_rates {
 	WL_RATE_3X3_VHT8SS3        = 114,
 	WL_RATE_3X3_VHT9SS3        = 115,
 
+<<<<<<< HEAD
 
 	/****************************
 	 * TX Beamforming, 2 chains *
@@ -451,6 +456,12 @@ typedef enum clm_rates {
 /* Number of rate codes */
 #define WL_NUMRATES 178
 
+=======
+	
+	WL_NUMRATES                = 116
+} clm_rates_t;
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

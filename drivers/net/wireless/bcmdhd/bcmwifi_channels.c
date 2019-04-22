@@ -338,8 +338,13 @@ wf_chspec_aton(const char *a)
 	if (!read_uint(&a, &num))
 		return 0;
 
+<<<<<<< HEAD
 	/* if we are looking at a 'g', then the first number was a band */
 	c = tolower((int)a[0]);
+=======
+	
+	c = tolower(a[0]);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (c == 'g') {
 		a ++; /* consume the char */
 
@@ -355,7 +360,7 @@ wf_chspec_aton(const char *a)
 		if (!read_uint(&a, &ctl_ch))
 			return 0;
 
-		c = tolower((int)a[0]);
+		c = tolower(a[0]);
 	}
 	else {
 		/* first number is channel, use default for band */
@@ -405,7 +410,7 @@ wf_chspec_aton(const char *a)
 	 * or '+80' if bw = 80, to make '80+80' bw.
 	 */
 
-	c = tolower((int)a[0]);
+	c = tolower(a[0]);
 
 	/* if we have a 2g/40 channel, we should have a l/u spec now */
 	if (chspec_band == WL_CHANSPEC_BAND_2G && bw == 40) {
@@ -782,6 +787,7 @@ wf_chspec_ctlchspec(chanspec_t chspec)
 	return ctl_chspec;
 }
 
+<<<<<<< HEAD
 /* return chanspec given control channel and bandwidth
  * return 0 on error
  */
@@ -839,6 +845,11 @@ wf_channel2chspec(uint ctl_ch, uint bw)
  * The control sideband specifies the same 20MHz channel that the 80MHz channel is using
  * as the primary 20MHz channel.
  */
+=======
+#endif 
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern chanspec_t wf_chspec_primary40_chspec(chanspec_t chspec)
 {
 	chanspec_t chspec40 = chspec;

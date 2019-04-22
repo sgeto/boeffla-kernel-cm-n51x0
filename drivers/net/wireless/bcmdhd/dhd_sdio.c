@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd_sdio.c 456607 2014-02-19 09:26:42Z $
+=======
+ * $Id: dhd_sdio.c 357859 2012-09-20 06:34:26Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <typedefs.h>
@@ -91,14 +95,15 @@ extern bool  bcmsdh_fatal_error(void *sdh);
 #define PRIOMASK	7
 
 #define TXRETRIES	2	/* # of retries for tx frames */
+<<<<<<< HEAD
 #define READ_FRM_CNT_RETRIES	3
 #ifndef DHD_RXBOUND
-#define DHD_RXBOUND	50	/* Default for max rx frames in one scheduling */
-#endif
+=======
 
-#ifndef DHD_TXBOUND
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+#define DHD_RXBOUND	50	/* Default for max rx frames in one scheduling */
+
 #define DHD_TXBOUND	20	/* Default for max tx frames in one scheduling */
-#endif
 
 #define DHD_TXMINMAX	1	/* Max tx frames if rx still pending */
 
@@ -166,8 +171,17 @@ extern bool  bcmsdh_fatal_error(void *sdh);
 #define PKTFREE2()		if ((bus->bus != SPI_BUS) || bus->usebufpool) \
 					PKTFREE(bus->dhd->osh, pkt, FALSE);
 DHD_SPINWAIT_SLEEP_INIT(sdioh_spinwait_sleep);
+<<<<<<< HEAD
 
 #if defined(MULTIPLE_SUPPLICANT)
+=======
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+extern void bcmsdh_set_irq(int flag);
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+#ifdef PROP_TXSTATUS
+extern void dhd_wlfc_txcomplete(dhd_pub_t *dhd, void *txp, bool success);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
 DEFINE_MUTEX(_dhd_sdio_mutex_lock_);
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
@@ -196,17 +210,20 @@ typedef struct dhd_console {
 #define	MIN_RSRC_SR			0x3
 #define	CORE_CAPEXT_ADDR		(SI_ENUM_BASE + 0x64c)
 #define	CORE_CAPEXT_SR_SUPPORTED_MASK	(1 << 1)
-#define RCTL_MACPHY_DISABLE_MASK	(1 << 26)
-#define RCTL_LOGIC_DISABLE_MASK		(1 << 27)
+#define	RCTL_MACPHY_DISABLE_MASK		(1 << 26)
+#define	RCTL_LOGIC_DISABLE_MASK			(1 << 27)
 
 #define	OOB_WAKEUP_ENAB(bus)		((bus)->_oobwakeup)
 #define	GPIO_DEV_SRSTATE		16	/* Host gpio17 mapped to device gpio0 SR state */
 #define	GPIO_DEV_SRSTATE_TIMEOUT	320000	/* 320ms */
 #define	GPIO_DEV_WAKEUP			17	/* Host gpio17 mapped to device gpio1 wakeup */
 #define	CC_CHIPCTRL2_GPIO1_WAKEUP	(1  << 0)
+<<<<<<< HEAD
 #define	CC_CHIPCTRL3_SR_ENG_ENABLE	(1  << 2)
 #define OVERFLOW_BLKSZ512_WM		96
 #define OVERFLOW_BLKSZ512_MES		80
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define CC_PMUCC3	(0x3)
 /* Private data for SDIO bus interaction */
@@ -323,13 +340,6 @@ typedef struct dhd_bus {
 	uint		pktgen_ptick;		/* Burst counter for printing */
 	uint		pktgen_sent;		/* Number of test packets generated */
 	uint		pktgen_rcvd;		/* Number of test packets received */
-	uint		pktgen_prev_time;	/* Time at which previous stats where printed */
-	uint		pktgen_prev_sent;	/* Number of test packets generated when
-						 * previous stats were printed
-						 */
-	uint		pktgen_prev_rcvd;	/* Number of test packets received when
-						 * previous stats were printed
-						 */
 	uint		pktgen_fail;		/* Number of failed send attempts */
 	uint16		pktgen_len;		/* Length of next packet to send */
 #define PKTGEN_RCV_IDLE     (0)
@@ -429,6 +439,10 @@ uint dhd_dpcpoll = FALSE;
 module_param(dhd_doflow, uint, 0644);
 module_param(dhd_dpcpoll, uint, 0644);
 
+<<<<<<< HEAD
+=======
+static bool dhd_doflow;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static bool dhd_alignctl;
 
 static bool sd1idle;
@@ -436,6 +450,7 @@ static bool sd1idle;
 static bool retrydata;
 #define RETRYCHAN(chan) (((chan) == SDPCM_EVENT_CHANNEL) || retrydata)
 
+<<<<<<< HEAD
 #ifdef BCMSPI
 /* At a watermark around 8 the spid hits underflow error. */
 static uint watermark = 32;
@@ -444,6 +459,15 @@ static uint mesbusyctrl = 0;
 static uint watermark = 8;
 static uint mesbusyctrl = 0;
 #endif /* BCMSPI */
+=======
+#if defined(SDIO_CRC_ERROR_FIX)
+static uint watermark = 48;
+static uint mesbusyctrl = 80;
+#else
+static const uint watermark = 8;
+static const uint mesbusyctrl = 0;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static const uint firstread = DHD_FIRSTREAD;
 
 /* Retry count for register access failures */
@@ -478,6 +502,7 @@ static const uint max_roundup = 512;
 
 /* Try doing readahead */
 static bool dhd_readahead;
+
 
 /* To check if there's window offered */
 #define DATAOK(bus) \
@@ -573,7 +598,7 @@ do {												\
 												\
 	R_SDREG(intstatuserr, &bus->regs->intstatus, retries);					\
 	printf("dstatussw = 0x%x, dstatushw = 0x%x, intstatus = 0x%x\n",			\
-	        dstatussw, dstatushw, intstatuserr); 						\
+	        dstatussw, dstatushw, intstatuserr);						\
 												\
 	bus->nextlen = 0;									\
 	*finished = TRUE;									\
@@ -596,7 +621,7 @@ do {												\
 
 #ifdef SDTEST
 static void dhdsdio_testrcv(dhd_bus_t *bus, void *pkt, uint seq);
-static void dhdsdio_sdtest_set(dhd_bus_t *bus, uint count);
+static void dhdsdio_sdtest_set(dhd_bus_t *bus, uint8 count);
 #endif
 
 #ifdef DHD_DEBUG
@@ -624,6 +649,7 @@ static int dhd_bcmsdh_recv_buf(dhd_bus_t *bus, uint32 addr, uint fn, uint flags,
 	void *pkt, bcmsdh_cmplt_fn_t complete, void *handle);
 static int dhd_bcmsdh_send_buf(dhd_bus_t *bus, uint32 addr, uint fn, uint flags,
 	uint8 *buf, uint nbytes,
+<<<<<<< HEAD
 	void *pkt, bcmsdh_cmplt_fn_t complete, void *handle, int max_retry);
 static int dhdsdio_txpkt(dhd_bus_t *bus, uint chan, void** pkts, int num_pkt, bool free_pkt);
 static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txseq,
@@ -632,6 +658,15 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 static int dhdsdio_txpkt_postprocess(dhd_bus_t *bus, void *pkt);
 
 static int dhdsdio_download_firmware(dhd_bus_t *bus, osl_t *osh, void *sdh);
+=======
+	void *pkt, bcmsdh_cmplt_fn_t complete, void *handle);
+#ifdef BCMSDIOH_TXGLOM
+static void dhd_bcmsdh_glom_post(dhd_bus_t *bus, uint8 *frame, uint len);
+static void dhd_bcmsdh_glom_clear(dhd_bus_t *bus);
+#endif
+
+static bool dhdsdio_download_firmware(dhd_bus_t *bus, osl_t *osh, void *sdh);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static int _dhdsdio_download_firmware(dhd_bus_t *bus);
 
 static int dhdsdio_download_code_file(dhd_bus_t *bus, char *image_path);
@@ -649,6 +684,7 @@ extern uint32 dhd_get_htsf(void *dhd, int ifidx);
 #endif /* WLMEDIA_HTSF */
 
 static void
+<<<<<<< HEAD
 dhdsdio_tune_fifoparam(struct dhd_bus *bus)
 {
 	int err;
@@ -695,6 +731,9 @@ dhdsdio_tune_fifoparam(struct dhd_bus *bus)
 
 static void
 dhd_dongle_setramsize(struct dhd_bus *bus, int mem_size)
+=======
+dhd_dongle_setmemsize(struct dhd_bus *bus, int mem_size)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	int32 min_size =  DONGLE_MIN_RAMSIZE;
 	/* Restrict the ramsize to user specified limit */
@@ -774,8 +813,12 @@ static bool
 dhdsdio_sr_cap(dhd_bus_t *bus)
 {
 	bool cap = FALSE;
+<<<<<<< HEAD
 	uint32  core_capext, addr, data;
 
+=======
+	uint32 min = 0, core_capext, addr, data;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (bus->sih->chip == BCM4324_CHIP_ID) {
 			addr = SI_ENUM_BASE + OFFSETOF(chipcregs_t, chipcontrol_addr);
 			data = SI_ENUM_BASE + OFFSETOF(chipcregs_t, chipcontrol_data);
@@ -799,6 +842,7 @@ dhdsdio_sr_cap(dhd_bus_t *bus)
 
 	if (bus->sih->chip == BCM4324_CHIP_ID) {
 		/* FIX: Should change to query SR control register instead */
+<<<<<<< HEAD
 		cap = TRUE;
 	} else if ((bus->sih->chip == BCM4335_CHIP_ID) ||
 		(bus->sih->chip == BCM4339_CHIP_ID) ||
@@ -806,6 +850,12 @@ dhdsdio_sr_cap(dhd_bus_t *bus)
 		(bus->sih->chip == BCM4345_CHIP_ID) ||
 		(bus->sih->chip == BCM4354_CHIP_ID) ||
 		(bus->sih->chip == BCM4350_CHIP_ID)) {
+=======
+		min = bcmsdh_reg_read(bus->sdh, MIN_RSRC_ADDR, 4);
+		if (min == MIN_RSRC_SR)
+			cap = TRUE;
+	} else if (bus->sih->chip == BCM4335_CHIP_ID) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		uint32 enabval = 0;
 		addr = SI_ENUM_BASE + OFFSETOF(chipcregs_t, chipcontrol_addr);
 		data = SI_ENUM_BASE + OFFSETOF(chipcregs_t, chipcontrol_data);
@@ -901,16 +951,16 @@ dhdsdio_clk_kso_init(dhd_bus_t *bus)
 }
 
 #define KSO_DBG(x)
+<<<<<<< HEAD
 #define KSO_WAIT_US 50
 #define KSO_WAIT_MS 1
 #define KSO_SLEEP_RETRY_COUNT 20
 #define ERROR_BCME_NODEVICE_MAX 1
 
 #if defined(CUSTOMER_HW4)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define MAX_KSO_ATTEMPTS 64
-#else
-#define MAX_KSO_ATTEMPTS (PMU_MAX_TRANSITION_DLY/KSO_WAIT_US)
-#endif /* CUSTOMER_HW4 */
 static int
 dhdsdio_clk_kso_enab(dhd_bus_t *bus, bool on)
 {
@@ -928,9 +978,14 @@ dhdsdio_clk_kso_enab(dhd_bus_t *bus, bool on)
 		cmp_val = SBSDIO_FUNC1_SLEEPCSR_KSO_MASK |  SBSDIO_FUNC1_SLEEPCSR_DEVON_MASK;
 		bmask = cmp_val;
 
+<<<<<<< HEAD
 		OSL_SLEEP(3);
+=======
+		msleep(3);
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	} else {
-		/* Put device to sleep, turn off  KSO  */
+		/*  Put device to sleep, turn off  KSO  */
 		cmp_val = 0;
 		bmask = SBSDIO_FUNC1_SLEEPCSR_KSO_MASK;
 	}
@@ -941,19 +996,25 @@ dhdsdio_clk_kso_enab(dhd_bus_t *bus, bool on)
 			break;
 
 		KSO_DBG(("%s> KSO wr/rd retry:%d, ERR:%x \n", __FUNCTION__, try_cnt, err));
+<<<<<<< HEAD
 
 		if (((try_cnt + 1) % KSO_SLEEP_RETRY_COUNT) == 0) {
 			OSL_SLEEP(KSO_WAIT_MS);
 		} else
 			OSL_DELAY(KSO_WAIT_US);
+=======
+		OSL_DELAY(50);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
+
 	} while (try_cnt++ < MAX_KSO_ATTEMPTS);
 
 
-	if (try_cnt > 2)
+	if (try_cnt > 1) {
 		KSO_DBG(("%s> op:%s, try_cnt:%d, rd_val:%x, ERR:%x \n",
 			__FUNCTION__, (on ? "KSO_SET" : "KSO_CLR"), try_cnt, rd_val, err));
+	}
 
 	if (try_cnt > MAX_KSO_ATTEMPTS)  {
 		DHD_ERROR(("%s> op:%s, ERROR: try_cnt:%d, rd_val:%x, ERR:%x \n",
@@ -1167,10 +1228,14 @@ dhdsdio_clk_devsleep_iovar(dhd_bus_t *bus, bool on)
 	if (err == 0)
 		bus->kso = on ? FALSE : TRUE;
 	else {
+<<<<<<< HEAD
 		DHD_ERROR(("%s: Sleep request failed: kso:%d on:%d err:%d\n",
 			__FUNCTION__, bus->kso, on, err));
 		if (!on && retry > 2)
 			bus->kso = FALSE;
+=======
+		DHD_ERROR(("%s: Sleep request failed: on:%d err:%d\n", __FUNCTION__, on, err));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	return err;
@@ -1188,6 +1253,9 @@ dhdsdio_htclk(dhd_bus_t *bus, bool on, bool pendok)
 
 	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+		pendok = FALSE;
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
 	clkctl = 0;
 	sdh = bus->sdh;
 
@@ -1226,6 +1294,12 @@ dhdsdio_htclk(dhd_bus_t *bus, bool on, bool pendok)
 			ht_avail_error = 0;
 		}
 
+		if (pendok &&
+		    ((bus->sih->buscoretype == PCMCIA_CORE_ID) && (bus->sih->buscorerev == 9))) {
+			uint32 dummy, retries;
+			R_SDREG(dummy, &bus->regs->clockctlstatus, retries);
+			BCM_REFERENCE(dummy);
+		}
 
 		/* Check current status */
 		clkctl = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR, &err);
@@ -1234,7 +1308,6 @@ dhdsdio_htclk(dhd_bus_t *bus, bool on, bool pendok)
 			return BCME_ERROR;
 		}
 
-#if !defined(OOB_INTR_ONLY)
 		/* Go to pending and await interrupt if appropriate */
 		if (!SBSDIO_CLKAV(clkctl, bus->alp_only) && pendok) {
 			/* Allow only clock-available interrupt */
@@ -1250,15 +1323,11 @@ dhdsdio_htclk(dhd_bus_t *bus, bool on, bool pendok)
 			DHD_INFO(("CLKCTL: set PENDING\n"));
 			bus->clkstate = CLK_PENDING;
 			return BCME_OK;
-		} else
-#endif /* !defined (OOB_INTR_ONLY) */
-		{
-			if (bus->clkstate == CLK_PENDING) {
-				/* Cancel CA-only interrupt filter */
-				devctl = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL, &err);
-				devctl &= ~SBSDIO_DEVCTL_CA_INT_ONLY;
-				bcmsdh_cfg_write(sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL, devctl, &err);
-			}
+		} else if (bus->clkstate == CLK_PENDING) {
+			/* Cancel CA-only interrupt filter */
+			devctl = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL, &err);
+			devctl &= ~SBSDIO_DEVCTL_CA_INT_ONLY;
+			bcmsdh_cfg_write(sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL, devctl, &err);
 		}
 
 		/* Otherwise, wait here (polling) for HT Avail */
@@ -1302,7 +1371,6 @@ dhdsdio_htclk(dhd_bus_t *bus, bool on, bool pendok)
 #endif /* DHD_USE_IDLECOUNT */
 	} else {
 		clkreq = 0;
-
 		if (bus->clkstate == CLK_PENDING) {
 			/* Cancel CA-only interrupt filter */
 			devctl = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL, &err);
@@ -1595,15 +1663,16 @@ dhdsdio_bussleep(dhd_bus_t *bus, bool sleep)
 	return err;
 }
 
-#if defined(CUSTOMER_HW4) && defined(USE_DYNAMIC_F2_BLKSIZE)
-int dhdsdio_func_blocksize(dhd_pub_t *dhd, int function_num, int block_size)
+#if defined(CUSTOMER_HW4) && defined(DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS)
+int
+dhdsdio_func_blocksize(dhd_pub_t *dhd, int function_num, int block_size)
 {
 	int func_blk_size = function_num;
 	int bcmerr = 0;
 	int result;
 
-	bcmerr = dhd_bus_iovar_op(dhd, "sd_blocksize", &func_blk_size,
-		sizeof(int), &result, sizeof(int), IOV_GET);
+	bcmerr = dhd_bus_iovar_op(dhd, "sd_blocksize", &func_blk_size, sizeof(int),	&result,
+		sizeof(int), 0);
 
 	if (bcmerr != BCME_OK) {
 		DHD_ERROR(("%s: Get F%d Block size error\n", __FUNCTION__, function_num));
@@ -1611,11 +1680,14 @@ int dhdsdio_func_blocksize(dhd_pub_t *dhd, int function_num, int block_size)
 	}
 
 	if (result != block_size) {
-		DHD_TRACE_HW4(("%s: F%d Block size set from %d to %d\n",
-			__FUNCTION__, function_num, result, block_size));
+
+		DHD_ERROR(("%s: F%d Block size set from %d to %d\n", __FUNCTION__,
+			function_num, result, block_size));
+
 		func_blk_size = function_num << 16 | block_size;
-		bcmerr = dhd_bus_iovar_op(dhd, "sd_blocksize", NULL,
-			0, &func_blk_size, sizeof(int32), IOV_SET);
+		bcmerr = dhd_bus_iovar_op(dhd, "sd_blocksize", &func_blk_size, sizeof(int32),
+			&result, sizeof(int32), 1);
+
 		if (bcmerr != BCME_OK) {
 			DHD_ERROR(("%s: Set F2 Block size error\n", __FUNCTION__));
 			return BCME_ERROR;
@@ -1623,8 +1695,9 @@ int dhdsdio_func_blocksize(dhd_pub_t *dhd, int function_num, int block_size)
 	}
 
 	return BCME_OK;
+
 }
-#endif /* CUSTOMER_HW4 && USE_DYNAMIC_F2_BLKSIZE */
+#endif /* CUSTOMER_HW4 && DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS */
 
 #if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
 void
@@ -1657,6 +1730,7 @@ dhd_enable_oob_intr(struct dhd_bus *bus, bool enable)
 	dhdsdio_clkctl(bus, CLK_SDONLY, FALSE);
 #endif /* !defined(HW_OOB) */
 }
+<<<<<<< HEAD
 #endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
 
 int
@@ -1827,6 +1901,14 @@ dhd_bus_txdata(struct dhd_bus *bus, void *pkt)
 static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txseq,
 	int prev_chain_total_len, bool last_chained_pkt,
 	int *pad_pkt_len, void **new_pkt)
+=======
+#endif /* defined(OOB_INTR_ONLY) */
+
+/* Writes a HW/SW header into the packet and sends it. */
+/* Assumes: (a) header space already there, (b) caller holds lock */
+static int
+dhdsdio_txpkt(dhd_bus_t *bus, void *pkt, uint chan, bool free_pkt, bool queue_only)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	osl_t *osh;
 	uint8 *frame;
@@ -1835,13 +1917,32 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 	int head_padding;
 	int tail_padding = 0;
 	uint32 swheader;
+<<<<<<< HEAD
 	uint32 swhdr_offset;
 	bool alloc_new_pkt = FALSE;
 	uint8 sdpcm_hdrlen = bus->txglom_enable ? SDPCM_HDRLEN_TXGLOM : SDPCM_HDRLEN;
+=======
+	uint retries = 0;
+	bcmsdh_info_t *sdh;
+	void *new;
+	int i;
+	int pkt_cnt;
+#ifdef BCMSDIOH_TXGLOM
+	uint8 *frame_tmp;
+#endif
+#ifdef WLMEDIA_HTSF
+	char *p;
+	htsfts_t *htsf_ts;
+#endif
+
+
+	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	*new_pkt = NULL;
 	osh = bus->dhd->osh;
 
+<<<<<<< HEAD
 #ifdef DHDTCPACK_SUPPRESS
 	if (dhd_tcpack_check_xmit(bus->dhd, pkt) == BCME_ERROR) {
 		DHD_ERROR(("%s %d: tcpack_suppress ERROR!!! Stop using it\n",
@@ -1853,6 +1954,12 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 	/* Add space for the SDPCM hardware/software headers */
 	PKTPUSH(osh, pkt, sdpcm_hdrlen);
 	ASSERT(ISALIGNED((uintptr)PKTDATA(osh, pkt), 2));
+=======
+	if (bus->dhd->dongle_reset) {
+		ret = BCME_NOTREADY;
+		goto done;
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	frame = (uint8*)PKTDATA(osh, pkt);
 	pkt_len = (uint16)PKTLEN(osh, pkt);
@@ -1872,6 +1979,7 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 		tx_packets[PKTPRIO(pkt)]++;
 #endif /* DHD_DEBUG */
 
+<<<<<<< HEAD
 	/* align the data pointer, allocate a new packet if there is not enough space (new
 	 * packet data pointer will be aligned thus no padding will be needed)
 	 */
@@ -1921,6 +2029,20 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 			} else {
 				alloc_new_pkt = TRUE;
 				bus->tx_tailpad_pktget++;
+=======
+	/* Add alignment padding, allocate new packet if needed */
+	if (!((uintptr)frame & 1) && (pad1 = ((uintptr)frame % DHD_SDALIGN))) {
+		if (PKTHEADROOM(osh, pkt) < pad1) {
+			DHD_INFO(("%s: insufficient headroom %d for %d pad1\n",
+			          __FUNCTION__, (int)PKTHEADROOM(osh, pkt), pad1));
+			bus->dhd->tx_realloc++;
+			new = PKTGET(osh, (PKTLEN(osh, pkt) + DHD_SDALIGN), TRUE);
+			if (!new) {
+				DHD_ERROR(("%s: couldn't allocate new %d-byte packet\n",
+				           __FUNCTION__, PKTLEN(osh, pkt) + DHD_SDALIGN));
+				ret = BCME_NOMEM;
+				goto done;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			}
 		} else
 		/* This last pkt's tailroom is sufficient to hold both tail_padding
@@ -1994,6 +2116,7 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 	 *			4-byte flags: TBD
 	 */
 
+<<<<<<< HEAD
 	swhdr_offset = SDPCM_FRAMETAG_LEN;
 
 	/* hardware frame tag:
@@ -2022,6 +2145,91 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 		hwheader2 = (tail_padding) << 16;
 		htol32_ua_store(hwheader1, frame + SDPCM_FRAMETAG_LEN);
 		htol32_ua_store(hwheader2, frame + SDPCM_FRAMETAG_LEN + 4);
+=======
+		/* Software tag: channel, sequence number, data offset */
+		swheader = ((chan << SDPCM_CHANNEL_SHIFT) & SDPCM_CHANNEL_MASK) |
+			((bus->tx_seq + bus->glom_cnt) % SDPCM_SEQUENCE_WRAP) |
+		        (((pad1 + SDPCM_HDRLEN) << SDPCM_DOFFSET_SHIFT) & SDPCM_DOFFSET_MASK);
+		htol32_ua_store(swheader, frame + SDPCM_FRAMETAG_LEN + SDPCM_HWEXT_LEN);
+		htol32_ua_store(0, frame + SDPCM_FRAMETAG_LEN + SDPCM_HWEXT_LEN + sizeof(swheader));
+
+		if (queue_only) {
+			if (forcealign && (len & (ALIGNMENT - 1)))
+				len = ROUNDUP(len, ALIGNMENT);
+			/* Hardware extention tag */
+			/* 2byte frame length, 1byte-, 1byte frame flag,
+			 * 2byte-hdrlength, 2byte padlenght
+			 */
+			hwheader1 = (act_len - SDPCM_FRAMETAG_LEN) | (0 << 24);
+			hwheader2 = (len - act_len) << 16;
+			htol32_ua_store(hwheader1, frame + SDPCM_FRAMETAG_LEN);
+			htol32_ua_store(hwheader2, frame + SDPCM_FRAMETAG_LEN + 4);
+			/* Post the frame pointer to sdio glom array */
+			dhd_bcmsdh_glom_post(bus, frame, len);
+			/* Save the pkt pointer in bus glom array */
+			bus->glom_pkt_arr[bus->glom_cnt] = pkt;
+			bus->glom_total_len += len;
+			bus->glom_cnt++;
+			return BCME_OK;
+		} else {
+				/* Raise len to next SDIO block to eliminate tail command */
+				if (bus->roundup && bus->blocksize &&
+					((bus->glom_total_len + len) > bus->blocksize)) {
+					uint16 pad2 = bus->blocksize -
+						((bus->glom_total_len + len) % bus->blocksize);
+					if ((pad2 <= bus->roundup) && (pad2 < bus->blocksize)) {
+							len += pad2;
+					} else {
+					}
+				} else if ((bus->glom_total_len + len) % DHD_SDALIGN) {
+					len += DHD_SDALIGN
+					    - ((bus->glom_total_len + len) % DHD_SDALIGN);
+				}
+				if (forcealign && (len & (ALIGNMENT - 1))) {
+					len = ROUNDUP(len, ALIGNMENT);
+				}
+
+				/* Hardware extention tag */
+				/* 2byte frame length, 1byte-, 1byte frame flag,
+				 * 2byte-hdrlength, 2byte padlenght
+				 */
+				hwheader1 = (act_len - SDPCM_FRAMETAG_LEN) | (1 << 24);
+				hwheader2 = (len - act_len) << 16;
+				htol32_ua_store(hwheader1, frame + SDPCM_FRAMETAG_LEN);
+				htol32_ua_store(hwheader2, frame + SDPCM_FRAMETAG_LEN + 4);
+
+				/* Post the frame pointer to sdio glom array */
+				dhd_bcmsdh_glom_post(bus, frame, len);
+				/* Save the pkt pointer in bus glom array */
+				bus->glom_pkt_arr[bus->glom_cnt] = pkt;
+				bus->glom_cnt++;
+				bus->glom_total_len += len;
+
+				/* Update the total length on the first pkt */
+				frame_tmp = (uint8*)PKTDATA(osh, bus->glom_pkt_arr[0]);
+				*(uint16*)frame_tmp = htol16(bus->glom_total_len);
+				*(((uint16*)frame_tmp) + 1) = htol16(~bus->glom_total_len);
+		}
+	} else
+#endif /* BCMSDIOH_TXGLOM */
+	{
+	/* Software tag: channel, sequence number, data offset */
+	swheader = ((chan << SDPCM_CHANNEL_SHIFT) & SDPCM_CHANNEL_MASK) | bus->tx_seq |
+	        (((pad1 + SDPCM_HDRLEN) << SDPCM_DOFFSET_SHIFT) & SDPCM_DOFFSET_MASK);
+	htol32_ua_store(swheader, frame + SDPCM_FRAMETAG_LEN);
+	htol32_ua_store(0, frame + SDPCM_FRAMETAG_LEN + sizeof(swheader));
+
+#ifdef DHD_DEBUG
+	if (PKTPRIO(pkt) < ARRAYSIZE(tx_packets)) {
+		tx_packets[PKTPRIO(pkt)]++;
+	}
+	if (DHD_BYTES_ON() &&
+	    (((DHD_CTL_ON() && (chan == SDPCM_CONTROL_CHANNEL)) ||
+	      (DHD_DATA_ON() && (chan != SDPCM_CONTROL_CHANNEL))))) {
+		prhex("Tx Frame", frame, len);
+	} else if (DHD_HDRS_ON()) {
+		prhex("TxHdr", frame, MIN(len, 16));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	PKTSETLEN((osh), (pkt), (pkt_len));
 
@@ -2032,8 +2240,29 @@ static int dhdsdio_txpkt_preprocess(dhd_bus_t *bus, void *pkt, int chan, int txs
 	htol32_ua_store(swheader, frame + swhdr_offset);
 	htol32_ua_store(0, frame + swhdr_offset + sizeof(swheader));
 
+<<<<<<< HEAD
 	return pkt_len;
 }
+=======
+	/* Some controllers have trouble with odd bytes -- round to even */
+	if (forcealign && (len & (ALIGNMENT - 1))) {
+#ifdef NOTUSED
+		if (PKTTAILROOM(osh, pkt))
+#endif
+			len = ROUNDUP(len, ALIGNMENT);
+#ifdef NOTUSED
+		else
+			DHD_ERROR(("%s: sending unrounded %d-byte packet\n", __FUNCTION__, len));
+#endif
+	}
+	}
+
+	do {
+		ret = dhd_bcmsdh_send_buf(bus, bcmsdh_cur_sbwad(sdh), SDIO_FUNC_2, F2SYNC,
+		                          frame, len, pkt, NULL, NULL);
+		bus->f2txdata++;
+		ASSERT(ret != BCME_PENDING);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 static int dhdsdio_txpkt_postprocess(dhd_bus_t *bus, void *pkt)
 {
@@ -2052,6 +2281,7 @@ static int dhdsdio_txpkt_postprocess(dhd_bus_t *bus, void *pkt)
 	DHD_INFO(("%s PKTLEN before postprocess %d",
 		__FUNCTION__, PKTLEN(osh, pkt)));
 
+<<<<<<< HEAD
 	/* PKTLEN still includes tail_padding, so exclude it.
 	 * We shall have head_padding + original pkt_len for PKTLEN afterwards.
 	 */
@@ -2070,6 +2300,42 @@ static int dhdsdio_txpkt_postprocess(dhd_bus_t *bus, void *pkt)
 		DHD_INFO((" non-txglom pkt: HW frame tag len %d after PKTLEN %d\n",
 			*(uint16*)frame, PKTLEN(osh, pkt)));
 	}
+=======
+#ifdef BCMSDIOH_TXGLOM
+	if (bus->glom_enable) {
+		dhd_bcmsdh_glom_clear(bus);
+		pkt_cnt = bus->glom_cnt;
+	} else
+#endif
+	{
+		pkt_cnt = 1;
+	}
+		/* restore pkt buffer pointer before calling tx complete routine */
+	while (pkt_cnt) {
+#ifdef BCMSDIOH_TXGLOM
+		uint32 doff;
+		if (bus->glom_enable) {
+			pkt = bus->glom_pkt_arr[bus->glom_cnt - pkt_cnt];
+			frame = (uint8*)PKTDATA(osh, pkt);
+			doff = ltoh32_ua(frame + SDPCM_FRAMETAG_LEN + SDPCM_HWEXT_LEN);
+			doff = (doff & SDPCM_DOFFSET_MASK) >> SDPCM_DOFFSET_SHIFT;
+			PKTPULL(osh, pkt, doff);
+		} else
+#endif
+		{
+	PKTPULL(osh, pkt, SDPCM_HDRLEN + pad1);
+		}
+#ifdef PROP_TXSTATUS
+	if (bus->dhd->wlfc_state) {
+		dhd_os_sdunlock(bus->dhd);
+		dhd_wlfc_txcomplete(bus->dhd, pkt, ret == 0);
+		dhd_os_sdlock(bus->dhd);
+	} else {
+#endif /* PROP_TXSTATUS */
+	dhd_txcomplete(bus->dhd, pkt, ret != 0);
+	if (free_pkt)
+		PKTFREE(osh, pkt, TRUE);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	data_offset = ltoh32_ua(frame + swhdr_offset);
 	data_offset = (data_offset & SDPCM_DOFFSET_MASK) >> SDPCM_DOFFSET_SHIFT;
@@ -2178,9 +2444,33 @@ done:
 		pkt = pkts[i];
 		wlfc_enabled = FALSE;
 #ifdef PROP_TXSTATUS
+<<<<<<< HEAD
 		if (DHD_PKTTAG_WLFCPKT(PKTTAG(pkt))) {
 			wlfc_enabled = (dhd_wlfc_txcomplete(bus->dhd, pkt, ret == 0) !=
 				WLFC_UNSUPPORTED);
+=======
+			/* let the caller decide whether to free the packet */
+			if (!bus->dhd->wlfc_state)
+#endif
+			PKTFREE(osh, pkt, TRUE);
+			ret = BCME_NORESOURCE;
+		}
+		else
+			ret = BCME_OK;
+		dhd_os_sdunlock_txq(bus->dhd);
+
+		if ((pktq_len(&bus->txq) >= FCHI) && dhd_doflow)
+			dhd_txflowcontrol(bus->dhd, ALL_INTERFACES, ON);
+
+#ifdef DHD_DEBUG
+		if (pktq_plen(&bus->txq, prec) > qcount[prec])
+			qcount[prec] = pktq_plen(&bus->txq, prec);
+#endif
+		/* Schedule DPC if needed to send queued packet(s) */
+		if (dhd_deferred_tx && !bus->dpc_sched) {
+			bus->dpc_sched = TRUE;
+			dhd_sched_dpc(bus->dhd);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 #endif /* PROP_TXSTATUS */
 		if (!wlfc_enabled) {
@@ -2202,11 +2492,19 @@ dhdsdio_sendfromq(dhd_bus_t *bus, uint maxframes)
 {
 	uint cnt = 0;
 	uint8 tx_prec_map;
+<<<<<<< HEAD
 	uint16 txpktqlen = 0;
 	uint32 intstatus = 0;
 	uint retries = 0;
 	osl_t *osh;
 	uint datalen = 0;
+=======
+#ifdef BCMSDIOH_TXGLOM
+	uint i;
+	uint8 glom_cnt;
+#endif
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	dhd_pub_t *dhd = bus->dhd;
 	sdpcmd_regs_t *regs = bus->regs;
 
@@ -2219,6 +2517,7 @@ dhdsdio_sendfromq(dhd_bus_t *bus, uint maxframes)
 
 	osh = dhd->osh;
 	tx_prec_map = ~bus->flowcontrol;
+<<<<<<< HEAD
 	for (cnt = 0; (cnt < maxframes) && DATAOK(bus);) {
 		int i;
 		int num_pkt = 1;
@@ -2234,6 +2533,70 @@ dhdsdio_sendfromq(dhd_bus_t *bus, uint maxframes)
 		for (i = 0; i < num_pkt; i++) {
 			pkts[i] = pktq_mdeq(&bus->txq, ~bus->flowcontrol, &prec_out);
 			datalen += PKTLEN(osh, pkts[i]);
+=======
+
+	/* Send frames until the limit or some other event */
+	for (cnt = 0; (cnt < maxframes) && DATAOK(bus); cnt++) {
+#ifdef BCMSDIOH_TXGLOM
+		if (bus->glom_enable) {
+			glom_cnt = MIN(DATABUFCNT(bus), bus->glomsize);
+			glom_cnt = MIN(glom_cnt, pktq_mlen(&bus->txq, tx_prec_map));
+			glom_cnt = MIN(glom_cnt, maxframes-cnt);
+
+			/* Limiting the size to 2pkts in case of copy */
+			if (bus->glom_mode == SDPCM_TXGLOM_CPY)
+			    glom_cnt = MIN(glom_cnt, 5);
+
+			if (glom_cnt == 0)
+				break;
+			datalen = 0;
+			for (i = 0; i < glom_cnt; i++) {
+				dhd_os_sdlock_txq(bus->dhd);
+				if ((pkt = pktq_mdeq(&bus->txq, tx_prec_map, &prec_out)) == NULL) {
+					/* This case should not happen */
+					DHD_ERROR(("No pkts in the queue for glomming\n"));
+					dhd_os_sdunlock_txq(bus->dhd);
+					break;
+				}
+				dhd_os_sdunlock_txq(bus->dhd);
+
+				datalen += (PKTLEN(bus->dhd->osh, pkt) - SDPCM_HDRLEN);
+#ifndef SDTEST
+				ret = dhdsdio_txpkt(bus,
+					pkt,
+					SDPCM_DATA_CHANNEL,
+					TRUE,
+					(i == (glom_cnt-1))? FALSE: TRUE);
+#else
+				ret = dhdsdio_txpkt(bus,
+					pkt,
+					(bus->ext_loop ? SDPCM_TEST_CHANNEL : SDPCM_DATA_CHANNEL),
+					TRUE,
+					(i == (glom_cnt-1))? FALSE: TRUE);
+#endif
+			}
+			cnt += i-1;
+		} else
+#endif /* BCMSDIOH_TXGLOM */
+		{
+		dhd_os_sdlock_txq(bus->dhd);
+		if ((pkt = pktq_mdeq(&bus->txq, tx_prec_map, &prec_out)) == NULL) {
+			dhd_os_sdunlock_txq(bus->dhd);
+			break;
+		}
+		dhd_os_sdunlock_txq(bus->dhd);
+		datalen = PKTLEN(bus->dhd->osh, pkt) - SDPCM_HDRLEN;
+
+#ifndef SDTEST
+		ret = dhdsdio_txpkt(bus, pkt, SDPCM_DATA_CHANNEL, TRUE, FALSE);
+#else
+		ret = dhdsdio_txpkt(bus,
+			pkt,
+			(bus->ext_loop ? SDPCM_TEST_CHANNEL : SDPCM_DATA_CHANNEL),
+			TRUE,
+			FALSE);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		dhd_os_sdunlock_txq(bus->dhd);
 
@@ -2259,6 +2622,7 @@ dhdsdio_sendfromq(dhd_bus_t *bus, uint maxframes)
 
 	}
 
+<<<<<<< HEAD
 	dhd_os_sdlock_txq(bus->dhd);
 	txpktqlen = pktq_len(&bus->txq);
 	dhd_os_sdunlock_txq(bus->dhd);
@@ -2273,10 +2637,17 @@ dhdsdio_sendfromq(dhd_bus_t *bus, uint maxframes)
 			dhd_txflowcontrol(dhd, ALL_INTERFACES, OFF);
 		}
 	}
+=======
+	/* Deflow-control stack if needed */
+	if (dhd_doflow && dhd->up && (dhd->busstate == DHD_BUS_DATA) &&
+	    dhd->txoff && (pktq_len(&bus->txq) < FCLOW))
+		dhd_txflowcontrol(dhd, ALL_INTERFACES, OFF);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return cnt;
 }
 
+<<<<<<< HEAD
 static void
 dhdsdio_sendpendctl(dhd_bus_t *bus)
 {
@@ -2304,6 +2675,8 @@ dhdsdio_sendpendctl(dhd_bus_t *bus)
 	dhd_wait_event_wakeup(bus->dhd);
 }
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 int
 dhd_bus_txctl(struct dhd_bus *bus, uchar *msg, uint msglen)
 {
@@ -2412,18 +2785,9 @@ dhd_bus_txctl(struct dhd_bus *bus, uchar *msg, uint msglen)
 			ret = 0;
 		} else {
 			bus->dhd->txcnt_timeout++;
-			if (!bus->dhd->hang_was_sent) {
-#ifdef CUSTOMER_HW4
-				uint32 status, retry = 0;
-				R_SDREG(status, &bus->regs->intstatus, retry);
-				DHD_TRACE_HW4(("%s: txcnt_timeout, INT status=0x%08X\n",
-					__FUNCTION__, status));
-				DHD_TRACE_HW4(("%s : tx_max : %d, tx_seq : %d, clkstate : %d \n",
-					__FUNCTION__, bus->tx_max, bus->tx_seq, bus->clkstate));
-#endif /* CUSTOMER_HW4 */
+			if (!bus->dhd->hang_was_sent)
 				DHD_ERROR(("%s: ctrl_frame_stat == TRUE txcnt_timeout=%d\n",
 					__FUNCTION__, bus->dhd->txcnt_timeout));
-			}
 			ret = -1;
 			bus->ctrl_frame_stat = FALSE;
 			goto done;
@@ -2461,7 +2825,7 @@ done:
 	else
 		bus->dhd->tx_ctlpkts++;
 
-	if (bus->dhd->txcnt_timeout >= MAX_CNTL_TX_TIMEOUT)
+	if (bus->dhd->txcnt_timeout >= MAX_CNTL_TIMEOUT)
 		return -ETIMEDOUT;
 
 	if (ret == BCME_NODEVICE)
@@ -2495,7 +2859,7 @@ dhd_bus_rxctl(struct dhd_bus *bus, uchar *msg, uint msglen)
 
 	if (rxlen) {
 		DHD_CTL(("%s: resumed on rxctl frame, got %d expected %d\n",
-			__FUNCTION__, rxlen, msglen));
+		         __FUNCTION__, rxlen, msglen));
 	} else if (timeleft == 0) {
 #ifdef DHD_DEBUG
 		uint32 status, retry = 0;
@@ -2524,10 +2888,8 @@ dhd_bus_rxctl(struct dhd_bus *bus, uchar *msg, uint msglen)
 #endif /* DHD_DEBUG */
 	}
 	if (timeleft == 0) {
-		if (rxlen == 0)
-			bus->dhd->rxcnt_timeout++;
-		DHD_ERROR(("%s: rxcnt_timeout=%d, rxlen=%d\n", __FUNCTION__,
-			bus->dhd->rxcnt_timeout, rxlen));
+		bus->dhd->rxcnt_timeout++;
+		DHD_ERROR(("%s: rxcnt_timeout=%d\n", __FUNCTION__, bus->dhd->rxcnt_timeout));
 	}
 	else
 		bus->dhd->rxcnt_timeout = 0;
@@ -2537,7 +2899,7 @@ dhd_bus_rxctl(struct dhd_bus *bus, uchar *msg, uint msglen)
 	else
 		bus->dhd->rx_ctlerrs++;
 
-	if (bus->dhd->rxcnt_timeout >= MAX_CNTL_RX_TIMEOUT)
+	if (bus->dhd->rxcnt_timeout >= MAX_CNTL_TIMEOUT)
 		return -ETIMEDOUT;
 
 	if (bus->dhd->dongle_trap_occured)
@@ -2817,15 +3179,12 @@ dhdsdio_pktgen_set(dhd_bus_t *bus, uint8 *arg)
 	bus->pktgen_stop = pktgen.stop;
 
 	bus->pktgen_tick = bus->pktgen_ptick = 0;
-	bus->pktgen_prev_time = jiffies;
 	bus->pktgen_len = MAX(bus->pktgen_len, bus->pktgen_minlen);
 	bus->pktgen_len = MIN(bus->pktgen_len, bus->pktgen_maxlen);
 
 	/* Clear counts for a new pktgen (mode change, or was stopped) */
-	if (bus->pktgen_count && (!oldcnt || oldmode != bus->pktgen_mode)) {
-		bus->pktgen_sent = bus->pktgen_prev_sent = bus->pktgen_rcvd = 0;
-		bus->pktgen_prev_rcvd = bus->pktgen_fail = 0;
-	}
+	if (bus->pktgen_count && (!oldcnt || oldmode != bus->pktgen_mode))
+		bus->pktgen_sent = bus->pktgen_rcvd = bus->pktgen_fail = 0;
 
 	return 0;
 }
@@ -3063,9 +3422,6 @@ dhdsdio_checkdied(dhd_bus_t *bus, char *data, uint size)
 
 	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
-	if (DHD_NOCHECKDIED_ON())
-		return 0;
-
 	if (data == NULL) {
 		/*
 		 * Called after a rx ctrl timeout. "data" is NULL.
@@ -3293,10 +3649,14 @@ dhd_serialconsole(dhd_bus_t *bus, bool set, bool enable, int *bcmerror)
 		uart_enab = CC_PLL_CHIPCTRL_SERIAL_ENAB;
 	}
 	else if (bus->sih->chip == BCM4334_CHIP_ID ||
+<<<<<<< HEAD
 		bus->sih->chip == BCM43340_CHIP_ID ||
 		bus->sih->chip == BCM43341_CHIP_ID ||
 		bus->sih->chip == BCM43342_CHIP_ID ||
 		0) {
+=======
+		bus->sih->chip == BCM43341_CHIP_ID) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (enable) {
 			/* Moved to PMU chipcontrol 1 from 4330 */
 			int_val &= ~gpio_sel;
@@ -3492,6 +3852,7 @@ dhdsdio_doiovar(dhd_bus_t *bus, const bcm_iovar_t *vi, uint32 actionid, const ch
 		DHD_INFO(("%s: Request to %s %d bytes at address 0x%08x\n", __FUNCTION__,
 		          (set ? "write" : "read"), size, address));
 
+<<<<<<< HEAD
 		/* check if CR4 */
 		if (si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
 			/*
@@ -3502,6 +3863,8 @@ dhdsdio_doiovar(dhd_bus_t *bus, const bcm_iovar_t *vi, uint32 actionid, const ch
 				bus->resetinstr = *(((uint32*)params) + 2);
 			}
 		} else {
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		/* If we know about SOCRAM, check for a fit */
 		if ((bus->orig_ramsize) &&
 		    ((address > bus->orig_ramsize) || (address + size > bus->orig_ramsize)))
@@ -3542,7 +3905,6 @@ dhdsdio_doiovar(dhd_bus_t *bus, const bcm_iovar_t *vi, uint32 actionid, const ch
 				bcmerror = BCME_ERROR;
 				break;
 			}
-		}
 		}
 
 		/* Generate the actual data pointer */
@@ -3802,13 +4164,12 @@ dhdsdio_doiovar(dhd_bus_t *bus, const bcm_iovar_t *vi, uint32 actionid, const ch
 	case IOV_SVAL(IOV_MESBUSYCTRL):
 		mesbusyctrl = (uint)int_val;
 		mesbusyctrl = (mesbusyctrl > SBSDIO_MESBUSYCTRL_MASK)
-			? SBSDIO_MESBUSYCTRL_MASK : mesbusyctrl;
+						? SBSDIO_MESBUSYCTRL_MASK : mesbusyctrl;
 		DHD_ERROR(("Setting mesbusyctrl as 0x%x.\n", mesbusyctrl));
 		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_MESBUSYCTRL,
 			((uint8)mesbusyctrl | 0x80), NULL);
 		break;
 #endif 
-
 
 	case IOV_GVAL(IOV_DONGLEISOLATION):
 		int_val = bus->dhd->dongle_isolation;
@@ -4010,8 +4371,6 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
 	int bcmerror = 0;
 	int foundcr4 = 0;
 
-	if (!bus->sih)
-		return BCME_ERROR;
 	/* To enter download state, disable ARM and reset SOCRAM.
 	 * To exit download state, simply reset ARM (default is RAM boot).
 	 */
@@ -4023,47 +4382,45 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
 			if (si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
 				foundcr4 = 1;
 			} else {
-				DHD_ERROR(("%s: Failed to find ARM core!\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
+			DHD_ERROR(("%s: Failed to find ARM core!\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
 		}
 
 		if (!foundcr4) {
-			si_core_disable(bus->sih, 0);
-			if (bcmsdh_regfail(bus->sdh)) {
+		si_core_disable(bus->sih, 0);
+		if (bcmsdh_regfail(bus->sdh)) {
+			bcmerror = BCME_SDIO_ERROR;
+			goto fail;
+		}
+
+		if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
+			DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
+
+		si_core_reset(bus->sih, 0, 0);
+		if (bcmsdh_regfail(bus->sdh)) {
+			DHD_ERROR(("%s: Failure trying reset SOCRAM core?\n", __FUNCTION__));
+			bcmerror = BCME_SDIO_ERROR;
+			goto fail;
+		}
+
+		/* Disable remap for download */
+		if (REMAP_ENAB(bus) && si_socdevram_remap_isenb(bus->sih))
+			dhdsdio_devram_remap(bus, FALSE);
+
+		/* Clear the top bit of memory */
+		if (bus->ramsize) {
+			uint32 zeros = 0;
+			if (dhdsdio_membytes(bus, TRUE, bus->ramsize - 4, (uint8*)&zeros, 4) < 0) {
 				bcmerror = BCME_SDIO_ERROR;
 				goto fail;
 			}
-
-			if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
-				DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
-
-			si_core_reset(bus->sih, 0, 0);
-			if (bcmsdh_regfail(bus->sdh)) {
-				DHD_ERROR(("%s: Failure trying reset SOCRAM core?\n",
-				           __FUNCTION__));
-				bcmerror = BCME_SDIO_ERROR;
-				goto fail;
-			}
-
-			/* Disable remap for download */
-			if (REMAP_ENAB(bus) && si_socdevram_remap_isenb(bus->sih))
-				dhdsdio_devram_remap(bus, FALSE);
-
-			/* Clear the top bit of memory */
-			if (bus->ramsize) {
-				uint32 zeros = 0;
-				if (dhdsdio_membytes(bus, TRUE, bus->ramsize - 4,
-				                     (uint8*)&zeros, 4) < 0) {
-					bcmerror = BCME_SDIO_ERROR;
-					goto fail;
-				}
-			}
-		} else {
+		}
+	} else {
 			/* For CR4,
 			 * Halt ARM
 			 * Remove ARM reset
@@ -4077,44 +4434,42 @@ dhdsdio_download_state(dhd_bus_t *bus, bool enter)
 		}
 	} else {
 		if (!si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
-			if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
-				DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
+		if (!(si_setcore(bus->sih, SOCRAM_CORE_ID, 0))) {
+			DHD_ERROR(("%s: Failed to find SOCRAM core!\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
 
-			if (!si_iscoreup(bus->sih)) {
-				DHD_ERROR(("%s: SOCRAM core is down after reset?\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
+		if (!si_iscoreup(bus->sih)) {
+			DHD_ERROR(("%s: SOCRAM core is down after reset?\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
 
-			if ((bcmerror = dhdsdio_write_vars(bus))) {
-				DHD_ERROR(("%s: could not write vars to RAM\n", __FUNCTION__));
-				goto fail;
-			}
+		if ((bcmerror = dhdsdio_write_vars(bus))) {
+			DHD_ERROR(("%s: could not write vars to RAM\n", __FUNCTION__));
+			goto fail;
+		}
+		/* Enable remap before ARM reset but after vars.
+		 * No backplane access in remap mode
+		 */
+		if (REMAP_ENAB(bus) && !si_socdevram_remap_isenb(bus->sih))
+			dhdsdio_devram_remap(bus, TRUE);
 
-			/* Enable remap before ARM reset but after vars.
-			 * No backplane access in remap mode
-			 */
-			if (REMAP_ENAB(bus) && !si_socdevram_remap_isenb(bus->sih))
-				dhdsdio_devram_remap(bus, TRUE);
+		if (!si_setcore(bus->sih, PCMCIA_CORE_ID, 0) &&
+		    !si_setcore(bus->sih, SDIOD_CORE_ID, 0)) {
+			DHD_ERROR(("%s: Can't change back to SDIO core?\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
+		W_SDREG(0xFFFFFFFF, &bus->regs->intstatus, retries);
 
-			if (!si_setcore(bus->sih, PCMCIA_CORE_ID, 0) &&
-			    !si_setcore(bus->sih, SDIOD_CORE_ID, 0)) {
-				DHD_ERROR(("%s: Can't change back to SDIO core?\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
-			W_SDREG(0xFFFFFFFF, &bus->regs->intstatus, retries);
-
-
-			if (!(si_setcore(bus->sih, ARM7S_CORE_ID, 0)) &&
-			    !(si_setcore(bus->sih, ARMCM3_CORE_ID, 0))) {
-				DHD_ERROR(("%s: Failed to find ARM core!\n", __FUNCTION__));
-				bcmerror = BCME_ERROR;
-				goto fail;
-			}
+		if (!(si_setcore(bus->sih, ARM7S_CORE_ID, 0)) &&
+		    !(si_setcore(bus->sih, ARMCM3_CORE_ID, 0))) {
+			DHD_ERROR(("%s: Failed to find ARM core!\n", __FUNCTION__));
+			bcmerror = BCME_ERROR;
+			goto fail;
+		}
 		} else {
 			/* cr4 has no socram, but tcm's */
 			/* write vars */
@@ -4231,8 +4586,11 @@ dhd_bus_iovar_op(dhd_pub_t *dhdp, const char *name,
 			} else {
 				DHD_INFO(("%s: noted %s update, value now %d\n",
 				          __FUNCTION__, "sd_blocksize", bus->blocksize));
+<<<<<<< HEAD
 
 				dhdsdio_tune_fifoparam(bus);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			}
 		}
 		bus->roundup = MIN(max_roundup, bus->blocksize);
@@ -4294,12 +4652,10 @@ dhd_bus_stop(struct dhd_bus *bus, bool enforce_mutex)
 		dhd_os_sdlock(bus->dhd);
 
 	if ((bus->dhd->busstate == DHD_BUS_DOWN) || bus->dhd->hang_was_sent) {
-		/* if Firmware already hangs disbale any interrupt */
 		bus->dhd->busstate = DHD_BUS_DOWN;
 		bus->hostintmask = 0;
 		bcmsdh_intr_disable(bus->sdh);
 	} else {
-
 		BUS_WAKE(bus);
 
 		/* Change our idea of bus state */
@@ -4307,34 +4663,33 @@ dhd_bus_stop(struct dhd_bus *bus, bool enforce_mutex)
 
 		if (KSO_ENAB(bus)) {
 
-		/* Enable clock for device interrupts */
-		dhdsdio_clkctl(bus, CLK_AVAIL, FALSE);
+			/* Enable clock for device interrupts */
+			dhdsdio_clkctl(bus, CLK_AVAIL, FALSE);
 
-		/* Disable and clear interrupts at the chip level also */
-		W_SDREG(0, &bus->regs->hostintmask, retries);
-		local_hostintmask = bus->hostintmask;
-		bus->hostintmask = 0;
+			/* Disable and clear interrupts at the chip level also */
+			W_SDREG(0, &bus->regs->hostintmask, retries);
+			local_hostintmask = bus->hostintmask;
+			bus->hostintmask = 0;
 
-		/* Force clocks on backplane to be sure F2 interrupt propagates */
-		saveclk = bcmsdh_cfg_read(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR, &err);
-		if (!err) {
-			bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR,
-			                 (saveclk | SBSDIO_FORCE_HT), &err);
-		}
-		if (err) {
-			DHD_ERROR(("%s: Failed to force clock for F2: err %d\n",
-			            __FUNCTION__, err));
-		}
+			/* Force clocks on backplane to be sure F2 interrupt propagates */
+			saveclk = bcmsdh_cfg_read(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR, &err);
+			if (!err) {
+				bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_CHIPCLKCSR,
+						 (saveclk | SBSDIO_FORCE_HT), &err);
+			}
+			if (err) {
+				DHD_ERROR(("%s: Failed to force clock for F2: err %d\n", __FUNCTION__, err));
+			}
 
-		/* Turn off the bus (F2), free any pending packets */
-		DHD_INTR(("%s: disable SDIO interrupts\n", __FUNCTION__));
-		bcmsdh_intr_disable(bus->sdh);
+			/* Turn off the bus (F2), free any pending packets */
+			DHD_INTR(("%s: disable SDIO interrupts\n", __FUNCTION__));
+			bcmsdh_intr_disable(bus->sdh);
 #ifndef BCMSPI
-		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_0, SDIOD_CCCR_IOEN, SDIO_FUNC_ENABLE_1, NULL);
-#endif /* !BCMSPI */
+			bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_0, SDIOD_CCCR_IOEN, SDIO_FUNC_ENABLE_1, NULL);
+#endif
 
-		/* Clear any pending interrupts now that F2 is disabled */
-		W_SDREG(local_hostintmask, &bus->regs->intstatus, retries);
+			/* Clear any pending interrupts now that F2 is disabled */
+			W_SDREG(local_hostintmask, &bus->regs->intstatus, retries);
 		}
 
 		/* Turn off the backplane clock (only) */
@@ -4371,8 +4726,6 @@ dhd_bus_stop(struct dhd_bus *bus, bool enforce_mutex)
 	/* Reset some F2 state stuff */
 	bus->rxskip = FALSE;
 	bus->tx_seq = bus->rx_seq = 0;
-
-	bus->tx_max = 4;
 
 	if (enforce_mutex)
 		dhd_os_sdunlock(bus->dhd);
@@ -4524,11 +4877,27 @@ dhd_bus_init(dhd_pub_t *dhdp, bool enforce_mutex)
 		}
 #endif /* BCMSPI */
 		W_SDREG(bus->hostintmask, &bus->regs->hostintmask, retries);
+<<<<<<< HEAD
 
 		if (bus->sih->buscorerev < 15) {
 			bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_WATERMARK,
 				(uint8)watermark, &err);
 		}
+=======
+#ifdef SDIO_CRC_ERROR_FIX
+		if (bus->blocksize < 512) {
+			mesbusyctrl = watermark = bus->blocksize / 4;
+		}
+#endif /* SDIO_CRC_ERROR_FIX */
+
+		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_WATERMARK, (uint8)watermark, &err);
+#ifdef SDIO_CRC_ERROR_FIX
+		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_FUNC1_MESBUSYCTRL,
+			(uint8)mesbusyctrl|0x80, &err);
+		bcmsdh_cfg_write(bus->sdh, SDIO_FUNC_1, SBSDIO_DEVICE_CTL,
+			SBSDIO_DEVCTL_EN_F2_BLK_WATERMARK, NULL);
+#endif /* SDIO_CRC_ERROR_FIX */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		/* Set bus state according to enable result */
 		dhdp->busstate = DHD_BUS_DATA;
@@ -4603,21 +4972,12 @@ dhdsdio_rxfail(dhd_bus_t *bus, bool abort, bool rtx)
 	}
 
 	bcmsdh_cfg_write(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_FRAMECTRL, SFC_RF_TERM, &err);
-	if (err) {
-		DHD_ERROR(("%s: SBSDIO_FUNC1_FRAMECTRL cmd err\n", __FUNCTION__));
-		goto fail;
-	}
 	bus->f1regdata++;
 
 	/* Wait until the packet has been flushed (device/FIFO stable) */
 	for (lastrbc = retries = 0xffff; retries > 0; retries--) {
 		hi = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_RFRAMEBCHI, NULL);
-		lo = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_RFRAMEBCLO, &err);
-		if (err) {
-			DHD_ERROR(("%s: SBSDIO_FUNC1_RFAMEBCLO cmd err\n", __FUNCTION__));
-			goto fail;
-		}
-
+		lo = bcmsdh_cfg_read(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_RFRAMEBCLO, NULL);
 		bus->f1regdata += 2;
 
 		if ((hi == 0) && (lo == 0))
@@ -4648,7 +5008,6 @@ dhdsdio_rxfail(dhd_bus_t *bus, bool abort, bool rtx)
 	/* Clear partial in any case */
 	bus->nextlen = 0;
 
-fail:
 	/* If we can't reach the device, signal failure */
 	if (err || bcmsdh_regfail(sdh))
 		bus->dhd->busstate = DHD_BUS_DOWN;
@@ -4757,6 +5116,11 @@ int
 dhd_process_pkt_reorder_info(dhd_pub_t *dhd, uchar *reorder_info_buf, uint reorder_info_len,
 	void **pkt, uint32 *pkt_count);
 
+#ifdef CUSTOMER_HW4
+int pkt_free;
+int caller;
+void *free_ptr;
+#endif
 static uint8
 dhdsdio_rxglom(dhd_bus_t *bus, uint8 rxseq)
 {
@@ -4779,6 +5143,9 @@ dhdsdio_rxglom(dhd_bus_t *bus, uint8 rxseq)
 	int ifidx = 0;
 	bool usechain = bus->use_rxchain;
 
+#ifdef CUSTOMER_HW4
+	pkt_free = 0;
+#endif
 	/* If packets, issue read(s) and send up packet chain */
 	/* Return sequence numbers consumed? */
 
@@ -5096,6 +5463,11 @@ dhdsdio_rxglom(dhd_bus_t *bus, uint8 rxseq)
 			reorder_info_len = sizeof(reorder_info_buf);
 
 			if (PKTLEN(osh, pfirst) == 0) {
+#ifdef CUSTOMER_HW4
+				pkt_free = 1;
+				caller = 1;
+				free_ptr = pfirst;
+#endif
 				PKTFREE(bus->dhd->osh, pfirst, FALSE);
 				continue;
 			} else if (dhd_prot_hdrpull(bus->dhd, &ifidx, pfirst, reorder_info_buf,
@@ -5217,6 +5589,9 @@ dhdsdio_readframes(dhd_bus_t *bus, uint maxframes, bool *finished)
 	bool sdtest = FALSE;	/* To limit message spew from test mode */
 #endif
 
+#ifdef CUSTOMER_HW4
+	pkt_free = 0;
+#endif
 	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
 	bus->readframes = TRUE;
@@ -5277,11 +5652,18 @@ dhdsdio_readframes(dhd_bus_t *bus, uint maxframes, bool *finished)
 	     !bus->rxskip && rxleft && bus->dhd->busstate != DHD_BUS_DOWN;
 	     rxseq++, rxleft--) {
 
+<<<<<<< HEAD
 		/* tx more to improve rx performance */
 		if (TXCTLOK(bus) && bus->ctrl_frame_stat && (bus->clkstate == CLK_AVAIL)) {
 			dhdsdio_sendpendctl(bus);
 		} else if ((bus->clkstate == CLK_AVAIL) && !bus->fcstate && DATAOK(bus) &&
 			(pktq_mlen(&bus->txq, ~bus->flowcontrol) > bus->txinrx_thres)) {
+=======
+#ifdef DHDTHREAD
+		/* tx more to improve rx performance */
+		if ((bus->clkstate == CLK_AVAIL) && !bus->fcstate &&
+			pktq_mlen(&bus->txq, ~bus->flowcontrol) && DATAOK(bus)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			dhdsdio_sendfromq(bus, dhd_txbound);
 		}
 
@@ -5861,6 +6243,11 @@ deliver:
 
 		if (PKTLEN(osh, pkt) == 0) {
 			dhd_os_sdlock_rxq(bus->dhd);
+#ifdef CUSTOMER_HW4
+			pkt_free = 1;
+			caller = 0;
+			free_ptr = pkt;
+#endif
 			PKTFREE(bus->dhd->osh, pkt, FALSE);
 			dhd_os_sdunlock_rxq(bus->dhd);
 			continue;
@@ -5882,6 +6269,7 @@ deliver:
 		}
 		else
 			pkt_count = 1;
+
 
 		/* Unlock during rx call */
 		dhd_os_sdunlock(bus->dhd);
@@ -5993,7 +6381,7 @@ dhdsdio_hostmail(dhd_bus_t *bus)
 #ifdef DHD_DEBUG
 	/* At least print a message if FW halted */
 	if (hmb_data & HMB_DATA_FWHALT) {
-		DHD_ERROR(("INTERNAL ERROR: FIRMWARE HALTED : set BUS DOWN\n"));
+		DHD_ERROR(("INTERNAL ERROR: FIRMWARE HALTED\n"));
 		dhdsdio_checkdied(bus, NULL, 0);
 		bus->dhd->busstate = DHD_BUS_DOWN;
 	}
@@ -6227,6 +6615,7 @@ clkwait:
 	}
 #endif /* defined(OOB_INTR_ONLY) && !defined(HW_OOB) */
 
+<<<<<<< HEAD
 #ifdef PROP_TXSTATUS
 	dhd_wlfc_commit_packets(bus->dhd, (f_commitpkt_t)dhd_bus_txdata, (void *)bus, NULL, FALSE);
 #endif
@@ -6234,6 +6623,56 @@ clkwait:
 	if (TXCTLOK(bus) && bus->ctrl_frame_stat && (bus->clkstate == CLK_AVAIL))
 		dhdsdio_sendpendctl(bus);
 
+=======
+	if (TXCTLOK(bus) && bus->ctrl_frame_stat && (bus->clkstate == CLK_AVAIL))  {
+		int ret, i;
+
+		uint8* frame_seq = bus->ctrl_frame_buf + SDPCM_FRAMETAG_LEN;
+
+		if (*frame_seq != bus->tx_seq) {
+			DHD_INFO(("%s IOCTL frame seq lag detected!"
+				" frm_seq:%d != bus->tx_seq:%d, corrected\n",
+				__FUNCTION__, *frame_seq, bus->tx_seq));
+			*frame_seq = bus->tx_seq;
+		}
+
+		ret = dhd_bcmsdh_send_buf(bus, bcmsdh_cur_sbwad(sdh), SDIO_FUNC_2, F2SYNC,
+		                      (uint8 *)bus->ctrl_frame_buf, (uint32)bus->ctrl_frame_len,
+			NULL, NULL, NULL);
+		ASSERT(ret != BCME_PENDING);
+		if (ret == BCME_NODEVICE) {
+			DHD_ERROR(("%s: Device asleep already\n", __FUNCTION__));
+		} else if (ret < 0) {
+			/* On failure, abort the command and terminate the frame */
+			DHD_INFO(("%s: sdio error %d, abort command and terminate frame.\n",
+			          __FUNCTION__, ret));
+			bus->tx_sderrs++;
+
+			bcmsdh_abort(sdh, SDIO_FUNC_2);
+
+			bcmsdh_cfg_write(sdh, SDIO_FUNC_1, SBSDIO_FUNC1_FRAMECTRL,
+			                 SFC_WF_TERM, NULL);
+			bus->f1regdata++;
+
+			for (i = 0; i < 3; i++) {
+				uint8 hi, lo;
+				hi = bcmsdh_cfg_read(sdh, SDIO_FUNC_1,
+				                     SBSDIO_FUNC1_WFRAMEBCHI, NULL);
+				lo = bcmsdh_cfg_read(sdh, SDIO_FUNC_1,
+				                     SBSDIO_FUNC1_WFRAMEBCLO, NULL);
+				bus->f1regdata += 2;
+				if ((hi == 0) && (lo == 0))
+					break;
+			}
+		}
+		if (ret == 0) {
+			bus->tx_seq = (bus->tx_seq + 1) % SDPCM_SEQUENCE_WRAP;
+		}
+
+		bus->ctrl_frame_stat = FALSE;
+		dhd_wait_event_wakeup(bus->dhd);
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Send queued frames (limit 1 if rx may still be pending) */
 	else if ((bus->clkstate == CLK_AVAIL) && !bus->fcstate &&
 	    pktq_mlen(&bus->txq, ~bus->flowcontrol) && txlimit && DATAOK(bus)) {
@@ -6242,8 +6681,11 @@ clkwait:
 		txlimit -= framecnt;
 	}
 	/* Resched the DPC if ctrl cmd is pending on bus credit */
-	if (bus->ctrl_frame_stat)
+	if (bus->ctrl_frame_stat) {
+		DHD_TRACE_HW4(("%s : tx_max : %d, tx_seq : %d, clkstate : %d \n",
+			__FUNCTION__, bus->tx_max, bus->tx_seq, bus->clkstate));
 		resched = TRUE;
+	}
 
 	/* Resched if events or tx frames are pending, else await next interrupt */
 	/* On failed register access, all bets are off: no resched or interrupts */
@@ -6276,6 +6718,7 @@ clkwait:
 	}
 
 exit:
+<<<<<<< HEAD
 
 	if (!resched && dhd_dpcpoll) {
 		if (dhdsdio_readframes(bus, dhd_rxbound, &rxdone) != 0)
@@ -6285,6 +6728,8 @@ exit:
 #endif
 	}
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	dhd_os_sdunlock(bus->dhd);
 #if defined(CUSTOMER_HW4)
 	if (bus->dhd->dhd_bug_on) {
@@ -6390,7 +6835,7 @@ dhdsdio_pktgen_init(dhd_bus_t *bus)
 
 	/* Default to per-watchdog burst with 10s print time */
 	bus->pktgen_freq = 1;
-	bus->pktgen_print = dhd_watchdog_ms ? (10000 / dhd_watchdog_ms) : 0;
+	bus->pktgen_print = dhd_watchdog_ms ? (10000/dhd_watchdog_ms):0;
 	bus->pktgen_count = (dhd_pktgen * dhd_watchdog_ms + 999) / 1000;
 
 	/* Default to echo mode */
@@ -6407,37 +6852,19 @@ dhdsdio_pktgen(dhd_bus_t *bus)
 	uint fillbyte;
 	osl_t *osh = bus->dhd->osh;
 	uint16 len;
-	ulong time_lapse;
-	uint sent_pkts;
-	uint rcvd_pkts;
 
 	/* Display current count if appropriate */
 	if (bus->pktgen_print && (++bus->pktgen_ptick >= bus->pktgen_print)) {
 		bus->pktgen_ptick = 0;
-		printf("%s: send attempts %d, rcvd %d, errors %d\n",
-		       __FUNCTION__, bus->pktgen_sent, bus->pktgen_rcvd, bus->pktgen_fail);
-
-		/* Print throughput stats only for constant length packet runs */
-		if (bus->pktgen_minlen == bus->pktgen_maxlen) {
-			time_lapse = jiffies - bus->pktgen_prev_time;
-			bus->pktgen_prev_time = jiffies;
-			sent_pkts = bus->pktgen_sent - bus->pktgen_prev_sent;
-			bus->pktgen_prev_sent = bus->pktgen_sent;
-			rcvd_pkts = bus->pktgen_rcvd - bus->pktgen_prev_rcvd;
-			bus->pktgen_prev_rcvd = bus->pktgen_rcvd;
-
-			printf("%s: Tx Throughput %d kbps, Rx Throughput %d kbps\n",
-			  __FUNCTION__,
-			  (sent_pkts * bus->pktgen_len / jiffies_to_msecs(time_lapse)) * 8,
-			  (rcvd_pkts * bus->pktgen_len  / jiffies_to_msecs(time_lapse)) * 8);
-		}
+		printf("%s: send attempts %d rcvd %d\n",
+		       __FUNCTION__, bus->pktgen_sent, bus->pktgen_rcvd);
 	}
 
 	/* For recv mode, just make sure dongle has started sending */
 	if (bus->pktgen_mode == DHD_PKTGEN_RECV) {
 		if (bus->pktgen_rcv_state == PKTGEN_RCV_IDLE) {
 			bus->pktgen_rcv_state = PKTGEN_RCV_ONGOING;
-			dhdsdio_sdtest_set(bus, bus->pktgen_total);
+			dhdsdio_sdtest_set(bus, (uint8)bus->pktgen_total);
 		}
 		return;
 	}
@@ -6451,11 +6878,7 @@ dhdsdio_pktgen(dhd_bus_t *bus)
 		}
 
 		/* Allocate an appropriate-sized packet */
-		if (bus->pktgen_mode == DHD_PKTGEN_RXBURST) {
-			len = SDPCM_TEST_PKT_CNT_FLD_LEN;
-		} else {
-			len = bus->pktgen_len;
-		}
+		len = bus->pktgen_len;
 		if (!(pkt = PKTGET(osh, (len + SDPCM_HDRLEN + SDPCM_TEST_HDRLEN + DHD_SDALIGN),
 		                   TRUE))) {;
 			DHD_ERROR(("%s: PKTGET failed!\n", __FUNCTION__));
@@ -6478,7 +6901,7 @@ dhdsdio_pktgen(dhd_bus_t *bus)
 
 		case DHD_PKTGEN_RXBURST:
 			*data++ = SDPCM_TEST_BURST;
-			*data++ = (uint8)bus->pktgen_count; /* Just for backward compatability */
+			*data++ = (uint8)bus->pktgen_count;
 			break;
 
 		default:
@@ -6489,23 +6912,12 @@ dhdsdio_pktgen(dhd_bus_t *bus)
 		}
 
 		/* Write test header length field */
-		*data++ = (bus->pktgen_len >> 0);
-		*data++ = (bus->pktgen_len >> 8);
+		*data++ = (len >> 0);
+		*data++ = (len >> 8);
 
-		/* Write frame count in a 4 byte field adjucent to SDPCM test header for
-		 * burst mode
-		 */
-		if (bus->pktgen_mode == DHD_PKTGEN_RXBURST) {
-			*data++ = (uint8)(bus->pktgen_count >> 0);
-			*data++ = (uint8)(bus->pktgen_count >> 8);
-			*data++ = (uint8)(bus->pktgen_count >> 16);
-			*data++ = (uint8)(bus->pktgen_count >> 24);
-		} else {
-
-			/* Then fill in the remainder -- N/A for burst */
-			for (fillbyte = 0; fillbyte < len; fillbyte++)
-				*data++ = SDPCM_TEST_FILL(fillbyte, (uint8)bus->pktgen_sent);
-		}
+		/* Then fill in the remainder -- N/A for burst, but who cares... */
+		for (fillbyte = 0; fillbyte < len; fillbyte++)
+			*data++ = SDPCM_TEST_FILL(fillbyte, (uint8)bus->pktgen_sent);
 
 #ifdef DHD_DEBUG
 		if (DHD_BYTES_ON() && DHD_DATA_ON()) {
@@ -6533,31 +6945,25 @@ dhdsdio_pktgen(dhd_bus_t *bus)
 }
 
 static void
-dhdsdio_sdtest_set(dhd_bus_t *bus, uint count)
+dhdsdio_sdtest_set(dhd_bus_t *bus, uint8 count)
 {
 	void *pkt;
 	uint8 *data;
 	osl_t *osh = bus->dhd->osh;
 
 	/* Allocate the packet */
-	if (!(pkt = PKTGET(osh, SDPCM_HDRLEN + SDPCM_TEST_HDRLEN +
-		SDPCM_TEST_PKT_CNT_FLD_LEN + DHD_SDALIGN, TRUE))) {
+	if (!(pkt = PKTGET(osh, SDPCM_HDRLEN + SDPCM_TEST_HDRLEN + DHD_SDALIGN, TRUE))) {
 		DHD_ERROR(("%s: PKTGET failed!\n", __FUNCTION__));
 		return;
 	}
-	PKTALIGN(osh, pkt, (SDPCM_HDRLEN + SDPCM_TEST_HDRLEN +
-		SDPCM_TEST_PKT_CNT_FLD_LEN), DHD_SDALIGN);
+	PKTALIGN(osh, pkt, (SDPCM_HDRLEN + SDPCM_TEST_HDRLEN), DHD_SDALIGN);
 	data = (uint8*)PKTDATA(osh, pkt) + SDPCM_HDRLEN;
 
 	/* Fill in the test header */
 	*data++ = SDPCM_TEST_SEND;
-	*data++ = (count > 0)?TRUE:FALSE;
+	*data++ = count;
 	*data++ = (bus->pktgen_maxlen >> 0);
 	*data++ = (bus->pktgen_maxlen >> 8);
-	*data++ = (uint8)(count >> 0);
-	*data++ = (uint8)(count >> 8);
-	*data++ = (uint8)(count >> 16);
-	*data++ = (uint8)(count >> 24);
 
 	/* Send it */
 	if (dhdsdio_txpkt(bus, SDPCM_TEST_CHANNEL, &pkt, 1, TRUE) != BCME_OK)
@@ -6762,7 +7168,7 @@ dhd_bus_watchdog(dhd_pub_t *dhdp)
 			if (!bus->dpc_sched) {
 				uint32 devpend;
 				devpend = bcmsdh_cfg_read_word(bus->sdh, SDIO_FUNC_0,
-					SPID_STATUS_REG, NULL);
+				SPID_STATUS_REG, NULL);
 				intstatus = devpend & STATUS_F2_PKT_AVAILABLE;
 			}
 #endif /* !BCMSPI */
@@ -6804,10 +7210,7 @@ dhd_bus_watchdog(dhd_pub_t *dhdp)
 	/* Generate packets if configured */
 	if (bus->pktgen_count && (++bus->pktgen_tick >= bus->pktgen_freq)) {
 		/* Make sure backplane clock is on */
-		if (SLPAUTO_ENAB(bus))
-			dhdsdio_bussleep(bus, FALSE);
-		else
-			dhdsdio_clkctl(bus, CLK_AVAIL, FALSE);
+		dhdsdio_clkctl(bus, CLK_AVAIL, FALSE);
 		bus->pktgen_tick = 0;
 		dhdsdio_pktgen(bus);
 	}
@@ -6822,6 +7225,7 @@ dhd_bus_watchdog(dhd_pub_t *dhdp)
 
 		if ((bus->idletime > 0) && (bus->idlecount >= bus->idletime)) {
 			DHD_TIMER(("%s: DHD Idle state!!\n", __FUNCTION__));
+
 			if (SLPAUTO_ENAB(bus)) {
 				if (dhdsdio_bussleep(bus, TRUE) != BCME_BUSY)
 					dhd_os_wd_timer(bus->dhd, 0);
@@ -6966,17 +7370,11 @@ dhdsdio_chipmatch(uint16 chipid)
 		return TRUE;
 	if (chipid == BCM4314_CHIP_ID)
 		return TRUE;
-	if (chipid == BCM43242_CHIP_ID)
+	if (chipid == BCM4334_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43340_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43341_CHIP_ID)
-		return TRUE;
-	if (chipid == BCM43143_CHIP_ID)
-		return TRUE;
-	if (chipid == BCM43342_CHIP_ID)
-		return TRUE;
-	if (chipid == BCM4334_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43239_CHIP_ID)
 		return TRUE;
@@ -6984,6 +7382,7 @@ dhdsdio_chipmatch(uint16 chipid)
 		return TRUE;
 	if (chipid == BCM4335_CHIP_ID)
 		return TRUE;
+<<<<<<< HEAD
 	if (chipid == BCM4339_CHIP_ID)
 		return TRUE;
 	if (chipid == BCM43349_CHIP_ID)
@@ -6994,6 +7393,8 @@ dhdsdio_chipmatch(uint16 chipid)
 		return TRUE;
 	if (chipid == BCM4354_CHIP_ID)
 		return TRUE;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return FALSE;
 }
 
@@ -7006,6 +7407,7 @@ dhdsdio_probe(uint16 venid, uint16 devid, uint16 bus_no, uint16 slot,
 
 #if defined(MULTIPLE_SUPPLICANT)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+
 	if (mutex_is_locked(&_dhd_sdio_mutex_lock_) == 0) {
 		DHD_ERROR(("%s : no mutex held. set lock\n", __FUNCTION__));
 	}
@@ -7032,12 +7434,17 @@ dhdsdio_probe(uint16 venid, uint16 devid, uint16 bus_no, uint16 slot,
 	sd1idle = TRUE;
 	dhd_readahead = TRUE;
 	retrydata = FALSE;
+<<<<<<< HEAD
 #if !defined(PLATFORM_MPS) && !defined(CUSTOMER_HW4)
 	dhd_doflow = FALSE;
 #else
 	dhd_doflow = TRUE;
 #endif /* OEM_ANDROID */
 	dhd_dongle_ramsize = 0;
+=======
+	dhd_doflow = FALSE;
+	dhd_dongle_memsize = 0;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	dhd_txminmax = DHD_TXMINMAX;
 
 #ifdef BCMSPI
@@ -7165,6 +7572,7 @@ dhdsdio_probe(uint16 venid, uint16 devid, uint16 bus_no, uint16 slot,
 	if (dhd_download_fw_on_driverload) {
 		if ((ret = dhd_bus_start(bus->dhd)) != 0) {
 			DHD_ERROR(("%s: dhd_bus_start failed\n", __FUNCTION__));
+			if (ret == BCME_NOTUP)
 				goto fail;
 		}
 	}
@@ -7215,284 +7623,6 @@ forcereturn:
 	return NULL;
 }
 
-#ifdef REGON_BP_HANG_FIX
-static int dhd_sdio_backplane_reset(struct dhd_bus *bus)
-{
-	uint32 temp = 0;
-	DHD_ERROR(("Resetting  the backplane to avoid failure in firmware download..\n"));
-
-	temp = bcmsdh_reg_read(bus->sdh, 0x180021e0, 4);
-	DHD_INFO(("SDIO Clk Control Reg = %x\n", temp));
-
-	/* Force HT req from PMU */
-	bcmsdh_reg_write(bus->sdh, 0x18000644, 4, 0x6000005);
-
-	/* Increase the clock stretch duration. */
-	bcmsdh_reg_write(bus->sdh, 0x18000630, 4, 0xC8FFC8);
-
-	/* Setting ALP clock request in SDIOD clock control status register */
-	bcmsdh_reg_write(bus->sdh, 0x180021e0, 4, 0x41);
-
-	/* Allowing clock from SR engine to SR memory */
-	bcmsdh_reg_write(bus->sdh, 0x18004400, 4, 0xf92f1);
-	/* Disabling SR Engine before SR binary download. */
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x0);
-
-	/* Enabling clock from backplane to SR memory */
-	bcmsdh_reg_write(bus->sdh, 0x18004400, 4, 0xf9af1);
-
-	/* Initializing SR memory address register in SOCRAM */
-	bcmsdh_reg_write(bus->sdh, 0x18004408, 4, 0x0);
-
-	/* Downloading the SR binary */
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0xc0002000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x80008000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x1051f080);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x80008000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x1050f080);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x80008000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x1050f080);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x80008000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x1050f080);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000004);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000604);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00001604);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00001404);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a08c80);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010001);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x14a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00011404);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00002000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x04a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00002000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0xf8000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00002000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x04a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00002000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0xf8000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00011604);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010604);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010004);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x14a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000004);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010001);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x14a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010004);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00010000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x14a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x30a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000008);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x04a00000);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0x00000008);
-	bcmsdh_reg_write(bus->sdh, 0x1800440c, 4, 0xfc000000);
-	/* SR Binary Download complete */
-
-	/* Allowing clock from SR engine to SR memory */
-	bcmsdh_reg_write(bus->sdh, 0x18004400, 4, 0xf92f1);
-
-	/* Turning ON SR Engine to initiate backplane reset  Repeated ?? Maharana */
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x0);
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x2);
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x37);
-	bcmsdh_reg_write(bus->sdh, 0x18000650, 4, 0x3);
-	temp = bcmsdh_reg_read(bus->sdh, 0x18000654, 4);
-	DHD_INFO(("0x18000654 = %x\n", temp));
-	bcmsdh_reg_write(bus->sdh, 0x18000654, 4, 0x800037);
-	OSL_DELAY(100000);
-	/* Rolling back the original values for clock stretch and PMU timers */
-	bcmsdh_reg_write(bus->sdh, 0x18000644, 4, 0x0);
-	bcmsdh_reg_write(bus->sdh, 0x18000630, 4, 0xC800C8);
-	/* Removing ALP clock request in SDIOD clock control status register */
-	bcmsdh_reg_write(bus->sdh, 0x180021e0, 4, 0x40);
-	OSL_DELAY(10000);
-	return TRUE;
-}
-
-static int dhdsdio_sdio_hang_war(struct dhd_bus *bus)
-{
-	uint32 temp = 0, temp2 = 0, counter = 0, BT_pwr_up = 0, BT_ready = 0;
-	/* Removing reset of D11 Core */
-	bcmsdh_reg_write(bus->sdh, 0x18101408, 4, 0x3);
-	bcmsdh_reg_write(bus->sdh, 0x18101800, 4, 0x0);
-	bcmsdh_reg_write(bus->sdh, 0x18101408, 4, 0x1);
-	/* Reading CLB XTAL BT cntrl register */
-	bcmsdh_reg_write(bus->sdh, 0x180013D8, 2, 0xD1);
-	bcmsdh_reg_write(bus->sdh, 0x180013DA, 2, 0x12);
-	bcmsdh_reg_write(bus->sdh, 0x180013D8, 2, 0x2D0);
-	/* Read if BT is powered up */
-	temp = bcmsdh_reg_read(bus->sdh, 0x180013DA, 2);
-	/* Read BT_ready from WLAN wireless register */
-	temp2 = bcmsdh_reg_read(bus->sdh, 0x1800002C, 4);
-	/*
-	Check if the BT is powered up and ready. The duration between BT being powered up
-	and BT becoming ready is the problematic window for WLAN. If we move ahead at this
-	time then we may encounter a corrupted backplane later. So we wait for BT to be ready
-	and then proceed after checking the health of the backplane. If the backplane shows
-	indications of failure then we	have to do a full reset of the backplane using SR engine
-	and then proceed.
-	*/
-	(temp & 0xF0) ? (BT_pwr_up = 1):(BT_pwr_up = 0);
-	(temp2 & (1<<17)) ? (BT_ready = 1):(BT_ready = 0);
-	DHD_ERROR(("WARNING: Checking if BT is ready BT_pwr_up = %x"
-		"BT_ready = %x \n", BT_pwr_up, BT_ready));
-	while (BT_pwr_up && !BT_ready)
-	{
-		OSL_DELAY(1000);
-		bcmsdh_reg_write(bus->sdh, 0x180013D8, 2, 0x2D0);
-		temp = bcmsdh_reg_read(bus->sdh, 0x180013DA, 2);
-		temp2 = bcmsdh_reg_read(bus->sdh, 0x1800002C, 4);
-		(temp & 0xF0) ? (BT_pwr_up = 1):(BT_pwr_up = 0);
-		(temp2 & (1<<17)) ? (BT_ready = 1):(BT_ready = 0);
-		counter++;
-		if (counter == 5000)
-		{
-			DHD_ERROR(("WARNING: Going ahead after 5 secs with"
-					"risk of failure because BT ready is not yet set\n"));
-			break;
-		}
-	}
-	DHD_ERROR(("\nWARNING: WL Proceeding BT_pwr_up = %x BT_ready = %x"
-			"\n", BT_pwr_up, BT_ready));
-	counter = 0;
-	OSL_DELAY(10000);
-	/*
-	Get the information of who accessed the crucial backplane entities
-	by reading read and write access registers
-	*/
-	DHD_TRACE(("%d: Read Value @ 0x18104808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18104808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810480C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810480C, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x18106808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18106808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810680C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810680C, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x18107808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18107808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810780C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810780C, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x18108808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18108808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810880C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810880C, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x18109808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18109808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810980C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810980C, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810C808 = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810c808, 4)));
-	DHD_TRACE(("%d: Read Value @ 0x1810C80C = %x."
-			"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810c80C, 4)));
-	counter = 0;
-	while ((bcmsdh_reg_read(bus->sdh, 0x18104808, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810480C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x18106808, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810680C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810780C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810780C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810880C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810880C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810980C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810980C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810C80C, 4) == 5) ||
-		(bcmsdh_reg_read(bus->sdh, 0x1810C80C, 4) == 5))
-	{
-		if (++counter > 10)
-		{
-			DHD_ERROR(("Unable to recover the backkplane corruption"
-					"..Tried %d times.. Exiting\n", counter));
-			break;
-		}
-		OSL_DELAY(10000);
-		dhd_sdio_backplane_reset(bus);
-		/*
-		Get the information of who accessed the crucial backplane
-		entities by reading read and write access registers
-		*/
-		DHD_ERROR(("%d: Read Value @ 0x18104808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18104808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810480C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810480C, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x18106808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18106808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810680C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810680C, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x18107808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18107808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810780C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810780C, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x18108808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18108808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810880C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810880C, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x18109808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x18109808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810980C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810980C, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810C808 = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810c808, 4)));
-		DHD_ERROR(("%d: Read Value @ 0x1810C80C = %x."
-				"\n", __LINE__, bcmsdh_reg_read(bus->sdh, 0x1810c80C, 4)));
-	}
-	/* Set the WL ready to indicate BT that we are done with backplane reset */
-	DHD_ERROR(("Setting up AXI_OK\n"));
-	bcmsdh_reg_write(bus->sdh, 0x18000658, 4, 0x3);
-	temp = bcmsdh_reg_read(bus->sdh, 0x1800065c, 4);
-	temp |= 0x80000000;
-	bcmsdh_reg_write(bus->sdh, 0x1800065c, 4, temp);
-	return TRUE;
-}
-#endif /* REGON_BP_HANG_FIX */
 static bool
 dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
                      uint16 devid)
@@ -7585,6 +7715,7 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 		goto fail;
 	}
 
+<<<<<<< HEAD
 #ifdef DHD_DEBUG
 	DHD_ERROR(("F1 signature OK, socitype:0x%x chip:0x%4x rev:0x%x pkg:0x%x\n",
 		bus->sih->socitype, bus->sih->chip, bus->sih->chiprev, bus->sih->chippkg));
@@ -7596,6 +7727,8 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 			dhdsdio_sdio_hang_war(bus);
 #endif /* REGON_BP_HANG_FIX */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	bcmsdh_chipinfo(sdh, bus->sih->chip, bus->sih->chiprev);
 
 	if (!dhdsdio_chipmatch((uint16)bus->sih->chip)) {
@@ -7627,10 +7760,10 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 		}
 
 		if (!si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
-			if (!(bus->orig_ramsize = si_socram_size(bus->sih))) {
-				DHD_ERROR(("%s: failed to find SOCRAM memory!\n", __FUNCTION__));
-				goto fail;
-			}
+		if (!(bus->orig_ramsize = si_socram_size(bus->sih))) {
+			DHD_ERROR(("%s: failed to find SOCRAM memory!\n", __FUNCTION__));
+			goto fail;
+		}
 		} else {
 			/* cr4 has a different way to find the RAM size from TCM's */
 			if (!(bus->orig_ramsize = si_tcm_size(bus->sih))) {
@@ -7638,6 +7771,7 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 				goto fail;
 			}
 			/* also populate base address */
+<<<<<<< HEAD
 			switch ((uint16)bus->sih->chip) {
 			case BCM4335_CHIP_ID:
 			case BCM4339_CHIP_ID:
@@ -7659,13 +7793,16 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 				DHD_ERROR(("%s: WARNING: Using default ram base at 0x%x\n",
 				           __FUNCTION__, bus->dongle_ram_base));
 			}
+=======
+			bus->dongle_ram_base = CR4_RAM_BASE;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		bus->ramsize = bus->orig_ramsize;
 		if (dhd_dongle_ramsize)
 			dhd_dongle_setramsize(bus, dhd_dongle_ramsize);
 
-		DHD_ERROR(("DHD: dongle ram size is set to %d(orig %d) at 0x%x\n",
-		           bus->ramsize, bus->orig_ramsize, bus->dongle_ram_base));
+		DHD_ERROR(("DHD: dongle ram size is set to %d(orig %d)\n",
+			bus->ramsize, bus->orig_ramsize));
 
 		bus->srmemsize = si_socram_srmem_size(bus->sih);
 	}
@@ -7706,6 +7843,12 @@ dhdsdio_probe_attach(struct dhd_bus *bus, osl_t *osh, void *sdh, void *regsva,
 	if ((bus->poll = (bool)dhd_poll))
 		bus->pollrate = 1;
 
+<<<<<<< HEAD
+=======
+#ifdef BCMSDIOH_TXGLOM
+	/* Setting default Glom mode */
+	bus->glom_mode = SDPCM_TXGLOM_CPY;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Setting default Glom size */
 	bus->txglomsize = SDPCM_DEFGLOM_SIZE;
 
@@ -7816,8 +7959,11 @@ dhdsdio_probe_init(dhd_bus_t *bus, osl_t *osh, void *sdh)
 	} else {
 		DHD_INFO(("%s: Initial value for %s is %d\n",
 		          __FUNCTION__, "sd_blocksize", bus->blocksize));
+<<<<<<< HEAD
 
 		dhdsdio_tune_fifoparam(bus);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	bus->roundup = MIN(max_roundup, bus->blocksize);
 
@@ -7981,10 +8127,10 @@ dhdsdio_release_dongle(dhd_bus_t *bus, osl_t *osh, bool dongle_isolation, bool r
 		return;
 
 	if (bus->sih) {
-#if !defined(BCMLXSDMMC)
 		if (bus->dhd) {
 			dhdsdio_clkctl(bus, CLK_AVAIL, FALSE);
 		}
+#if !defined(BCMLXSDMMC)
 		if (KSO_ENAB(bus) && (dongle_isolation == FALSE))
 			si_watchdog(bus->sih, 4);
 #endif /* !defined(BCMLXSDMMC) */
@@ -8006,10 +8152,14 @@ dhdsdio_disconnect(void *ptr)
 {
 	dhd_bus_t *bus = (dhd_bus_t *)ptr;
 
+<<<<<<< HEAD
 	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
 #if defined(MULTIPLE_SUPPLICANT)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+
 	if (mutex_is_locked(&_dhd_sdio_mutex_lock_) == 0) {
 		DHD_ERROR(("%s : no mutex held. set lock\n", __FUNCTION__));
 	}
@@ -8020,6 +8170,7 @@ dhdsdio_disconnect(void *ptr)
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
 #endif 
 
+	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
 	if (bus) {
 		ASSERT(bus->dhd);
@@ -8032,7 +8183,6 @@ dhdsdio_disconnect(void *ptr)
 	DHD_ERROR(("%s : the lock is released.\n", __FUNCTION__));
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) */
 #endif /* LINUX */
-
 
 	DHD_TRACE(("%s: Disconnected\n", __FUNCTION__));
 }
@@ -8113,17 +8263,6 @@ dhdsdio_download_code_array(struct dhd_bus *bus)
 
 	/* Download image */
 	while ((offset + MEMBLOCK) < sizeof(dlarray)) {
-		/* check if CR4 */
-		if (si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
-			/* if address is 0, store the reset instruction to be written in 0 */
-
-			if (offset == 0) {
-				bus->resetinstr = *(((uint32*)dlarray));
-				/* Add start of RAM address to the address given by user */
-				offset += bus->dongle_ram_base;
-			}
-		}
-
 		bcmerror = dhdsdio_membytes(bus, TRUE, offset,
 			(uint8 *) (dlarray + offset), MEMBLOCK);
 		if (bcmerror) {
@@ -8221,17 +8360,6 @@ dhdsdio_download_code_file(struct dhd_bus *bus, char *pfw_path)
 			bcmerror = BCME_ERROR;
 			goto err;
 		}
-		/* check if CR4 */
-		if (si_setcore(bus->sih, ARMCR4_CORE_ID, 0)) {
-			/* if address is 0, store the reset instruction to be written in 0 */
-
-			if (offset == 0) {
-				bus->resetinstr = *(((uint32*)memptr));
-				/* Add start of RAM address to the address given by user */
-				offset += bus->dongle_ram_base;
-			}
-		}
-
 		bcmerror = dhdsdio_membytes(bus, TRUE, offset, memptr, len);
 		if (bcmerror) {
 			DHD_ERROR(("%s: error %d on writing %d membytes at 0x%08x\n",
@@ -8381,7 +8509,6 @@ _dhdsdio_download_firmware(struct dhd_bus *bus)
 			dlok = TRUE;
 		}
 	}
-
 #ifdef BCMEMBEDIMAGE
 	if (embed) {
 		if (dhdsdio_download_code_array(bus)) {
@@ -8480,7 +8607,15 @@ dhd_bcmsdh_send_buf(dhd_bus_t *bus, uint32 addr, uint fn, uint flags, uint8 *buf
 		}
 	} while ((ret < 0) && retrydata && ++retries < max_retry);
 
+<<<<<<< HEAD
 	return ret;
+=======
+#ifdef BCMSDIOH_TXGLOM
+static void
+dhd_bcmsdh_glom_post(dhd_bus_t *bus, uint8 *frame, uint len)
+{
+	bcmsdh_glom_post(bus->sdh, frame, len);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 uint
@@ -8653,6 +8788,7 @@ uint dhd_bus_chippkg_id(dhd_pub_t *dhdp)
 	return bus->sih->chippkg;
 }
 
+<<<<<<< HEAD
 int dhd_bus_get_ids(struct dhd_bus *bus, uint32 *bus_type, uint32 *bus_num, uint32 *slot_num)
 {
 	*bus_type = bus->bus;
@@ -8661,6 +8797,8 @@ int dhd_bus_get_ids(struct dhd_bus *bus, uint32 *bus_type, uint32 *bus_num, uint
 	return 0;
 }
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 int
 dhd_bus_membytes(dhd_pub_t *dhdp, bool set, uint32 address, uint8 *data, uint size)
 {
@@ -8670,6 +8808,7 @@ dhd_bus_membytes(dhd_pub_t *dhdp, bool set, uint32 address, uint8 *data, uint si
 	return dhdsdio_membytes(bus, set, address, data, size);
 }
 #if defined(SUPPORT_MULTIPLE_REVISION)
+<<<<<<< HEAD
 /* Just print chip revision for BCM4330 */
 static int
 concate_revision_bcm4330(dhd_bus_t *bus)
@@ -8686,6 +8825,8 @@ concate_revision_bcm4330(dhd_bus_t *bus)
 	return 0;
 }
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static int
 concate_revision_bcm4334(dhd_bus_t *bus,
 	char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
@@ -8696,11 +8837,15 @@ concate_revision_bcm4334(dhd_bus_t *bus,
 	uint chipver;
 	uint32 unique_id;
 	uint8 data[4];
+<<<<<<< HEAD
 #if defined(SUPPORT_MULTIPLE_CHIPS)
 	char chipver_tag[10] = "_4334";
 #else
 	char chipver_tag[4] = "";
 #endif /* defined(SUPPORT_MULTIPLE_CHIPS) */
+=======
+	char chipver_tag[4] = "_b0";
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	DHD_TRACE(("%s: BCM4334 Multiple Revision Check\n", __FUNCTION__));
 	if (bus->sih->chip != BCM4334_CHIP_ID) {
@@ -8717,6 +8862,7 @@ concate_revision_bcm4334(dhd_bus_t *bus,
 	DHD_ERROR(("CHIP VER = [0x%x]\n", chipver));
 	if (chipver == 1) {
 		DHD_ERROR(("----- CHIP bcm4334_B0 -----\n"));
+<<<<<<< HEAD
 		strcat(chipver_tag, "_b0");
 	} else if (chipver == 2) {
 		DHD_ERROR(("----- CHIP bcm4334_B1 -----\n"));
@@ -8724,6 +8870,17 @@ concate_revision_bcm4334(dhd_bus_t *bus,
 	} else if (chipver == 3) {
 		DHD_ERROR(("----- CHIP bcm4334_B2 -----\n"));
 		strcat(chipver_tag, "_b2");
+=======
+		chipver_tag[2] = '0';
+		strcpy(chipver_tag, "_b0");
+	} else if (chipver == 2) {
+		DHD_ERROR(("----- CHIP bcm4334_B1 -----\n"));
+		chipver_tag[2] = '1';
+	} else if (chipver == 3) {
+		DHD_ERROR(("----- CHIP bcm4334_B2 -----\n"));
+		chipver_tag[2] = '2';
+		strcpy(chipver_tag, "_b2");
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	else {
 		DHD_ERROR(("----- Invalid chip version -----\n"));
@@ -8740,6 +8897,7 @@ concate_revision_bcm4334(dhd_bus_t *bus,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int
 concate_revision_bcm4335
 	(dhd_bus_t *bus, char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
@@ -8931,15 +9089,21 @@ static int concate_revision_bcm4354(dhd_bus_t *bus,
 	return 0;
 }
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 int
-concate_revision(dhd_bus_t *bus, char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
+concate_revision(dhd_bus_t *bus, char *path, int path_len)
 {
+<<<<<<< HEAD
 	int res = 0;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (!bus || !bus->sih) {
 		DHD_ERROR(("%s:Bus is Invalid\n", __FUNCTION__));
 		return -1;
 	}
+<<<<<<< HEAD
 
 #if defined(PLATFORM_MPS)
 /* get the base name (prefix) for firmware & nvram from the platform */
@@ -9108,3 +9272,12 @@ void dhd_sdio_reg_write(void *h, uint32 addr, uint32 val)
 	dhd_os_sdunlock(bus->dhd);
 }
 #endif /* DEBUGGER */
+=======
+	if (bus->sih->chip == BCM4334_CHIP_ID) {
+		return concate_revision_bcm4334(bus, path, path_len);
+	}
+	DHD_ERROR(("REVISION SPECIFIC feature is not required\n"));
+	return -1;
+}
+#endif /* MULTIPLE_REVISION */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

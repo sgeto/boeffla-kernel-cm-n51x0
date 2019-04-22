@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wl_cfgp2p.c 454364 2014-02-10 09:20:25Z $
+=======
+ * $Id: wl_cfgp2p.c 358702 2012-09-25 06:48:56Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  *
  */
 #include <typedefs.h>
@@ -53,7 +57,11 @@ static bool
 wl_cfgp2p_has_ie(u8 *ie, u8 **tlvs, u32 *tlvs_len, const u8 *oui, u32 oui_len, u8 type);
 
 static u32
+<<<<<<< HEAD
 wl_cfgp2p_vndr_ie(struct bcm_cfg80211 *cfg, u8 *iebuf, s32 pktflag,
+=======
+wl_cfgp2p_vndr_ie(struct wl_priv *wl, u8 *iebuf, s32 bssidx, s32 pktflag,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
             s8 *oui, s32 ie_id, s8 *data, s32 datalen, const s8* add_del_cmd);
 static s32 wl_cfgp2p_cancel_listen(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	struct wireless_dev *wdev, bool notify);
@@ -128,6 +136,15 @@ bool wl_cfgp2p_is_p2p_action(void *frame, u32 frame_len)
 	return false;
 }
 
+<<<<<<< HEAD
+=======
+/*
+* Currently Action frame just pass to P2P interface regardless real dst.
+* but GAS Action can be used for Hotspot2.0 as well
+* Need to distingush that it's for P2P or HS20
+*/
+#ifdef WL11U
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define GAS_RESP_LEN		2
 #define DOUBLE_TLV_BODY_OFF	4
 #define GAS_RESP_OFFSET		4
@@ -197,8 +214,9 @@ bool wl_cfgp2p_is_gas_action(void *frame, u32 frame_len)
 		return true;
 	else
 		return false;
-#endif /* WL11U */
+#endif /* WLC11U */
 }
+<<<<<<< HEAD
 #ifdef CUSTOMER_HW4
 bool wl_cfgp2p_is_p2p_gas_action(void *frame, u32 frame_len)
 {
@@ -223,6 +241,9 @@ bool wl_cfgp2p_is_p2p_gas_action(void *frame, u32 frame_len)
 }
 #endif /* CUSTOMER_HW4 */
 void wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len, u32 channel)
+=======
+void wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	wifi_p2p_pub_act_frame_t *pact_frm;
 	wifi_p2p_action_frame_t *act_frm;
@@ -234,44 +255,44 @@ void wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len, u32 channel)
 		pact_frm = (wifi_p2p_pub_act_frame_t *)frame;
 		switch (pact_frm->subtype) {
 			case P2P_PAF_GON_REQ:
-				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Req Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Req Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_GON_RSP:
-				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Rsp Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Rsp Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_GON_CONF:
-				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Confirm Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Group Owner Negotiation Confirm Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_INVITE_REQ:
-				CFGP2P_ACTION(("%s P2P Invitation Request  Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Invitation Request  Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_INVITE_RSP:
-				CFGP2P_ACTION(("%s P2P Invitation Response Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Invitation Response Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_DEVDIS_REQ:
-				CFGP2P_ACTION(("%s P2P Device Discoverability Request Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Device Discoverability Request Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_DEVDIS_RSP:
-				CFGP2P_ACTION(("%s P2P Device Discoverability Response Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Device Discoverability Response Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_PROVDIS_REQ:
-				CFGP2P_ACTION(("%s P2P Provision Discovery Request Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Provision Discovery Request Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_PAF_PROVDIS_RSP:
-				CFGP2P_ACTION(("%s P2P Provision Discovery Response Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Provision Discovery Response Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			default:
-				CFGP2P_ACTION(("%s Unknown P2P Public Action Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s Unknown P2P Public Action Frame\n",
+					(tx)? "TX": "RX"));
 
 		}
 
@@ -279,48 +300,48 @@ void wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len, u32 channel)
 		act_frm = (wifi_p2p_action_frame_t *)frame;
 		switch (act_frm->subtype) {
 			case P2P_AF_NOTICE_OF_ABSENCE:
-				CFGP2P_ACTION(("%s P2P Notice of Absence Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Notice of Absence Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_AF_PRESENCE_REQ:
-				CFGP2P_ACTION(("%s P2P Presence Request Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Presence Request Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_AF_PRESENCE_RSP:
-				CFGP2P_ACTION(("%s P2P Presence Response Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Presence Response Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			case P2P_AF_GO_DISC_REQ:
-				CFGP2P_ACTION(("%s P2P Discoverability Request Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s P2P Discoverability Request Frame\n",
+					(tx)? "TX": "RX"));
 				break;
 			default:
-				CFGP2P_ACTION(("%s Unknown P2P Action Frame,"
-					" channel=%d\n", (tx)? "TX": "RX", channel));
+				CFGP2P_ACTION(("%s Unknown P2P Action Frame\n",
+					(tx)? "TX": "RX"));
 		}
 
 	} else if (wl_cfgp2p_is_gas_action(frame, frame_len)) {
 		sd_act_frm = (wifi_p2psd_gas_pub_act_frame_t *)frame;
 		switch (sd_act_frm->action) {
 			case P2PSD_ACTION_ID_GAS_IREQ:
-				CFGP2P_ACTION(("%s P2P GAS Initial Request,"
-					" channel=%d\n", (tx)? "TX" : "RX", channel));
+				CFGP2P_ACTION(("%s P2P GAS Initial Request\n",
+					(tx)? "TX" : "RX"));
 				break;
 			case P2PSD_ACTION_ID_GAS_IRESP:
-				CFGP2P_ACTION(("%s P2P GAS Initial Response,"
-					" channel=%d\n", (tx)? "TX" : "RX", channel));
+				CFGP2P_ACTION(("%s P2P GAS Initial Response\n",
+					(tx)? "TX" : "RX"));
 				break;
 			case P2PSD_ACTION_ID_GAS_CREQ:
-				CFGP2P_ACTION(("%s P2P GAS Comback Request,"
-					" channel=%d\n", (tx)? "TX" : "RX", channel));
+				CFGP2P_ACTION(("%s P2P GAS Comback Request\n",
+					(tx)? "TX" : "RX"));
 				break;
 			case P2PSD_ACTION_ID_GAS_CRESP:
-				CFGP2P_ACTION(("%s P2P GAS Comback Response,"
-					" channel=%d\n", (tx)? "TX" : "RX", channel));
+				CFGP2P_ACTION(("%s P2P GAS Comback Response\n",
+					(tx)? "TX" : "RX"));
 				break;
 			default:
-				CFGP2P_ACTION(("%s Unknown P2P GAS Frame,"
-					" channel=%d\n", (tx)? "TX" : "RX", channel));
+				CFGP2P_ACTION(("%s Unknown P2P GAS Frame\n",
+					(tx)? "TX" : "RX"));
 		}
 
 
@@ -395,11 +416,7 @@ wl_cfgp2p_set_firm_p2p(struct bcm_cfg80211 *cfg)
 	s32 ret = BCME_OK;
 	s32 val = 0;
 	/* Do we have to check whether APSTA is enabled or not ? */
-	ret = wldev_iovar_getint(ndev, "apsta", &val);
-	if (ret < 0) {
-		CFGP2P_ERR(("get apsta error %d\n", ret));
-		return ret;
-	}
+	wldev_iovar_getint(ndev, "apsta", &val);
 	if (val == 0) {
 		val = 1;
 		ret = wldev_ioctl(ndev, WLC_DOWN, &val, sizeof(s32), true);
@@ -605,12 +622,16 @@ wl_cfgp2p_set_p2p_mode(struct bcm_cfg80211 *cfg, u8 mode, u32 channel, u16 liste
 	struct net_device *dev;
 	CFGP2P_DBG(("enter\n"));
 
-	if (unlikely(bssidx == WL_INVALID)) {
+	if (unlikely(bssidx == WL_INVALID || bssidx >= P2PAPI_BSSCFG_MAX)) {
 		CFGP2P_ERR((" %d index out of range\n", bssidx));
 		return -1;
 	}
 
+<<<<<<< HEAD
 	dev = wl_cfgp2p_find_ndev(cfg, bssidx);
+=======
+	dev = wl_to_p2p_bss_ndev(wl, bssidx);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (unlikely(dev == NULL)) {
 		CFGP2P_ERR(("bssidx %d is not assigned\n", bssidx));
 		return BCME_NOTFOUND;
@@ -716,8 +737,13 @@ wl_cfgp2p_deinit_discovery(struct bcm_cfg80211 *cfg)
 	/* Clear the saved bsscfg index of the discovery BSSCFG to indicate we
 	 * have no discovery BSS.
 	 */
+<<<<<<< HEAD
 	wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_DEVICE) = WL_INVALID;
 	wl_to_p2p_bss_ndev(cfg, P2PAPI_BSSCFG_DEVICE) = NULL;
+=======
+	wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE) = 0;
+	wl_to_p2p_bss_ndev(wl, P2PAPI_BSSCFG_DEVICE) = NULL;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return ret;
 
@@ -734,9 +760,15 @@ wl_cfgp2p_enable_discovery(struct bcm_cfg80211 *cfg, struct net_device *dev,
 	const u8 *ie, u32 ie_len)
 {
 	s32 ret = BCME_OK;
+<<<<<<< HEAD
 	s32 bssidx;
 
 	if (wl_get_p2p_status(cfg, DISCOVERY_ON)) {
+=======
+	s32 bssidx = (wl_to_prmry_ndev(wl) == dev) ?
+		wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE) : wl_cfgp2p_find_idx(wl, dev);
+	if (wl_get_p2p_status(wl, DISCOVERY_ON)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		CFGP2P_INFO((" DISCOVERY is already initialized, we have nothing to do\n"));
 		goto set_ie;
 	}
@@ -823,8 +855,12 @@ exit:
 s32
 wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 	u32 num_chans, u16 *channels,
+<<<<<<< HEAD
 	s32 search_state, u16 action, u32 bssidx, struct ether_addr *tx_dst_addr,
 	p2p_scan_purpose_t p2p_scan_purpose)
+=======
+	s32 search_state, u16 action, u32 bssidx)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	s32 ret = BCME_OK;
 	s32 memsize;
@@ -851,7 +887,7 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 	memsize = sizeof(wl_p2p_scan_t) + eparams_size;
 	memblk = scanparambuf;
 	if (memsize > sizeof(scanparambuf)) {
-		CFGP2P_ERR((" scanpar buf too small (%u > %zu)\n",
+		CFGP2P_ERR((" scanpar buf too small (%u > %u)\n",
 		    memsize, sizeof(scanparambuf)));
 		return -1;
 	}
@@ -862,10 +898,16 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 		 * If we in SEARCH STATE, we don't need to set SSID explictly
 		 * because dongle use P2P WILDCARD internally by default
 		 */
+<<<<<<< HEAD
 		wl_cfgp2p_set_p2p_mode(cfg, WL_P2P_DISC_ST_SEARCH, 0, 0, bssidx);
 		/* use null ssid */
 		ssid.SSID_len = 0;
 		memset(&ssid.SSID, 0, sizeof(ssid.SSID));
+=======
+		wl_cfgp2p_set_p2p_mode(wl, WL_P2P_DISC_ST_SEARCH, 0, 0, bssidx);
+		ssid.SSID_len = htod32(0);
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	} else if (search_state == WL_P2P_DISC_ST_SCAN) {
 		/* SCAN STATE 802.11 SCAN
 		 * WFD Supplicant has p2p_find command with (type=progressive, type= full)
@@ -873,12 +915,21 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 		 * we have to set ssid to P2P WILDCARD because
 		 * we just do broadcast scan unless setting SSID
 		 */
+<<<<<<< HEAD
 		wl_cfgp2p_set_p2p_mode(cfg, WL_P2P_DISC_ST_SCAN, 0, 0, bssidx);
 		/* use wild card ssid */
 		ssid.SSID_len = WL_P2P_WILDCARD_SSID_LEN;
 		memset(&ssid.SSID, 0, sizeof(ssid.SSID));
 		memcpy(&ssid.SSID, WL_P2P_WILDCARD_SSID, WL_P2P_WILDCARD_SSID_LEN);
 	} else {
+=======
+		strncpy(ssid.SSID, WL_P2P_WILDCARD_SSID, sizeof(ssid.SSID) - 1);
+		ssid.SSID[sizeof(ssid.SSID) - 1] = 0;
+		ssid.SSID_len = htod32(WL_P2P_WILDCARD_SSID_LEN);
+		wl_cfgp2p_set_p2p_mode(wl, WL_P2P_DISC_ST_SCAN, 0, 0, bssidx);
+	}
+	else {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		CFGP2P_ERR((" invalid search state %d\n", search_state));
 		return -1;
 	}
@@ -895,11 +946,7 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 	else
 		eparams->params.scan_type = DOT11_SCANTYPE_PASSIVE;
 
-	if (tx_dst_addr == NULL)
-		memcpy(&eparams->params.bssid, &ether_bcast, ETHER_ADDR_LEN);
-	else
-		memcpy(&eparams->params.bssid, tx_dst_addr, ETHER_ADDR_LEN);
-
+	memcpy(&eparams->params.bssid, &ether_bcast, ETHER_ADDR_LEN);
 	if (ssid.SSID_len)
 		memcpy(&eparams->params.ssid, &ssid, sizeof(wlc_ssid_t));
 
@@ -945,8 +992,16 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
 	}
 	eparams->version = htod32(ESCAN_REQ_VERSION);
 	eparams->action =  htod16(action);
+<<<<<<< HEAD
 	wl_escan_set_sync_id(eparams->sync_id, cfg);
 	wl_escan_set_type(cfg, WL_SCANTYPE_P2P);
+=======
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	eparams->sync_id = wl->escan_info.cur_sync_id;
+#else
+	eparams->sync_id = htod16(0x1234);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	CFGP2P_INFO(("SCAN CHANNELS : "));
 
 	for (i = 0; i < num_chans; i++) {
@@ -971,8 +1026,13 @@ wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active,
  * Returns 0 if success.
  */
 s32
+<<<<<<< HEAD
 wl_cfgp2p_act_frm_search(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	s32 bssidx, s32 channel, struct ether_addr *tx_dst_addr)
+=======
+wl_cfgp2p_act_frm_search(struct wl_priv *wl, struct net_device *ndev,
+	s32 bssidx, s32 channel)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	s32 ret = 0;
 	u32 chan_cnt = 0;
@@ -981,8 +1041,13 @@ wl_cfgp2p_act_frm_search(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	if (!p2p_is_on(cfg) || ndev == NULL || bssidx == WL_INVALID)
 		return -BCME_ERROR;
 	CFGP2P_ERR((" Enter\n"));
+<<<<<<< HEAD
 	if (bssidx == wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_PRIMARY))
 		bssidx = wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_DEVICE);
+=======
+	if (bssidx == P2PAPI_BSSCFG_PRIMARY)
+		bssidx =  wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (channel)
 		chan_cnt = AF_PEER_SEARCH_CNT;
 	else
@@ -1016,7 +1081,11 @@ wl_cfgp2p_act_frm_search(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	}
 	ret = wl_cfgp2p_escan(cfg, ndev, true, chan_cnt,
 		default_chan_list, WL_P2P_DISC_ST_SEARCH,
+<<<<<<< HEAD
 		WL_SCAN_ACTION_START, bssidx, NULL, p2p_scan_purpose);
+=======
+		WL_SCAN_ACTION_START, bssidx);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	kfree(default_chan_list);
 exit:
 	return ret;
@@ -1032,9 +1101,7 @@ exit:
 #define wl_cfgp2p_is_p2p_ie(ie, tlvs, len)	wl_cfgp2p_has_ie(ie, tlvs, len, \
 		(const uint8 *)WFA_OUI, WFA_OUI_LEN, WFA_OUI_TYPE_P2P)
 /* Check whether the given IE looks like WFA WFDisplay IE. */
-#ifndef WFA_OUI_TYPE_WFD
 #define WFA_OUI_TYPE_WFD	0x0a			/* WiFi Display OUI TYPE */
-#endif
 #define wl_cfgp2p_is_wfd_ie(ie, tlvs, len)	wl_cfgp2p_has_ie(ie, tlvs, len, \
 		(const uint8 *)WFA_OUI, WFA_OUI_LEN, WFA_OUI_TYPE_WFD)
 
@@ -1123,8 +1190,8 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 	struct parsed_vndr_ies new_vndr_ies;
 	s32 i;
 	u8 *ptr;
-	s32 type = -1;
 	s32 remained_buf_len;
+<<<<<<< HEAD
 #define IE_TYPE(type, bsstype) (wl_to_p2p_bss_saved_ie(cfg, bsstype).p2p_ ## type ## _ie)
 #define IE_TYPE_LEN(type, bsstype) (wl_to_p2p_bss_saved_ie(cfg, bsstype).p2p_ ## type ## _ie_len)
 	memset(g_mgmt_ie_buf, 0, sizeof(g_mgmt_ie_buf));
@@ -1136,37 +1203,46 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 			return BCME_ERROR;
 		}
 
+=======
+
+#define IE_TYPE(type, bsstype) (wl_to_p2p_bss_saved_ie(wl, bsstype).p2p_ ## type ## _ie)
+#define IE_TYPE_LEN(type, bsstype) (wl_to_p2p_bss_saved_ie(wl, bsstype).p2p_ ## type ## _ie_len)
+	memset(g_mgmt_ie_buf, 0, sizeof(g_mgmt_ie_buf));
+	curr_ie_buf = g_mgmt_ie_buf;
+	CFGP2P_DBG((" bssidx %d, pktflag : 0x%02X\n", bssidx, pktflag));
+	if (wl->p2p != NULL) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		switch (pktflag) {
 			case VNDR_IE_PRBREQ_FLAG :
-				mgmt_ie_buf = IE_TYPE(probe_req, type);
-				mgmt_ie_len = &IE_TYPE_LEN(probe_req, type);
-				mgmt_ie_buf_len = sizeof(IE_TYPE(probe_req, type));
+				mgmt_ie_buf = IE_TYPE(probe_req, bssidx);
+				mgmt_ie_len = &IE_TYPE_LEN(probe_req, bssidx);
+				mgmt_ie_buf_len = sizeof(IE_TYPE(probe_req, bssidx));
 				break;
 			case VNDR_IE_PRBRSP_FLAG :
-				mgmt_ie_buf = IE_TYPE(probe_res, type);
-				mgmt_ie_len = &IE_TYPE_LEN(probe_res, type);
-				mgmt_ie_buf_len = sizeof(IE_TYPE(probe_res, type));
+				mgmt_ie_buf = IE_TYPE(probe_res, bssidx);
+				mgmt_ie_len = &IE_TYPE_LEN(probe_res, bssidx);
+				mgmt_ie_buf_len = sizeof(IE_TYPE(probe_res, bssidx));
 				break;
 			case VNDR_IE_ASSOCREQ_FLAG :
-				mgmt_ie_buf = IE_TYPE(assoc_req, type);
-				mgmt_ie_len = &IE_TYPE_LEN(assoc_req, type);
-				mgmt_ie_buf_len = sizeof(IE_TYPE(assoc_req, type));
+				mgmt_ie_buf = IE_TYPE(assoc_req, bssidx);
+				mgmt_ie_len = &IE_TYPE_LEN(assoc_req, bssidx);
+				mgmt_ie_buf_len = sizeof(IE_TYPE(assoc_req, bssidx));
 				break;
 			case VNDR_IE_ASSOCRSP_FLAG :
-				mgmt_ie_buf = IE_TYPE(assoc_res, type);
-				mgmt_ie_len = &IE_TYPE_LEN(assoc_res, type);
-				mgmt_ie_buf_len = sizeof(IE_TYPE(assoc_res, type));
+				mgmt_ie_buf = IE_TYPE(assoc_res, bssidx);
+				mgmt_ie_len = &IE_TYPE_LEN(assoc_res, bssidx);
+				mgmt_ie_buf_len = sizeof(IE_TYPE(assoc_res, bssidx));
 				break;
 			case VNDR_IE_BEACON_FLAG :
-				mgmt_ie_buf = IE_TYPE(beacon, type);
-				mgmt_ie_len = &IE_TYPE_LEN(beacon, type);
-				mgmt_ie_buf_len = sizeof(IE_TYPE(beacon, type));
+				mgmt_ie_buf = IE_TYPE(beacon, bssidx);
+				mgmt_ie_len = &IE_TYPE_LEN(beacon, bssidx);
+				mgmt_ie_buf_len = sizeof(IE_TYPE(beacon, bssidx));
 				break;
 			default:
 				mgmt_ie_buf = NULL;
 				mgmt_ie_len = NULL;
 				CFGP2P_ERR(("not suitable type\n"));
-				return BCME_ERROR;
+				return -1;
 		}
 	} else if (wl_get_mode_by_netdev(cfg, ndev) == WL_MODE_AP) {
 		switch (pktflag) {
@@ -1184,7 +1260,7 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 				mgmt_ie_buf = NULL;
 				mgmt_ie_len = NULL;
 				CFGP2P_ERR(("not suitable type\n"));
-				return BCME_ERROR;
+				return -1;
 		}
 		bssidx = 0;
 	} else if (wl_get_mode_by_netdev(cfg, ndev) == WL_MODE_BSS) {
@@ -1203,12 +1279,12 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 				mgmt_ie_buf = NULL;
 				mgmt_ie_len = NULL;
 				CFGP2P_ERR(("not suitable type\n"));
-				return BCME_ERROR;
+				return -1;
 		}
 		bssidx = 0;
 	} else {
 		CFGP2P_ERR(("not suitable type\n"));
-		return BCME_ERROR;
+		return -1;
 	}
 
 	if (vndr_ie_len > mgmt_ie_buf_len) {
@@ -1253,8 +1329,13 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 					vndrie_info->vndrie.oui[0], vndrie_info->vndrie.oui[1],
 					vndrie_info->vndrie.oui[2]));
 
+<<<<<<< HEAD
 				del_add_ie_buf_len = wl_cfgp2p_vndr_ie(cfg, curr_ie_buf,
 					pktflag, vndrie_info->vndrie.oui,
+=======
+				del_add_ie_buf_len = wl_cfgp2p_vndr_ie(wl, curr_ie_buf,
+					bssidx, pktflag, vndrie_info->vndrie.oui,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 					vndrie_info->vndrie.id,
 					vndrie_info->ie_ptr + VNDR_IE_FIXED_LEN,
 					vndrie_info->ie_len - VNDR_IE_FIXED_LEN,
@@ -1283,8 +1364,13 @@ wl_cfgp2p_set_management_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s
 					vndrie_info->vndrie.oui[0], vndrie_info->vndrie.oui[1],
 					vndrie_info->vndrie.oui[2]));
 
+<<<<<<< HEAD
 				del_add_ie_buf_len = wl_cfgp2p_vndr_ie(cfg, curr_ie_buf,
 					pktflag, vndrie_info->vndrie.oui,
+=======
+				del_add_ie_buf_len = wl_cfgp2p_vndr_ie(wl, curr_ie_buf,
+					bssidx, pktflag, vndrie_info->vndrie.oui,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 					vndrie_info->vndrie.id,
 					vndrie_info->ie_ptr + VNDR_IE_FIXED_LEN,
 					vndrie_info->ie_len - VNDR_IE_FIXED_LEN,
@@ -1335,18 +1421,22 @@ exit:
 s32
 wl_cfgp2p_clear_management_ie(struct bcm_cfg80211 *cfg, s32 bssidx)
 {
+<<<<<<< HEAD
 
 	s32 vndrie_flag[] = {VNDR_IE_BEACON_FLAG, VNDR_IE_PRBRSP_FLAG, VNDR_IE_ASSOCRSP_FLAG,
 		VNDR_IE_PRBREQ_FLAG, VNDR_IE_ASSOCREQ_FLAG};
 	s32 index = -1;
 	s32 type = -1;
 	struct net_device *ndev = wl_cfgp2p_find_ndev(cfg, bssidx);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define INIT_IE(IE_TYPE, BSS_TYPE)		\
 	do {							\
 		memset(wl_to_p2p_bss_saved_ie(cfg, BSS_TYPE).p2p_ ## IE_TYPE ## _ie, 0, \
 		   sizeof(wl_to_p2p_bss_saved_ie(cfg, BSS_TYPE).p2p_ ## IE_TYPE ## _ie)); \
 		wl_to_p2p_bss_saved_ie(cfg, BSS_TYPE).p2p_ ## IE_TYPE ## _ie_len = 0; \
 	} while (0);
+<<<<<<< HEAD
 
 	if (bssidx < 0 || ndev == NULL) {
 		CFGP2P_ERR(("invalid %s\n", (bssidx < 0) ? "bssidx" : "ndev"));
@@ -1366,6 +1456,17 @@ wl_cfgp2p_clear_management_ie(struct bcm_cfg80211 *cfg, s32 bssidx)
 	INIT_IE(assoc_req, type);
 	INIT_IE(assoc_res, type);
 	INIT_IE(beacon, type);
+=======
+	if (bssidx < 0) {
+		CFGP2P_ERR(("invalid bssidx\n"));
+		return BCME_BADARG;
+	}
+	INIT_IE(probe_req, bssidx);
+	INIT_IE(probe_res, bssidx);
+	INIT_IE(assoc_req, bssidx);
+	INIT_IE(assoc_res, bssidx);
+	INIT_IE(beacon, bssidx);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return BCME_OK;
 }
 
@@ -1447,7 +1548,11 @@ wl_cfgp2p_find_wfdie(u8 *parse, u32 len)
 	return NULL;
 }
 static u32
+<<<<<<< HEAD
 wl_cfgp2p_vndr_ie(struct bcm_cfg80211 *cfg, u8 *iebuf, s32 pktflag,
+=======
+wl_cfgp2p_vndr_ie(struct wl_priv *wl, u8 *iebuf, s32 bssidx, s32 pktflag,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
             s8 *oui, s32 ie_id, s8 *data, s32 datalen, const s8* add_del_cmd)
 {
 	vndr_ie_setbuf_t hdr;	/* aligned temporary vndr_ie buffer header */
@@ -1504,25 +1609,33 @@ wl_cfgp2p_vndr_ie(struct bcm_cfg80211 *cfg, u8 *iebuf, s32 pktflag,
  * Parameters:
  * @cfg       : wl_private data
  * @ndev     : net device to search bssidx
- * @bssidx  : output arg to store bssidx of the bsscfg of firmware.
- * Returns error
+ *  Returns bssidx for ndev
  */
 s32
+<<<<<<< HEAD
 wl_cfgp2p_find_idx(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 *bssidx)
+=======
+wl_cfgp2p_find_idx(struct wl_priv *wl, struct net_device *ndev)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	u32 i;
-	if (ndev == NULL || bssidx == NULL) {
-		CFGP2P_ERR((" argument is invalid\n"));
-		return BCME_BADARG;
+	s32 index = -1;
+
+	if (ndev == NULL) {
+		CFGP2P_ERR((" ndev is NULL\n"));
+		goto exit;
 	}
+<<<<<<< HEAD
 	if (!cfg->p2p_supported) {
 		*bssidx = P2PAPI_BSSCFG_PRIMARY;
 		return BCME_OK;
+=======
+	if (!wl->p2p_supported) {
+		return P2PAPI_BSSCFG_PRIMARY;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
-	/* we cannot find the bssidx of DISCOVERY BSS
-	 *  because the ndev is same with ndev of PRIMARY BSS.
-	 */
 	for (i = 0; i < P2PAPI_BSSCFG_MAX; i++) {
+<<<<<<< HEAD
 		if (ndev == wl_to_p2p_bss_ndev(cfg, i)) {
 			*bssidx = wl_to_p2p_bss_bssidx(cfg, i);
 			return BCME_OK;
@@ -1543,14 +1656,20 @@ wl_cfgp2p_find_ndev(struct bcm_cfg80211 *cfg, s32 bssidx)
 	for (i = 0; i < P2PAPI_BSSCFG_MAX; i++) {
 		if (bssidx == wl_to_p2p_bss_bssidx(cfg, i)) {
 			ndev = wl_to_p2p_bss_ndev(cfg, i);
+=======
+		if (ndev == wl_to_p2p_bss_ndev(wl, i)) {
+			index = wl_to_p2p_bss_bssidx(wl, i);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			break;
 		}
 	}
-
+	if (index == -1)
+		return P2PAPI_BSSCFG_PRIMARY;
 exit:
-	return ndev;
+	return index;
 }
 /*
+<<<<<<< HEAD
  * Search the driver array idx based on bssidx argument
  * Parameters:
  * @cfg     : wl_private data
@@ -1580,6 +1699,8 @@ exit:
 }
 
 /*
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  * Callback function for WLC_E_P2P_DISC_LISTEN_COMPLETE
  */
 s32
@@ -1810,6 +1931,7 @@ wl_cfgp2p_action_tx_complete(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev
 	u32 status = ntoh32(e->status);
 	struct net_device *ndev = NULL;
 	CFGP2P_DBG((" Enter\n"));
+<<<<<<< HEAD
 
 	ndev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 
@@ -1832,7 +1954,26 @@ wl_cfgp2p_action_tx_complete(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev
 
 			if (wl_get_drv_status_all(cfg, SENDING_ACT_FRM))
 				complete(&cfg->send_af_done);
+=======
+	if (event_type == WLC_E_ACTION_FRAME_COMPLETE) {
+
+		CFGP2P_INFO((" WLC_E_ACTION_FRAME_COMPLETE is received : %d\n", status));
+		if (status == WLC_E_STATUS_SUCCESS) {
+			wl_set_p2p_status(wl, ACTION_TX_COMPLETED);
+			CFGP2P_DBG(("WLC_E_ACTION_FRAME_COMPLETE : ACK\n"));
 		}
+		else {
+			wl_set_p2p_status(wl, ACTION_TX_NOACK);
+			CFGP2P_INFO(("WLC_E_ACTION_FRAME_COMPLETE : NO ACK\n"));
+			wl_stop_wait_next_action_frame(wl, ndev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+		}
+	} else {
+		CFGP2P_INFO((" WLC_E_ACTION_FRAME_OFFCHAN_COMPLETE is received,"
+					"status : %d\n", status));
+
+		if (wl_get_drv_status_all(wl, SENDING_ACT_FRM))
+			complete(&wl->send_af_done);
 	}
 	return ret;
 }
@@ -1858,6 +1999,7 @@ wl_cfgp2p_tx_action_frame(struct bcm_cfg80211 *cfg, struct net_device *dev,
 	CFGP2P_INFO(("channel : %u , dwell time : %u\n",
 	    af_params->channel, af_params->dwell_time));
 
+<<<<<<< HEAD
 	wl_clr_p2p_status(cfg, ACTION_TX_COMPLETED);
 	wl_clr_p2p_status(cfg, ACTION_TX_NOACK);
 
@@ -1866,6 +2008,13 @@ wl_cfgp2p_tx_action_frame(struct bcm_cfg80211 *cfg, struct net_device *dev,
 	wl_cfg80211_add_to_eventbuffer(&buf, WLC_E_ACTION_FRAME_COMPLETE, true);
 	if ((evt_ret = wl_cfg80211_apply_eventbuffer(bcmcfg_to_prmry_ndev(cfg), cfg, &buf)) < 0)
 		return evt_ret;
+=======
+	wl_clr_p2p_status(wl, ACTION_TX_COMPLETED);
+	wl_clr_p2p_status(wl, ACTION_TX_NOACK);
+#define MAX_WAIT_TIME 2000
+	if (bssidx == P2PAPI_BSSCFG_PRIMARY)
+		bssidx =  wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	cfg->af_sent_channel  = af_params->channel;
 #ifdef WL_CFG80211_SYNC_GON
@@ -1880,8 +2029,12 @@ wl_cfgp2p_tx_action_frame(struct bcm_cfg80211 *cfg, struct net_device *dev,
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	timeout = wait_for_completion_timeout(&cfg->send_af_done,
 		msecs_to_jiffies(af_params->dwell_time + WL_AF_TX_EXTRA_TIME_MAX));
+=======
+	timeout = wait_for_completion_timeout(&wl->send_af_done, msecs_to_jiffies(MAX_WAIT_TIME));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (timeout >= 0 && wl_get_p2p_status(cfg, ACTION_TX_COMPLETED)) {
 		CFGP2P_INFO(("tx action frame operation is completed\n"));
@@ -1896,6 +2049,7 @@ wl_cfgp2p_tx_action_frame(struct bcm_cfg80211 *cfg, struct net_device *dev,
 
 exit:
 	CFGP2P_INFO((" via act frame iovar : status = %d\n", ret));
+<<<<<<< HEAD
 
 	bzero(&buf, sizeof(wl_eventmsg_buf_t));
 	wl_cfg80211_add_to_eventbuffer(&buf, WLC_E_ACTION_FRAME_OFF_CHAN_COMPLETE, false);
@@ -1905,6 +2059,9 @@ exit:
 		return evt_ret;
 	}
 
+=======
+#undef MAX_WAIT_TIME
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return ret;
 }
 
@@ -2069,6 +2226,7 @@ wl_cfgp2p_supported(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 s32
 wl_cfgp2p_down(struct bcm_cfg80211 *cfg)
 {
+<<<<<<< HEAD
 	struct net_device *ndev = NULL;
 	struct wireless_dev *wdev = NULL;
 	s32 i = 0, index = -1;
@@ -2091,6 +2249,13 @@ wl_cfgp2p_down(struct bcm_cfg80211 *cfg)
 	wl_cfgp2p_del_p2p_disc_if(wdev, cfg);
 #endif /* WL_CFG80211_P2P_DEV_IF */
 	wl_cfgp2p_deinit_priv(cfg);
+=======
+
+	wl_cfgp2p_cancel_listen(wl,
+		wl->p2p_net ? wl->p2p_net : wl_to_prmry_ndev(wl), TRUE);
+
+	wl_cfgp2p_deinit_priv(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return 0;
 }
 s32
@@ -2247,11 +2412,25 @@ wl_cfgp2p_set_p2p_ps(struct bcm_cfg80211 *cfg, struct net_device *ndev, char* bu
 		}
 
 		if ((legacy_ps != -1) && ((legacy_ps == PM_MAX) || (legacy_ps == PM_OFF))) {
+<<<<<<< HEAD
 			ret = wldev_ioctl(dev,
+=======
+#ifdef SUPPORT_PM2_ONLY
+			if (legacy_ps == PM_MAX)
+				legacy_ps = PM_FAST;
+#endif
+			ret = wldev_ioctl(wl_to_p2p_bss_ndev(wl, P2PAPI_BSSCFG_CONNECTION),
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				WLC_SET_PM, &legacy_ps, sizeof(legacy_ps), true);
 			if (unlikely(ret))
 				CFGP2P_ERR(("error (%d)\n", ret));
+<<<<<<< HEAD
 			wl_cfg80211_update_power_mode(dev);
+=======
+			} else {
+				wl_cfg80211_update_power_mode(ndev);
+			}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		else
 			CFGP2P_ERR(("ilegal setting\n"));
@@ -2401,6 +2580,7 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 {
 	int ret = 0;
 	struct net_device* net = NULL;
+<<<<<<< HEAD
 #ifndef	WL_NEWCFG_PRIVCMD_SUPPORT
 	struct wireless_dev *wdev = NULL;
 #endif /* WL_NEWCFG_PRIVCMD_SUPPORT */
@@ -2411,9 +2591,15 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 		return -EINVAL;
 	}
 
+=======
+	struct wireless_dev *wdev;
+	uint8 temp_addr[ETHER_ADDR_LEN] = { 0x00, 0x90, 0x4c, 0x33, 0x22, 0x11 };
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Allocate etherdev, including space for private structure */
 	if (!(net = alloc_etherdev(sizeof(struct bcm_cfg80211 *)))) {
 		CFGP2P_ERR(("%s: OOM - alloc_etherdev\n", __FUNCTION__));
+<<<<<<< HEAD
 		return -ENODEV;
 	}
 
@@ -2423,6 +2609,9 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 		WL_ERR(("Could not allocate wireless device\n"));
 		free_netdev(net);
 		return -ENOMEM;
+=======
+		goto fail;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #endif /* WL_NEWCFG_PRIVCMD_SUPPORT */
 
@@ -2446,8 +2635,18 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 	/* Register with a dummy MAC addr */
 	memcpy(net->dev_addr, temp_addr, ETHER_ADDR_LEN);
 
+<<<<<<< HEAD
 #ifndef	WL_NEWCFG_PRIVCMD_SUPPORT
 	wdev->wiphy = cfg->wdev->wiphy;
+=======
+	wdev = kzalloc(sizeof(*wdev), GFP_KERNEL);
+	if (unlikely(!wdev)) {
+		WL_ERR(("Could not allocate wireless device\n"));
+		return -ENOMEM;
+	}
+
+	wdev->wiphy = wl->wdev->wiphy;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	wdev->iftype = wl_mode_to_nl80211_iftype(WL_MODE_BSS);
 
@@ -2465,9 +2664,21 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 	wdev->netdev = net;
 #endif /* WL_NEWCFG_PRIVCMD_SUPPORT */
 
+	/* store p2p net ptr for further reference. Note that iflist won't have this
+	 * entry as there corresponding firmware interface is a "Hidden" interface.
+	 */
+	if (wl->p2p_net) {
+		CFGP2P_ERR(("p2p_net defined already.\n"));
+		return -EINVAL;
+	} else {
+		wl->p2p_wdev = wdev;
+		wl->p2p_net = net;
+	}
+
 	ret = register_netdev(net);
 	if (ret) {
 		CFGP2P_ERR((" register_netdevice failed (%d)\n", ret));
+<<<<<<< HEAD
 		free_netdev(net);
 #ifndef	WL_NEWCFG_PRIVCMD_SUPPORT
 		kfree(wdev);
@@ -2483,9 +2694,28 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg)
 #endif /* WL_NEWCFG_PRIVCMD_SUPPORT */
 	cfg->p2p_net = net;
 
+=======
+		goto fail;
+	}
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	printk("%s: P2P Interface Registered\n", net->name);
 
 	return ret;
+fail:
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 31)
+	net->open = NULL;
+#else
+	net->netdev_ops = NULL;
+#endif
+
+	if (net) {
+		unregister_netdev(net);
+		free_netdev(net);
+	}
+
+	return -ENODEV;
 }
 
 s32
@@ -2505,6 +2735,7 @@ wl_cfgp2p_unregister_ndev(struct bcm_cfg80211 *cfg)
 
 static int wl_cfgp2p_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 {
+<<<<<<< HEAD
 
 	if (skb)
 	{
@@ -2513,6 +2744,9 @@ static int wl_cfgp2p_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		dev_kfree_skb_any(skb);
 	}
 
+=======
+	CFGP2P_DBG(("(%s) is not used for data operations. Droping the packet. \n", ndev->name));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return 0;
 }
 
@@ -2578,6 +2812,7 @@ static int wl_cfgp2p_if_stop(struct net_device *net)
 #endif /* !WL_IFACE_COMB_NUM_CHANNELS */
 	return 0;
 }
+<<<<<<< HEAD
 
 bool wl_cfgp2p_is_ifops(const struct net_device_ops *if_ops)
 {
@@ -2709,3 +2944,5 @@ wl_cfgp2p_del_p2p_disc_if(struct wireless_dev *wdev, struct bcm_cfg80211 *cfg)
 	return 0;
 }
 #endif /* WL_CFG80211_P2P_DEV_IF */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

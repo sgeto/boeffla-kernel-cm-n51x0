@@ -21,7 +21,11 @@
  *
  * Fundamental types and constants relating to WFA P2P (aka WiFi Direct)
  *
+<<<<<<< HEAD
  * $Id: p2p.h 444066 2013-12-18 12:49:24Z $
+=======
+ * $Id: p2p.h 357863 2012-09-20 06:40:47Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _P2P_H_
@@ -397,6 +401,7 @@ typedef struct wifi_p2p_pub_act_frame wifi_p2p_pub_act_frame_t;
 #define P2P_PUB_AF_CATEGORY	0x04
 #define P2P_PUB_AF_ACTION	0x09
 
+<<<<<<< HEAD
 /* WiFi P2P Public Action Frame OUI Subtypes */
 #define P2P_PAF_GON_REQ		0	/* Group Owner Negotiation Req */
 #define P2P_PAF_GON_RSP		1	/* Group Owner Negotiation Rsp */
@@ -410,6 +415,20 @@ typedef struct wifi_p2p_pub_act_frame wifi_p2p_pub_act_frame_t;
 #define P2P_PAF_SUBTYPE_INVALID	255	/* Invalid Subtype */
 
 /* TODO: Stop using these obsolete aliases for P2P_PAF_GON_* */
+=======
+
+#define P2P_PAF_GON_REQ		0	
+#define P2P_PAF_GON_RSP		1	
+#define P2P_PAF_GON_CONF	2	
+#define P2P_PAF_INVITE_REQ	3	
+#define P2P_PAF_INVITE_RSP	4	
+#define P2P_PAF_DEVDIS_REQ	5	
+#define P2P_PAF_DEVDIS_RSP	6	
+#define P2P_PAF_PROVDIS_REQ	7	
+#define P2P_PAF_PROVDIS_RSP	8	
+#define P2P_PAF_SUBTYPE_INVALID	255	/* Invalid Subtype */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define P2P_TYPE_MNREQ		P2P_PAF_GON_REQ
 #define P2P_TYPE_MNRSP		P2P_PAF_GON_RSP
 #define P2P_TYPE_MNCONF		P2P_PAF_GON_CONF

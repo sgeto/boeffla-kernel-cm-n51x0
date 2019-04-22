@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wl_cfgp2p.h 444054 2013-12-18 11:33:42Z $
+=======
+ * $Id: wl_cfgp2p.h 358702 2012-09-25 06:48:56Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 #ifndef _wl_cfgp2p_h_
 #define _wl_cfgp2p_h_
@@ -57,7 +61,7 @@ typedef enum {
 /* vendor ies max buffer length for probe response or beacon */
 #define VNDR_IES_MAX_BUF_LEN	1400
 /* normal vendor ies buffer length */
-#define VNDR_IES_BUF_LEN 		512
+#define VNDR_IES_BUF_LEN		512
 
 /* Structure to hold all saved P2P and WPS IEs for a BSSCFG */
 struct p2p_saved_ie {
@@ -83,13 +87,12 @@ struct p2p_bss {
 struct p2p_info {
 	bool on;    /* p2p on/off switch */
 	bool scan;
-	int16 search_state;
 	bool vif_created;
 	s8 vir_ifname[IFNAMSIZ];
 	unsigned long status;
 	struct ether_addr dev_addr;
 	struct ether_addr int_addr;
-	struct p2p_bss bss[P2PAPI_BSSCFG_MAX];
+	struct p2p_bss bss_idx[P2PAPI_BSSCFG_MAX];
 	struct timer_list listen_timer;
 	wl_p2p_sched_t noa;
 	wl_p2p_ops_t ops;
@@ -121,11 +124,11 @@ enum wl_cfgp2p_status {
 	WLP2P_STATUS_ACTION_TX_COMPLETED,
 	WLP2P_STATUS_ACTION_TX_NOACK,
 	WLP2P_STATUS_SCANNING,
-	WLP2P_STATUS_GO_NEG_PHASE,
-	WLP2P_STATUS_DISC_IN_PROGRESS
+	WLP2P_STATUS_GO_NEG_PHASE
 };
 
 
+<<<<<<< HEAD
 #define wl_to_p2p_bss_ndev(cfg, type)		((cfg)->p2p->bss[type].dev)
 #define wl_to_p2p_bss_bssidx(cfg, type)		((cfg)->p2p->bss[type].bssidx)
 #define wl_to_p2p_bss_saved_ie(cfg, type)	((cfg)->p2p->bss[type].saved_ie)
@@ -142,21 +145,32 @@ enum wl_cfgp2p_status {
 #define p2p_on(cfg) ((cfg)->p2p->on)
 #define p2p_scan(cfg) ((cfg)->p2p->scan)
 #define p2p_is_on(cfg) ((cfg)->p2p && (cfg)->p2p->on)
+=======
+#define wl_to_p2p_bss_ndev(w, type) 	((wl)->p2p->bss_idx[type].dev)
+#define wl_to_p2p_bss_bssidx(w, type) 	((wl)->p2p->bss_idx[type].bssidx)
+#define wl_to_p2p_bss_saved_ie(w, type) 	((wl)->p2p->bss_idx[type].saved_ie)
+#define wl_to_p2p_bss_private(w, type) 	((wl)->p2p->bss_idx[type].private_data)
+#define wl_to_p2p_bss(wl, type) ((wl)->p2p->bss_idx[type])
+#define wl_get_p2p_status(wl, stat) ((!(wl)->p2p_supported) ? 0 : test_bit(WLP2P_STATUS_ ## stat, \
+									&(wl)->p2p->status))
+#define wl_set_p2p_status(wl, stat) ((!(wl)->p2p_supported) ? 0 : set_bit(WLP2P_STATUS_ ## stat, \
+									&(wl)->p2p->status))
+#define wl_clr_p2p_status(wl, stat) ((!(wl)->p2p_supported) ? 0 : clear_bit(WLP2P_STATUS_ ## stat, \
+									&(wl)->p2p->status))
+#define wl_chg_p2p_status(wl, stat) ((!(wl)->p2p_supported) ? 0:change_bit(WLP2P_STATUS_ ## stat, \
+									&(wl)->p2p->status))
+#define p2p_on(wl) ((wl)->p2p->on)
+#define p2p_scan(wl) ((wl)->p2p->scan)
+#define p2p_is_on(wl) ((wl)->p2p && (wl)->p2p->on)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* dword align allocation */
 #define WLC_IOCTL_MAXLEN 8192
 
-#ifdef CUSTOMER_HW4
-#define CFGP2P_ERROR_TEXT		"CFGP2P-INFO2) "
-#else
-#define CFGP2P_ERROR_TEXT		"CFGP2P-ERROR) "
-#endif
-
-
 #define CFGP2P_ERR(args)									\
 	do {										\
 		if (wl_dbg_level & WL_DBG_ERR) {				\
-			printk(KERN_INFO CFGP2P_ERROR_TEXT "%s : ", __func__);	\
+			printk(KERN_INFO "CFGP2P-INFO2) %s : ", __func__);	\
 			printk args;						\
 		}									\
 	} while (0)
@@ -240,7 +254,7 @@ extern bool
 wl_cfgp2p_is_p2p_gas_action(void *frame, u32 frame_len);
 #endif /* CUSTOMER_HW4 */
 extern void
-wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len, u32 channel);
+wl_cfgp2p_print_actframe(bool tx, void *frame, u32 frame_len);
 extern s32
 wl_cfgp2p_init_priv(struct bcm_cfg80211 *cfg);
 extern void
@@ -273,12 +287,20 @@ wl_cfgp2p_disable_discovery(struct bcm_cfg80211 *cfg);
 extern s32
 wl_cfgp2p_escan(struct bcm_cfg80211 *cfg, struct net_device *dev, u16 active, u32 num_chans,
 	u16 *channels,
+<<<<<<< HEAD
 	s32 search_state, u16 action, u32 bssidx, struct ether_addr *tx_dst_addr,
 	p2p_scan_purpose_t p2p_scan_purpose);
 
 extern s32
 wl_cfgp2p_act_frm_search(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	s32 bssidx, s32 channel, struct ether_addr *tx_dst_addr);
+=======
+	s32 search_state, u16 action, u32 bssidx);
+
+extern s32
+wl_cfgp2p_act_frm_search(struct wl_priv *wl, struct net_device *ndev,
+	s32 bssidx, s32 channel);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 extern wpa_ie_fixed_t *
 wl_cfgp2p_find_wpaie(u8 *parse, u32 len);
@@ -298,11 +320,15 @@ extern s32
 wl_cfgp2p_clear_management_ie(struct bcm_cfg80211 *cfg, s32 bssidx);
 
 extern s32
+<<<<<<< HEAD
 wl_cfgp2p_find_idx(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 *index);
 extern struct net_device *
 wl_cfgp2p_find_ndev(struct bcm_cfg80211 *cfg, s32 bssidx);
 extern s32
 wl_cfgp2p_find_type(struct bcm_cfg80211 *cfg, s32 bssidx, s32 *type);
+=======
+wl_cfgp2p_find_idx(struct wl_priv *wl, struct net_device *ndev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 extern s32
@@ -365,6 +391,7 @@ wl_cfgp2p_register_ndev(struct bcm_cfg80211 *cfg);
 extern s32
 wl_cfgp2p_unregister_ndev(struct bcm_cfg80211 *cfg);
 
+<<<<<<< HEAD
 extern bool
 wl_cfgp2p_is_ifops(const struct net_device_ops *if_ops);
 
@@ -382,6 +409,8 @@ extern int
 wl_cfgp2p_del_p2p_disc_if(struct wireless_dev *wdev, struct bcm_cfg80211 *cfg);
 #endif /* WL_CFG80211_P2P_DEV_IF */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* WiFi Direct */
 #define SOCIAL_CHAN_1 1
 #define SOCIAL_CHAN_2 6
@@ -400,13 +429,26 @@ wl_cfgp2p_del_p2p_disc_if(struct wireless_dev *wdev, struct bcm_cfg80211 *cfg);
  * or the device discoverablity frame is destined to GO
  * then we need not do an internal scan to find GO.
  */
+<<<<<<< HEAD
 #define IS_ACTPUB_WITHOUT_GROUP_ID(p2p_ie, len) \
+=======
+#define IS_PROV_DISC_WITHOUT_GROUP_ID(p2p_ie, len) \
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	(wl_cfgp2p_retreive_p2pattrib(p2p_ie, P2P_SEID_GROUP_ID) == NULL)
 
 #define IS_GAS_REQ(frame, len) (wl_cfgp2p_is_gas_action(frame, len) && \
 					((frame->action == P2PSD_ACTION_ID_GAS_IREQ) || \
 					(frame->action == P2PSD_ACTION_ID_GAS_CREQ)))
+<<<<<<< HEAD
 
+=======
+#define IS_P2P_PUB_ACT_REQ(frame, p2p_ie, len) \
+					(wl_cfgp2p_is_pub_action(frame, len) && \
+					((frame->subtype == P2P_PAF_GON_REQ) || \
+					(frame->subtype == P2P_PAF_INVITE_REQ) || \
+					((frame->subtype == P2P_PAF_PROVDIS_REQ) && \
+						IS_PROV_DISC_WITHOUT_GROUP_ID(p2p_ie, len))))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define IS_P2P_PUB_ACT_RSP_SUBTYPE(subtype) ((subtype == P2P_PAF_GON_RSP) || \
 							((subtype == P2P_PAF_GON_CONF) || \
 							(subtype == P2P_PAF_INVITE_RSP) || \

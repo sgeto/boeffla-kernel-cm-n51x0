@@ -20,7 +20,11 @@
  *      Notwithstanding the above, under no circumstances may you combine this
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
+<<<<<<< HEAD
  * $Id: bcmevent.c 440870 2013-12-04 05:23:45Z $
+=======
+ * $Id: bcmevent.c 327460 2012-04-13 18:38:41Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <typedefs.h>
@@ -29,8 +33,14 @@
 #include <proto/bcmeth.h>
 #include <proto/bcmevent.h>
 
+<<<<<<< HEAD
 /* Use the actual name for event tracing */
 #define BCMEVENT_NAME(_event) {(_event), #_event}
+=======
+#if WLC_E_LAST != 94
+#error "You need to add an entry to bcmevent_names[] for the new event"
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 const bcmevent_name_t bcmevent_names[] = {
 	BCMEVENT_NAME(WLC_E_SET_SSID),
@@ -97,6 +107,21 @@ const bcmevent_name_t bcmevent_names[] = {
 	BCMEVENT_NAME(WLC_E_ACTION_FRAME_RX),
 	BCMEVENT_NAME(WLC_E_ACTION_FRAME_COMPLETE),
 #endif
+<<<<<<< HEAD
+=======
+#if 0 && (NDISVER >= 0x0620)
+	{ WLC_E_PRE_ASSOC_IND, "ASSOC_RECV" },
+	{ WLC_E_PRE_REASSOC_IND, "REASSOC_RECV" },
+	{ WLC_E_CHANNEL_ADOPTED, "CHANNEL_ADOPTED" },
+	{ WLC_E_AP_STARTED, "AP_STARTED" },
+	{ WLC_E_DFS_AP_STOP, "DFS_AP_STOP" },
+	{ WLC_E_DFS_AP_RESUME, "DFS_AP_RESUME" },
+	{ WLC_E_ASSOC_IND_NDIS, "ASSOC_IND_NDIS"},
+	{ WLC_E_REASSOC_IND_NDIS, "REASSOC_IND_NDIS"},
+	{ WLC_E_ACTION_FRAME_RX_NDIS, "WLC_E_ACTION_FRAME_RX_NDIS" },
+	{ WLC_E_AUTH_REQ, "WLC_E_AUTH_REQ" },
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef BCMWAPI_WAI
 	BCMEVENT_NAME(WLC_E_WAI_STA_EVENT),
 	BCMEVENT_NAME(WLC_E_WAI_MSG),
@@ -131,6 +156,7 @@ const bcmevent_name_t bcmevent_names[] = {
 #ifdef WLTDLS
 	BCMEVENT_NAME(WLC_E_TDLS_PEER_EVENT),
 #endif /* WLTDLS */
+<<<<<<< HEAD
 	BCMEVENT_NAME(WLC_E_NATIVE),
 #ifdef WLPKTDLYSTAT
 	BCMEVENT_NAME(WLC_E_PKTDELAY_IND),
@@ -155,6 +181,8 @@ const bcmevent_name_t bcmevent_names[] = {
 #ifdef WLAIBSS
 	BCMEVENT_NAME(WLC_E_AIBSS_TXFAIL),
 #endif /* WLAIBSS */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 };
 
 const int bcmevent_names_size = ARRAYSIZE(bcmevent_names);

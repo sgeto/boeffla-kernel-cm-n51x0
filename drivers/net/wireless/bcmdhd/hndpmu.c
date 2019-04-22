@@ -22,6 +22,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: hndpmu.c 433378 2013-10-31 17:19:39Z $
  */
 
@@ -34,6 +35,9 @@
  * They refer to different revisions of the PMU (which is at revision 18 @ Apr 25, 2012)
  * pmu1_ marks the transition from PLL to ADFLL (Digital Frequency Locked Loop). It supports
  * fractional frequency generation. pmu2_ does not support fractional frequency generation.
+=======
+ * $Id: hndpmu.c 357871 2012-09-20 07:17:35Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <bcm_cfg.h>
@@ -138,6 +142,7 @@ static const sdiod_drive_str_t sdiod_drive_strength_tab6_1v8[] = {
 	{0, 0x0} };
 
 
+<<<<<<< HEAD
 /**
  * SDIO Drive Strength to sel value table for 43143 PMU Rev 17, see Confluence 43143 Toplevel
  * architecture page, section 'PMU Chip Control 1 Register definition', click link to picture
@@ -164,6 +169,8 @@ static const sdiod_drive_str_t sdiod_drive_strength_tab7_1v8[] = {
 
 #endif /* BCM_SDIO_VDDIO */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define SDIOD_DRVSTR_KEY(chip, pmu)	(((chip) << 16) | (pmu))
 
 /**

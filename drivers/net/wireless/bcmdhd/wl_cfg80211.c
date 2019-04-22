@@ -21,9 +21,13 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wl_cfg80211.c 464537 2014-03-25 06:28:32Z $
+=======
+ * $Id: wl_cfg80211.c 359682 2012-09-28 20:23:14Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
-/* */
+
 #include <typedefs.h>
 #include <linuxver.h>
 #include <osl.h>
@@ -58,16 +62,10 @@
 #include <linux/wait.h>
 #include <net/cfg80211.h>
 #include <net/rtnetlink.h>
-
 #include <wlioctl.h>
 #include <wldev_common.h>
 #include <wl_cfg80211.h>
 #include <wl_cfgp2p.h>
-#include <wl_android.h>
-
-#ifdef PROP_TXSTATUS
-#include <dhd_wlfc.h>
-#endif
 
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 13, 0)) || defined(WL_VENDOR_EXT_SUPPORT)
 #include <wl_cfgvendor.h>
@@ -125,7 +123,11 @@ u32 wl_dbg_level = WL_DBG_ERR;
 
 #ifdef VSDB
 /* sleep time to keep STA's connecting or connection for continuous af tx or finding a peer */
+<<<<<<< HEAD
 #define DEFAULT_SLEEP_TIME_VSDB		120
+=======
+#define DEFAULT_SLEEP_TIME_VSDB 	200
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define OFF_CHAN_TIME_THRESHOLD_MS	200
 #define AF_RETRY_DELAY_TIME			40
 
@@ -152,10 +154,6 @@ u32 wl_dbg_level = WL_DBG_ERR;
 
 #define DNGL_FUNC(func, parameters) func parameters
 #define COEX_DHCP
-
-#define WLAN_EID_SSID	0
-#define CH_MIN_5G_CHANNEL 34
-#define CH_MIN_2G_CHANNEL 1
 
 /* This is to override regulatory domains defined in cfg80211 module (reg.c)
  * By default world regulatory domain defined in reg.c puts the flags NL80211_RRF_PASSIVE_SCAN
@@ -280,7 +278,7 @@ common_iface_combinations[] = {
 
 #ifdef BCMCCX
 #ifndef WLAN_AKM_SUITE_CCKM
-#define WLAN_AKM_SUITE_CCKM 0x00409600
+#define WLAN_AKM_SUITE_CCKM 0x000FAC04
 #endif
 #define DOT11_LEAP_AUTH	0x80 /* LEAP auth frame paylod constants */
 #endif /* BCMCCX */
@@ -359,16 +357,23 @@ static s32 wl_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
 static s32 wl_cfg80211_config_default_mgmt_key(struct wiphy *wiphy,
 	struct net_device *dev,	u8 key_idx);
 static s32 wl_cfg80211_resume(struct wiphy *wiphy);
+<<<<<<< HEAD
 #if defined(WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, \
 	2, 0))
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32 wl_cfg80211_mgmt_tx_cancel_wait(struct wiphy *wiphy,
 	bcm_struct_cfgdev *cfgdev, u64 cookie);
 static s32 wl_cfg80211_del_station(struct wiphy *wiphy,
 	struct net_device *ndev, u8* mac_addr);
+<<<<<<< HEAD
 static s32 wl_cfg80211_change_station(struct wiphy *wiphy,
 	struct net_device *dev, u8 *mac, struct station_parameters *params);
 #endif /* WL_SUPPORT_BACKPORTED_KPATCHES || KERNEL_VER >= KERNEL_VERSION(3, 2, 0)) */
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)) || defined(WL_COMPAT_WIRELESS)
+=======
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32 wl_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wow);
 #else
 static s32 wl_cfg80211_suspend(struct wiphy *wiphy);
@@ -379,6 +384,7 @@ static s32 wl_cfg80211_del_pmksa(struct wiphy *wiphy, struct net_device *dev,
 	struct cfg80211_pmksa *pmksa);
 static s32 wl_cfg80211_flush_pmksa(struct wiphy *wiphy,
 	struct net_device *dev);
+<<<<<<< HEAD
 static void wl_cfg80211_scan_abort(struct bcm_cfg80211 *cfg);
 static s32 wl_notify_escan_complete(struct bcm_cfg80211 *cfg,
 	struct net_device *ndev, bool aborted, bool fw_abort);
@@ -390,6 +396,10 @@ static s32 wl_cfg80211_tdls_oper(struct wiphy *wiphy, struct net_device *dev,
 static int wl_cfg80211_sched_scan_stop(struct wiphy *wiphy, struct net_device *dev);
 #endif
 
+=======
+static s32 wl_notify_escan_complete(struct wl_priv *wl,
+	struct net_device *ndev, bool aborted, bool fw_abort);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /*
  * event & event Q handlers for cfg80211 interfaces
  */
@@ -421,6 +431,7 @@ static s32 wl_bss_roaming_done(struct bcm_cfg80211 *cfg, struct net_device *ndev
 	const wl_event_msg_t *e, void *data);
 static s32 wl_notify_mic_status(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 	const wl_event_msg_t *e, void *data);
+<<<<<<< HEAD
 #ifdef WL_SCHED_SCAN
 static s32
 wl_notify_sched_scan_results(struct bcm_cfg80211 *cfg, struct net_device *ndev,
@@ -437,6 +448,10 @@ static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_
 static s32 wl_tdls_event_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 	const wl_event_msg_t *e, void *data);
 #endif /* WLTDLS */
+=======
+static s32 wl_notifier_change_state(struct wl_priv *wl, struct net_info *_net_info,
+	enum wl_status state, bool set);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /*
  * register/deregister parent device
  */
@@ -506,11 +521,17 @@ wl_cfg80211_add_iw_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 bss
 static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *dev, void *data);
 static void wl_free_wdev(struct bcm_cfg80211 *cfg);
 
+<<<<<<< HEAD
 static s32 wl_inform_bss(struct bcm_cfg80211 *cfg);
 static s32 wl_inform_single_bss(struct bcm_cfg80211 *cfg, struct wl_bss_info *bi);
 static s32 wl_update_bss_info(struct bcm_cfg80211 *cfg, struct net_device *ndev);
+=======
+static s32 wl_inform_bss(struct wl_priv *wl);
+static s32 wl_inform_single_bss(struct wl_priv *wl, struct wl_bss_info *bi);
+static s32 wl_update_bss_info(struct wl_priv *wl, struct net_device *ndev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static chanspec_t wl_cfg80211_get_shared_freq(struct wiphy *wiphy);
-s32 wl_cfg80211_channel_to_freq(u32 channel);
+static s32 wl_cfg80211_40MHz_to_20MHz_Channel(chanspec_t chspec);
 
 
 static void wl_cfg80211_work_handler(struct work_struct *work);
@@ -565,10 +586,13 @@ static __used u32 wl_find_msb(u16 bit16);
  */
 static int wl_setup_rfkill(struct bcm_cfg80211 *cfg, bool setup);
 static int wl_rfkill_set(void *data, bool blocked);
+<<<<<<< HEAD
 #ifdef DEBUGFS_CFG80211
 static s32 wl_setup_debugfs(struct bcm_cfg80211 *cfg);
 static s32 wl_free_debugfs(struct bcm_cfg80211 *cfg);
 #endif
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 static wl_scan_params_t *wl_cfg80211_scan_alloc_params(int channel,
 	int nprobes, int *out_params_size);
@@ -583,25 +607,38 @@ int dhd_monitor_init(void *dhd_pub);
 int dhd_monitor_uninit(void);
 int dhd_start_xmit(struct sk_buff *skb, struct net_device *net);
 
+<<<<<<< HEAD
 #if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
 void init_roam(int ioctl_ver);
+=======
+#ifdef ROAM_CHANNEL_CACHE
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 void reset_roam_cache(void);
 void add_roam_cache(wl_bss_info_t *bi);
 int  get_roam_channel_list(int target_chan,
 	chanspec_t *channels, const wlc_ssid_t *ssid, int ioctl_ver);
 void print_roam_cache(void);
 void set_roam_band(int band);
+<<<<<<< HEAD
 void update_roam_cache(struct bcm_cfg80211 *cfg, int ioctl_ver);
 #endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+=======
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 static int wl_cfg80211_delayed_roam(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	const struct ether_addr *bssid);
 
 
-#define RETURN_EIO_IF_NOT_UP(wlpriv)						\
+#define CHECK_SYS_UP(wlpriv)						\
 do {									\
+<<<<<<< HEAD
 	struct net_device *checkSysUpNDev = bcmcfg_to_prmry_ndev(wlpriv);       	\
 	if (unlikely(!wl_get_drv_status(wlpriv, READY, checkSysUpNDev))) {	\
+=======
+	struct net_device *ndev = wl_to_prmry_ndev(wlpriv);       	\
+	if (unlikely(!wl_get_drv_status(wlpriv, READY, ndev))) {	\
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_INFO(("device is not ready\n"));			\
 		return -EIO;						\
 	}								\
@@ -685,18 +722,18 @@ static s8 wl_dbg_estr[][WL_DBG_ESTR_MAX] = {
 	}
 
 static struct ieee80211_rate __wl_rates[] = {
-	RATETAB_ENT(DOT11_RATE_1M, 0),
-	RATETAB_ENT(DOT11_RATE_2M, IEEE80211_RATE_SHORT_PREAMBLE),
-	RATETAB_ENT(DOT11_RATE_5M5, IEEE80211_RATE_SHORT_PREAMBLE),
-	RATETAB_ENT(DOT11_RATE_11M, IEEE80211_RATE_SHORT_PREAMBLE),
-	RATETAB_ENT(DOT11_RATE_6M, 0),
-	RATETAB_ENT(DOT11_RATE_9M, 0),
-	RATETAB_ENT(DOT11_RATE_12M, 0),
-	RATETAB_ENT(DOT11_RATE_18M, 0),
-	RATETAB_ENT(DOT11_RATE_24M, 0),
-	RATETAB_ENT(DOT11_RATE_36M, 0),
-	RATETAB_ENT(DOT11_RATE_48M, 0),
-	RATETAB_ENT(DOT11_RATE_54M, 0)
+	RATETAB_ENT(WLC_RATE_1M, 0),
+	RATETAB_ENT(WLC_RATE_2M, IEEE80211_RATE_SHORT_PREAMBLE),
+	RATETAB_ENT(WLC_RATE_5M5, IEEE80211_RATE_SHORT_PREAMBLE),
+	RATETAB_ENT(WLC_RATE_11M, IEEE80211_RATE_SHORT_PREAMBLE),
+	RATETAB_ENT(WLC_RATE_6M, 0),
+	RATETAB_ENT(WLC_RATE_9M, 0),
+	RATETAB_ENT(WLC_RATE_12M, 0),
+	RATETAB_ENT(WLC_RATE_18M, 0),
+	RATETAB_ENT(WLC_RATE_24M, 0),
+	RATETAB_ENT(WLC_RATE_36M, 0),
+	RATETAB_ENT(WLC_RATE_48M, 0),
+	RATETAB_ENT(WLC_RATE_54M, 0)
 };
 
 #define wl_a_rates		(__wl_rates + 4)
@@ -761,10 +798,7 @@ static const u32 __wl_cipher_suites[] = {
 	WLAN_CIPHER_SUITE_CCMP,
 	WLAN_CIPHER_SUITE_AES_CMAC,
 #ifdef BCMWAPI_WPI
-	WLAN_CIPHER_SUITE_SMS4,
-#endif
-#if defined(WLFBT) && defined(WLAN_CIPHER_SUITE_PMK)
-	WLAN_CIPHER_SUITE_PMK,
+	WLAN_CIPHER_SUITE_SMS4
 #endif
 };
 
@@ -778,20 +812,6 @@ static int maxrxpktglom = 0;
 
 /* IOCtl version read from targeted driver */
 static int ioctl_version;
-#ifdef DEBUGFS_CFG80211
-#define S_SUBLOGLEVEL 20
-static const struct {
-	u32 log_level;
-	char *sublogname;
-} sublogname_map[] = {
-	{WL_DBG_ERR, "ERR"},
-	{WL_DBG_INFO, "INFO"},
-	{WL_DBG_DBG, "DBG"},
-	{WL_DBG_SCAN, "SCAN"},
-	{WL_DBG_TRACE, "TRACE"},
-	{WL_DBG_P2P_ACTION, "P2PACTION"}
-};
-#endif
 
 #if defined(CUSTOMER_HW4) && defined(DHD_DEBUG)
 uint prev_dhd_console_ms = 0;
@@ -1079,7 +1099,12 @@ static void swap_key_to_BE(struct wl_wsec_key *key)
 	key->iv_initialized = dtoh32(key->iv_initialized);
 }
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)) && !defined(WL_COMPAT_WIRELESS)
+=======
+//#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
+#if 0
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* For debug: Dump the contents of the encoded wps ie buffe */
 static void
 wl_validate_wps_ie(char *wps_ie, s32 wps_ie_len, bool *pbc)
@@ -1239,6 +1264,37 @@ s32 wl_get_tx_power(struct net_device *dev, s32 *dbm)
 	return err;
 }
 
+static s32
+wl_cfg80211_40MHz_to_20MHz_Channel(chanspec_t chspec)
+{
+	u32 channel = chspec & WL_CHANSPEC_CHAN_MASK;
+
+	/* If chspec is not for 40MHz. Do nothing */
+	if (!(chspec & WL_CHANSPEC_BW_40))
+		return channel;
+
+	if ((channel < 0) || (channel > MAXCHANNEL))
+		return -1;
+
+	switch (channel) {
+		/* 5G Channels */
+		case 38:
+		case 46:
+		case 151:
+		case 159:
+			if (chspec & WL_CHANSPEC_CTL_SB_LOWER)
+				channel = channel - CH_10MHZ_APART;
+			else if (chspec & WL_CHANSPEC_CTL_SB_UPPER)
+				channel = channel + CH_10MHZ_APART;
+			break;
+		default:
+			/* Mhz adjustment not required. Use as is */
+			WL_ERR(("Unsupported channel: %d \n", channel));
+	}
+
+	return channel;
+}
+
 static chanspec_t wl_cfg80211_get_shared_freq(struct wiphy *wiphy)
 {
 	chanspec_t chspec;
@@ -1267,6 +1323,13 @@ static chanspec_t wl_cfg80211_get_shared_freq(struct wiphy *wiphy)
 	else {
 			bss = (struct wl_bss_info *) (cfg->extra_buf + 4);
 			chspec =  bss->chanspec;
+<<<<<<< HEAD
+=======
+			if (chspec & WL_CHANSPEC_BW_40) {
+				uint32 channel = wl_cfg80211_40MHz_to_20MHz_Channel(chspec);
+				chspec = wl_ch_host_to_driver(channel);
+			}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 			WL_DBG(("Valid BSS Found. chanspec:%d \n", chspec));
 	}
@@ -1366,14 +1429,54 @@ wl_cfg80211_add_virtual_iface(struct wiphy *wiphy,
 		WL_ERR(("name is NULL\n"));
 		return NULL;
 	}
+<<<<<<< HEAD
 	if (cfg->p2p_supported && (wlif_type != -1)) {
 		ASSERT(cfg->p2p); /* ensure expectation of p2p initialization */
+=======
+	if (wl->p2p_supported && (wlif_type != -1)) {
+		if (wl_get_p2p_status(wl, IF_DELETING)) {
+			/* wait till IF_DEL is complete
+			 * release the lock for the unregister to proceed
+			 */
+			if (rtnl_is_locked()) {
+				rtnl_unlock();
+				rollback_lock = true;
+			}
+			WL_INFO(("%s: Released the lock and wait till IF_DEL is complete\n",
+				__func__));
+			timeout = wait_event_interruptible_timeout(wl->netif_change_event,
+				(wl_get_p2p_status(wl, IF_DELETING) == false),
+				msecs_to_jiffies(MAX_WAIT_TIME));
+
+			/* put back the rtnl_lock again */
+			if (rollback_lock) {
+				rtnl_lock();
+				rollback_lock = false;
+			}
+			if (timeout > 0) {
+				WL_ERR(("IF DEL is Success\n"));
+
+			} else {
+				WL_ERR(("timeount < 0, return -EAGAIN\n"));
+				return ERR_PTR(-EAGAIN);
+			}
+			/* It should be now be safe to put this check here since we are sure
+			 * by now netdev_notifier (unregister) would have been called
+			 */
+			if (wl->iface_cnt == IFACE_MAX_CNT)
+				return ERR_PTR(-ENOMEM);
+		}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef PROP_TXSTATUS_VSDB
 		if (!dhd)
 			return ERR_PTR(-ENODEV);
 #endif /* PROP_TXSTATUS_VSDB */
+<<<<<<< HEAD
 		if (!cfg->p2p)
+=======
+		if (!wl->p2p || !wl->p2p->vir_ifname)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			return ERR_PTR(-ENODEV);
 
 		if (cfg->p2p && !cfg->p2p->on && strstr(name, WL_P2P_INTERFACE_PREFIX)) {
@@ -1385,10 +1488,17 @@ wl_cfg80211_add_virtual_iface(struct wiphy *wiphy,
 				&cfg->p2p->dev_addr, &cfg->p2p->int_addr);
 		}
 
+<<<<<<< HEAD
 		memset(cfg->p2p->vir_ifname, 0, IFNAMSIZ);
 		strncpy(cfg->p2p->vir_ifname, name, IFNAMSIZ - 1);
 
 		wl_cfg80211_scan_abort(cfg);
+=======
+		memset(wl->p2p->vir_ifname, 0, IFNAMSIZ);
+		strncpy(wl->p2p->vir_ifname, name, IFNAMSIZ - 1);
+
+		wl_notify_escan_complete(wl, _ndev, true, true);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef PROP_TXSTATUS_VSDB
 		if (!cfg->wlfc_on && !disable_proptx) {
 			dhd_wlfc_get_enable(dhd, &enabled);
@@ -1452,6 +1562,7 @@ wl_cfg80211_add_virtual_iface(struct wiphy *wiphy,
 			vwdev->wiphy = cfg->wdev->wiphy;
 			WL_INFO(("virtual interface(%s) is created\n", cfg->p2p->vir_ifname));
 			vwdev->iftype = type;
+<<<<<<< HEAD
 			vwdev->netdev = new_ndev;
 			new_ndev->ieee80211_ptr = vwdev;
 			SET_NETDEV_DEV(new_ndev, wiphy_dev(vwdev->wiphy));
@@ -1461,6 +1572,42 @@ wl_cfg80211_add_virtual_iface(struct wiphy *wiphy,
 
 			if (wl_cfg80211_register_if(cfg, event->ifidx, new_ndev) != BCME_OK) {
 				wl_cfg80211_remove_if(cfg, event->ifidx, new_ndev);
+=======
+			_ndev =  wl_to_p2p_bss_ndev(wl, P2PAPI_BSSCFG_CONNECTION);
+			_ndev->ieee80211_ptr = vwdev;
+			SET_NETDEV_DEV(_ndev, wiphy_dev(vwdev->wiphy));
+			vwdev->netdev = _ndev;
+			wl_set_drv_status(wl, READY, _ndev);
+			wl->p2p->vif_created = true;
+			wl_set_mode_by_netdev(wl, _ndev, mode);
+			net_attach =  wl_to_p2p_bss_private(wl, P2PAPI_BSSCFG_CONNECTION);
+			if (rtnl_is_locked()) {
+				rtnl_unlock();
+				rollback_lock = true;
+			}
+			if (net_attach && !net_attach(wl->pub, _ndev->ifindex)) {
+#ifdef CUSTOMER_HW4
+				wl_alloc_netinfo(wl, _ndev, vwdev, mode, PM_BLOCK);
+#else
+				wl_alloc_netinfo(wl, _ndev, vwdev, mode, PM_ENABLE);
+#endif /* CUSTOMER_HW4 */
+				val = 1;
+				/* Disable firmware roaming for P2P interface  */
+				wldev_iovar_setint(_ndev, "roam_off", val);
+				WL_ERR((" virtual interface(%s) is "
+					"created net attach done\n", wl->p2p->vir_ifname));
+				if (mode == WL_MODE_AP)
+					wl_set_drv_status(wl, CONNECTED, _ndev);
+				if (type == NL80211_IFTYPE_P2P_CLIENT)
+					dhd_mode = DHD_FLAG_P2P_GC_MODE;
+				else if (type == NL80211_IFTYPE_P2P_GO)
+					dhd_mode = DHD_FLAG_P2P_GO_MODE;
+				DNGL_FUNC(dhd_cfg80211_set_p2p_info, (wl, dhd_mode));
+			} else {
+				/* put back the rtnl_lock again */
+				if (rollback_lock)
+					rtnl_lock();
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				goto fail;
 			}
 			wl_alloc_netinfo(cfg, new_ndev, vwdev, mode, pm_mode);
@@ -1514,10 +1661,13 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	s32 timeout = -1;
 	s32 ret = 0;
+<<<<<<< HEAD
 	s32 index = -1;
 #ifdef CUSTOM_SET_CPUCORE
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 #endif /* CUSTOM_SET_CPUCORE */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	WL_DBG(("Enter\n"));
 
 #ifdef CUSTOM_SET_CPUCORE
@@ -1529,6 +1679,7 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 	if (cfgdev->iftype == NL80211_IFTYPE_P2P_DEVICE) {
 		return wl_cfgp2p_del_p2p_disc_if(cfgdev, cfg);
 	}
+<<<<<<< HEAD
 #endif /* WL_CFG80211_P2P_DEV_IF */
 	dev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 
@@ -1538,6 +1689,11 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 	}
 	if (cfg->p2p_supported) {
 		memcpy(p2p_mac.octet, cfg->p2p->int_addr.octet, ETHER_ADDR_LEN);
+=======
+
+	if (wl->p2p_supported) {
+		memcpy(p2p_mac.octet, wl->p2p->int_addr.octet, ETHER_ADDR_LEN);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		/* Clear GO_NEG_PHASE bit to take care of GO-NEG-FAIL cases
 		 */
@@ -1575,6 +1731,7 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 					WL_ERR(("Wait for Link Down event for GO !!!\n"));
 					wait_for_completion_timeout(&cfg->iface_disable,
 						msecs_to_jiffies(500));
+<<<<<<< HEAD
 				} else if (ret != BCME_UNSUPPORTED) {
 					msleep(300);
 				}
@@ -1595,6 +1752,33 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 				#if defined(BCMDONGLEHOST) && defined(OEM_ANDROID)
 				net_os_send_hang_message(ndev);
 				#endif 
+=======
+				} else {
+					msleep(300);
+				}
+			}
+			/* delete interface after link down */
+			ret = wl_cfgp2p_ifdel(wl, &p2p_mac);
+			/* Firmware could not delete the interface so we will not get WLC_E_IF
+			* event for cleaning the dhd virtual nw interace
+			* So lets do it here. Failures from fw will ensure the application to do
+			* ifconfig <inter> down and up sequnce, which will reload the fw
+			* however we should cleanup the linux network virtual interfaces
+			*/
+			/* Request framework to RESET and clean up */
+			if (ret) {
+				struct net_device *ndev = wl_to_prmry_ndev(wl);
+				WL_ERR(("Firmware returned an error (%d) from p2p_ifdel"
+					"HANG Notification sent to %s\n", ret, ndev->name));
+				wl_cfg80211_hang(ndev, WLAN_REASON_UNSPECIFIED);
+			}
+			/* Wait for IF_DEL operation to be finished in firmware */
+			timeout = wait_event_interruptible_timeout(wl->netif_change_event,
+				(wl->p2p->vif_created == false),
+				msecs_to_jiffies(MAX_WAIT_TIME));
+			if (timeout > 0 && (wl->p2p->vif_created == false)) {
+				WL_DBG(("IFDEL operation done\n"));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			} else {
 				/* Wait for IF_DEL operation to be finished */
 				timeout = wait_event_interruptible_timeout(cfg->netif_change_event,
@@ -1626,7 +1810,10 @@ wl_cfg80211_change_virtual_iface(struct wiphy *wiphy, struct net_device *ndev,
 {
 	s32 ap = 0;
 	s32 infra = 0;
+<<<<<<< HEAD
 	s32 ibss = 0;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	s32 wlif_type;
 	s32 mode = 0;
 	s32 err = BCME_OK;
@@ -1679,11 +1866,19 @@ wl_cfg80211_change_virtual_iface(struct wiphy *wiphy, struct net_device *ndev,
 			wlif_type = WL_P2P_IF_GO;
 			WL_ERR(("%s : ap (%d), infra (%d), iftype: (%d)\n",
 				ndev->name, ap, infra, type));
+<<<<<<< HEAD
 			wl_set_p2p_status(cfg, IF_CHANGING);
 			wl_clr_p2p_status(cfg, IF_CHANGED);
 			wl_cfgp2p_ifchange(cfg, &cfg->p2p->int_addr, htod32(wlif_type), chspec);
 			wait_event_interruptible_timeout(cfg->netif_change_event,
 				(wl_get_p2p_status(cfg, IF_CHANGED) == true),
+=======
+			wl_set_p2p_status(wl, IF_CHANGING);
+			wl_clr_p2p_status(wl, IF_CHANGED);
+			wl_cfgp2p_ifchange(wl, &wl->p2p->int_addr, htod32(wlif_type), chspec);
+			wait_event_interruptible_timeout(wl->netif_change_event,
+				(wl_get_p2p_status(wl, IF_CHANGED) == true),
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				msecs_to_jiffies(MAX_WAIT_TIME));
 			wl_set_mode_by_netdev(cfg, ndev, mode);
 			dhd->op_mode &= ~DHD_FLAG_P2P_GC_MODE;
@@ -1788,8 +1983,14 @@ wl_cfg80211_notify_ifchange(int ifidx, char *name, uint8 *mac, uint8 bssidx)
 static s32 wl_cfg80211_handle_ifdel(struct bcm_cfg80211 *cfg, wl_if_event_info *if_event_info,
 	struct net_device* ndev)
 {
+<<<<<<< HEAD
 	s32 type = -1;
 	s32 bssidx = -1;
+=======
+	struct wl_priv *wl = wlcfg_drv_priv;
+	bool rollback_lock = false;
+	s32 index = 0;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef PROP_TXSTATUS_VSDB
 	dhd_pub_t *dhd =  (dhd_pub_t *)(cfg->pub);
 	bool enabled;
@@ -1809,6 +2010,7 @@ static s32 wl_cfg80211_handle_ifdel(struct bcm_cfg80211 *cfg, wl_if_event_info *
 			WL_DBG(("ESCAN COMPLETED\n"));
 			wl_notify_escan_complete(cfg, cfg->escan_info.ndev, true, false);
 		}
+<<<<<<< HEAD
 
 		memset(cfg->p2p->vir_ifname, '\0', IFNAMSIZ);
 		if (wl_cfgp2p_find_type(cfg, bssidx, &type) != BCME_OK) {
@@ -1820,6 +2022,19 @@ static s32 wl_cfg80211_handle_ifdel(struct bcm_cfg80211 *cfg, wl_if_event_info *
 		wl_to_p2p_bss_bssidx(cfg, type) = WL_INVALID;
 		cfg->p2p->vif_created = false;
 
+=======
+		WL_ERR(("IF_DEL event called from dongle, net %x, vif name: %s\n",
+			(unsigned int)ndev, wl->p2p->vir_ifname));
+
+		memset(wl->p2p->vir_ifname, '\0', IFNAMSIZ);
+		index = wl_cfgp2p_find_idx(wl, ndev);
+		wl_to_p2p_bss_ndev(wl, index) = NULL;
+		wl_to_p2p_bss_bssidx(wl, index) = 0;
+		wl->p2p->vif_created = false;
+		wl_cfgp2p_clear_management_ie(wl,
+			index);
+		WL_DBG(("index : %d\n", index));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef PROP_TXSTATUS_VSDB
 		dhd_wlfc_get_enable(dhd, &enabled);
 		if (enabled && cfg->wlfc_on && dhd->op_mode != DHD_FLAG_HOSTAP_MODE &&
@@ -1837,15 +2052,19 @@ static s32 wl_cfg80211_handle_ifdel(struct bcm_cfg80211 *cfg, wl_if_event_info *
 }
 
 /* Find listen channel */
+<<<<<<< HEAD
 static s32 wl_find_listen_channel(struct bcm_cfg80211 *cfg,
 	const u8 *ie, u32 ie_len)
+=======
+static s32 wl_find_listen_channel(struct wl_priv *wl,
+	u8 *ie, u32 ie_len)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	wifi_p2p_ie_t *p2p_ie;
 	u8 *end, *pos;
 	s32 listen_channel;
 
-	pos = (u8 *)ie;
-	p2p_ie = wl_cfgp2p_find_p2pie(pos, ie_len);
+	p2p_ie = wl_cfgp2p_find_p2pie(ie, ie_len);
 
 	if (p2p_ie == NULL)
 		return 0;
@@ -2003,9 +2222,8 @@ static void wl_scan_prep(struct wl_scan_params *params, struct cfg80211_scan_req
 	        htod32((n_ssids << WL_SCAN_PARAMS_NSSID_SHIFT) |
 	               (n_channels & WL_SCAN_PARAMS_COUNT_MASK));
 
-	if (n_channels == 1) {
-		params->active_time = htod32(WL_SCAN_CONNECT_DWELL_TIME_MS);
-		params->nprobes = htod32(params->active_time / WL_SCAN_JOIN_PROBE_INTERVAL_MS);
+	if (n_channels == 1 && wl_get_drv_status_all(wl, CONNECTED)) {
+		params->active_time = WL_SCAN_CONNECT_DWELL_TIME_MS;
 	}
 }
 
@@ -2074,6 +2292,7 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		}
 		if (ndev == bcmcfg_to_prmry_ndev(cfg) && g_first_broadcast_scan == true) {
 #ifdef USE_INITIAL_2G_SCAN
+<<<<<<< HEAD
 			struct ieee80211_channel tmp_channel_list[CH_MAX_2G_CHANNEL];
 			/* allow one 5G channel to add previous connected channel in 5G */
 			bool allow_one_5g_channel = TRUE;
@@ -2096,6 +2315,18 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 #if defined(BCM4334_CHIP)
 				request->channels[i]->flags |=
 					IEEE80211_CHAN_NO_HT40;
+=======
+			if (ndev == wl_to_prmry_ndev(wl) && g_first_broadcast_scan == true) {
+				j = 0;
+				if (!wl_get_valid_channels(ndev, chan_buf, sizeof(chan_buf))) {
+					list = (wl_uint32_list_t *) chan_buf;
+					n_valid_chan = dtoh32(list->count);
+					for (i = 0; i < n_valid_chan && request->n_channels > j;
+						i++) {
+#if defined(BCM4334_CHIP)
+						request->channels[i]->flags |=
+							IEEE80211_CHAN_NO_HT40;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 				bcopy(request->channels[i], &tmp_channel_list[j],
 					sizeof(struct ieee80211_channel));
@@ -2107,11 +2338,27 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 					bcopy(&tmp_channel_list[i], request->channels[i],
 						sizeof(struct ieee80211_channel));
 
+<<<<<<< HEAD
 				request->n_channels = j;
 				is_first_init_2g_scan = true;
 			}
 			else
 				WL_ERR(("Invalid number of 2.4GHz channels %d\n", j));
+=======
+						WL_SCAN(("list->element[%d]=%d\n",
+							i, list->element[i]));
+						if (list->element[i] > CH_MAX_2G_CHANNEL)
+							break;
+						j++;
+					}
+					request->n_channels = j;
+
+					WL_SCAN(("request->n_channels=%d\n", request->n_channels));
+					g_first_broadcast_scan = false;
+					is_first_init_2g_scan = true;
+				}
+			}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 			WL_SCAN(("request->n_channels=%d\n", request->n_channels));
 #else /* USE_INITIAL_SHORT_DWELL_TIME */
@@ -2125,15 +2372,25 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		if (request != NULL) {
 			n_channels = request->n_channels;
 			n_ssids = request->n_ssids;
+<<<<<<< HEAD
+=======
+			/* Allocate space for populating ssids in wl_iscan_params struct */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			if (n_channels % 2)
 				/* If n_channels is odd, add a padd of u16 */
 				params_size += sizeof(u16) * (n_channels + 1);
 			else
 				params_size += sizeof(u16) * n_channels;
 
+<<<<<<< HEAD
 			/* Allocate space for populating ssids in wl_escan_params_t struct */
 			params_size += sizeof(struct wlc_ssid) * n_ssids;
 		}
+=======
+			/* Allocate space for populating ssids in wl_iscan_params struct */
+			params_size += sizeof(struct wlc_ssid) * n_ssids;
+        }
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		params = (wl_escan_params_t *) kzalloc(params_size, GFP_KERNEL);
 		if (params == NULL) {
 			err = -ENOMEM;
@@ -2149,8 +2406,16 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 
 		params->version = htod32(ESCAN_REQ_VERSION);
 		params->action =  htod16(action);
+<<<<<<< HEAD
 		wl_escan_set_sync_id(params->sync_id, cfg);
 		wl_escan_set_type(cfg, WL_SCANTYPE_LEGACY);
+=======
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		params->sync_id = wl->escan_info.cur_sync_id;
+#else
+		params->sync_id = htod16(0x1234);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (params_size + sizeof("escan") >= WLC_IOCTL_MEDLEN) {
 			WL_ERR(("ioctl buffer length not sufficient\n"));
 			kfree(params);
@@ -2183,9 +2448,12 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 				goto exit;
 			}
 			if (!wl_get_valid_channels(ndev, chan_buf, sizeof(chan_buf))) {
+<<<<<<< HEAD
 #ifdef CUSTOMER_HW4
 				int is_printed = false;
 #endif
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				list = (wl_uint32_list_t *) chan_buf;
 				n_valid_chan = dtoh32(list->count);
 				for (i = 0; i < num_chans; i++)
@@ -2209,6 +2477,7 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 						(IEEE80211_CHAN_RADAR
 						| IEEE80211_CHAN_PASSIVE_SCAN))
 						continue;
+<<<<<<< HEAD
 #ifdef CUSTOMER_HW4
 					if (channel >= 52 && channel <= 140) {
 						if (is_printed == false) {
@@ -2218,6 +2487,8 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 						continue;
 					}
 #endif
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 					for (j = 0; j < n_valid_chan; j++) {
 						/* allows only supported channel on
@@ -2264,12 +2535,16 @@ wl_run_escan(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		}
 		err = wl_cfgp2p_escan(cfg, ndev, cfg->active_scan, num_chans, default_chan_list,
 			search_state, action,
+<<<<<<< HEAD
 			wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_DEVICE), NULL,
 			p2p_scan_purpose);
 
 		if (!err)
 			cfg->p2p->search_state = search_state;
 
+=======
+			wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		kfree(default_chan_list);
 	}
 exit:
@@ -2292,9 +2567,18 @@ wl_do_escan(struct bcm_cfg80211 *cfg, struct wiphy *wiphy, struct net_device *nd
 	s32 passive_scan;
 	wl_scan_results_t *results;
 	WL_SCAN(("Enter \n"));
+<<<<<<< HEAD
 	mutex_lock(&cfg->usr_sync);
 
 	results = wl_escan_get_buf(cfg, FALSE);
+=======
+	mutex_lock(&wl->usr_sync);
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	results = (wl_scan_results_t *) wl->escan_info.escan_buf[wl->escan_info.cur_sync_id%2];
+#else
+	results = (wl_scan_results_t *) wl->escan_info.escan_buf;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	results->version = 0;
 	results->count = 0;
 	results->buflen = WL_SCAN_RESULTS_FIXED_SIZE;
@@ -2327,6 +2611,7 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 	bool p2p_ssid;
 #ifdef WL11U
 	bcm_tlv_t *interworking_ie;
+	u32 ie_len;
 #endif
 	s32 err = 0;
 	s32 bssidx = -1;
@@ -2338,6 +2623,7 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 	struct net_device *remain_on_channel_ndev = NULL;
 #endif
 
+<<<<<<< HEAD
 	dhd_pub_t *dhd;
 
 	dhd = (dhd_pub_t *)(cfg->pub);
@@ -2347,6 +2633,14 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 	}
 
 	ndev = ndev_to_wlc_ndev(ndev, cfg);
+=======
+	/* If scan req comes for p2p0, send it over primary I/F
+	 * Scan results will be delivered corresponding to cfg80211_scan_request
+	 */
+	if (ndev == wl->p2p_net) {
+		ndev = wl_to_prmry_ndev(wl);
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (WL_DRV_STATUS_SENDING_AF_FRM_EXT(cfg)) {
 		WL_ERR(("Sending Action Frames. Try it again.\n"));
@@ -2378,7 +2672,6 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 		wl_notify_escan_complete(cfg, remain_on_channel_ndev, true, true);
 	}
 #endif /* WL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST */
-
 
 	/* Arm scan timeout timer */
 	mod_timer(&cfg->scan_timeout, jiffies + msecs_to_jiffies(WL_SCAN_TIMER_INTERVAL_MS));
@@ -2427,6 +2720,7 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 
 					}
 				}
+<<<<<<< HEAD
 			}
 			if (!cfg->p2p_supported || !p2p_scan(cfg)) {
 
@@ -2442,6 +2736,38 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 					err = wl_cfg80211_add_iw_ie(cfg, ndev, bssidx,
 					       VNDR_IE_CUSTOM_FLAG, interworking_ie->id,
 					       interworking_ie->data, interworking_ie->len);
+=======
+				if (!wl->p2p_supported || !p2p_scan(wl)) {
+					bssidx = wl_cfgp2p_find_idx(wl, ndev);
+
+#ifdef WL11U
+					if ((interworking_ie = wl_cfg80211_find_interworking_ie(
+						(u8 *)request->ie, request->ie_len)) != NULL) {
+						ie_len = interworking_ie->len;
+
+						err = wl_cfg80211_add_iw_ie(wl, ndev, bssidx,
+						       VNDR_IE_CUSTOM_FLAG, interworking_ie->id,
+						       interworking_ie->data, interworking_ie->len);
+
+						if (unlikely(err)) {
+							goto scan_out;
+						}
+					} else if (wl->iw_ie_len != 0) {
+					/* we have to clear IW IE and disable gratuitous APR */
+						wl_cfg80211_add_iw_ie(wl, ndev, bssidx,
+							VNDR_IE_CUSTOM_FLAG,
+							DOT11_MNG_INTERWORKING_ID,
+							0, 0);
+
+						wldev_iovar_setint_bsscfg(ndev, "grat_arp", 0,
+							bssidx);
+						/* we don't care about error */
+					}
+#endif /* WL11U */
+					err = wl_cfgp2p_set_management_ie(wl, ndev, bssidx,
+						VNDR_IE_PRBREQ_FLAG, (u8 *)request->ie,
+						request->ie_len);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 					if (unlikely(err)) {
 						goto scan_out;
@@ -2472,10 +2798,31 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 	} else {		/* scan in ibss */
 		ssids = this_ssid;
 	}
+<<<<<<< HEAD
 
 	if (request && !p2p_scan(cfg)) {
 		WL_TRACE_HW4(("START SCAN\n"));
 	}
+=======
+	wl->scan_request = request;
+	wl_set_drv_status(wl, SCANNING, ndev);
+	if (iscan_req) {
+		err = wl_do_iscan(wl, request);
+		if (likely(!err))
+			goto scan_success;
+		else
+			goto scan_out;
+	} else if (escan_req) {
+		if (wl->p2p_supported) {
+			if (p2p_on(wl) && p2p_scan(wl)) {
+
+				/* find my listen channel */
+				wl->afx_hdl->my_listen_chan =
+					wl_find_listen_channel(wl, (u8 *)request->ie,
+					request->ie_len);
+				err = wl_cfgp2p_enable_discovery(wl, ndev,
+					request->ie, request->ie_len);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	cfg->scan_request = request;
 	wl_set_drv_status(cfg, SCANNING, ndev);
@@ -2502,11 +2849,13 @@ __wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 		goto scan_out;
 
 scan_success:
+
 	busy_count = 0;
 
 	return 0;
 
 scan_out:
+
 	if (err == BCME_BUSY || err == BCME_NOTREADY) {
 		WL_ERR(("Scan err = (%d), busy?%d", err, -EBUSY));
 		err = -EBUSY;
@@ -2533,16 +2882,21 @@ scan_out:
 			if ((ret = wldev_ioctl(ndev, WLC_GET_BSSID,
 				&bssid, ETHER_ADDR_LEN, false)) == 0)
 				WL_ERR(("FW is connected with " MACDBG "/n",
-					MAC2STRDBG(bssid.octet)));
+				MAC2STRDBG(bssid.octet)));
 			else
 				WL_ERR(("GET BSSID failed with %d\n", ret));
 
+<<<<<<< HEAD
 			wl_cfg80211_scan_abort(cfg);
 
+=======
+			wl_cfg80211_disconnect(wiphy, ndev, DOT11_RC_DISASSOC_LEAVING);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 	} else {
 		busy_count = 0;
 	}
+<<<<<<< HEAD
 
 	wl_clr_drv_status(cfg, SCANNING, ndev);
 	if (timer_pending(&cfg->scan_timeout))
@@ -2551,6 +2905,14 @@ scan_out:
 	cfg->scan_request = NULL;
 	spin_unlock_irqrestore(&cfg->cfgdrv_lock, flags);
 
+=======
+	wl_clr_drv_status(wl, SCANNING, ndev);
+	if (timer_pending(&wl->scan_timeout))
+		del_timer_sync(&wl->scan_timeout);
+	spin_lock_irqsave(&wl->cfgdrv_lock, flags);
+	wl->scan_request = NULL;
+	spin_unlock_irqrestore(&wl->cfgdrv_lock, flags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return err;
 }
 
@@ -2570,7 +2932,11 @@ wl_cfg80211_scan(struct wiphy *wiphy, struct net_device *ndev,
 #endif /* WL_CFG80211_P2P_DEV_IF */
 
 	WL_DBG(("Enter \n"));
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	err = __wl_cfg80211_scan(wiphy, ndev, request, NULL);
 	if (unlikely(err)) {
@@ -2628,7 +2994,11 @@ static s32 wl_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
 	struct net_device *ndev = bcmcfg_to_prmry_ndev(cfg);
 	s32 err = 0;
 
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	WL_DBG(("Enter\n"));
 	if (changed & WIPHY_PARAM_RTS_THRESHOLD &&
 		(cfg->conf->rts_threshold != wiphy->rts_threshold)) {
@@ -2829,11 +3199,18 @@ wl_cfg80211_join_ibss(struct wiphy *wiphy, struct net_device *dev,
 #endif /* WLAIBSS */
 
 	WL_TRACE(("In\n"));
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 	WL_INFO(("JOIN BSSID:" MACDBG "\n", MAC2STRDBG(params->bssid)));
 	if (!params->ssid || params->ssid_len <= 0) {
 		WL_ERR(("Invalid parameter\n"));
 		return -EINVAL;
+=======
+	CHECK_SYS_UP(wl);
+	if (params->bssid) {
+		WL_ERR(("Invalid bssid\n"));
+		return -EOPNOTSUPP;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #if defined(WL_CFG80211_P2P_DEV_IF)
 	chan = params->chandef.chan;
@@ -3021,8 +3398,13 @@ static s32 wl_cfg80211_leave_ibss(struct wiphy *wiphy, struct net_device *dev)
 		return err;
 	}
 
+<<<<<<< HEAD
 	/* remove the VSIE */
 	wl_cfg80211_ibss_vsie_delete(dev);
+=======
+	CHECK_SYS_UP(wl);
+	wl_link_down(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return err;
 }
@@ -3072,11 +3454,15 @@ wl_set_wpa_version(struct net_device *dev, struct cfg80211_connect_params *sme)
 	struct wl_security *sec;
 	s32 val = 0;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (sme->crypto.wpa_versions & NL80211_WPA_VERSION_1)
 		val = WPA_AUTH_PSK |
@@ -3120,11 +3506,15 @@ wl_set_set_wapi_ie(struct net_device *dev, struct cfg80211_connect_params *sme)
 {
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	WL_DBG((" %s \n", __FUNCTION__));
 
@@ -3149,12 +3539,16 @@ wl_set_auth_type(struct net_device *dev, struct cfg80211_connect_params *sme)
 	struct wl_security *sec;
 	s32 val = 0;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
 
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	switch (sme->auth_type) {
 	case NL80211_AUTHTYPE_OPEN_SYSTEM:
 		val = WL_AUTH_OPEN_SYSTEM;
@@ -3165,7 +3559,11 @@ wl_set_auth_type(struct net_device *dev, struct cfg80211_connect_params *sme)
 		WL_DBG(("shared key\n"));
 		break;
 	case NL80211_AUTHTYPE_AUTOMATIC:
+#ifdef USE_WEP_AUTH_SHARED_OPEN
+		val = WL_AUTH_SHARED_OPEN;
+#else
 		val = WL_AUTH_OPEN_SHARED;
+#endif /* USE_WEP_AUTH_SHARED_OPEN */
 		WL_DBG(("automatic\n"));
 		break;
 #ifdef BCMCCX
@@ -3175,7 +3573,7 @@ wl_set_auth_type(struct net_device *dev, struct cfg80211_connect_params *sme)
 		break;
 #endif
 	default:
-		val = 2;
+		val = WL_AUTH_OPEN_SHARED;
 		WL_ERR(("invalid auth type (%d)\n", sme->auth_type));
 		break;
 	}
@@ -3208,11 +3606,15 @@ wl_set_set_cipher(struct net_device *dev, struct cfg80211_connect_params *sme)
 #ifdef BCMWAPI_WPI
 	s32 val = 0;
 #endif
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (sme->crypto.n_ciphers_pairwise) {
 		switch (sme->crypto.ciphers_pairwise[0]) {
@@ -3224,6 +3626,8 @@ wl_set_set_cipher(struct net_device *dev, struct cfg80211_connect_params *sme)
 			pval = TKIP_ENABLED;
 			break;
 		case WLAN_CIPHER_SUITE_CCMP:
+			pval = AES_ENABLED;
+			break;
 		case WLAN_CIPHER_SUITE_AES_CMAC:
 			pval = AES_ENABLED;
 			break;
@@ -3239,6 +3643,7 @@ wl_set_set_cipher(struct net_device *dev, struct cfg80211_connect_params *sme)
 			return -EINVAL;
 		}
 	}
+<<<<<<< HEAD
 #if defined(BCMSUP_4WAY_HANDSHAKE) && defined(WLAN_AKM_SUITE_FT_8021X)
 	/* Ensure in-dongle supplicant is turned on when FBT wants to do the 4-way
 	 * handshake.
@@ -3257,6 +3662,8 @@ wl_set_set_cipher(struct net_device *dev, struct cfg80211_connect_params *sme)
 		}
 	}
 #endif /* BCMSUP_4WAY_HANDSHAKE && WLAN_AKM_SUITE_FT_8021X */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (sme->crypto.cipher_group) {
 		switch (sme->crypto.cipher_group) {
 		case WLAN_CIPHER_SUITE_WEP40:
@@ -3364,11 +3771,15 @@ wl_set_key_mgmt(struct net_device *dev, struct cfg80211_connect_params *sme)
 	struct wl_security *sec;
 	s32 val = 0;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (sme->crypto.n_akm_suites) {
 		err = wldev_iovar_getint(dev, "wpa_auth", &val);
@@ -3418,16 +3829,6 @@ wl_set_key_mgmt(struct net_device *dev, struct cfg80211_connect_params *sme)
 			case WLAN_AKM_SUITE_PSK:
 				val = WPA2_AUTH_PSK;
 				break;
-#if defined(WLFBT) && defined(WLAN_AKM_SUITE_FT_8021X)
-			case WLAN_AKM_SUITE_FT_8021X:
-				val = WPA2_AUTH_UNSPECIFIED | WPA2_AUTH_FT;
-				break;
-#endif
-#if defined(WLFBT) && defined(WLAN_AKM_SUITE_FT_PSK)
-			case WLAN_AKM_SUITE_FT_PSK:
-				val = WPA2_AUTH_PSK | WPA2_AUTH_FT;
-				break;
-#endif
 #ifdef BCMCCX
 			case WLAN_AKM_SUITE_CCKM:
 				val = WPA2_AUTH_CCKM;
@@ -3478,11 +3879,15 @@ wl_set_set_sharedkey(struct net_device *dev,
 	struct wl_wsec_key key;
 	s32 val;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	WL_DBG(("key len (%d)\n", sme->key_len));
 	if (sme->key_len) {
@@ -3553,15 +3958,14 @@ wl_set_set_sharedkey(struct net_device *dev,
 	return err;
 }
 
-#if defined(ESCAN_RESULT_PATCH)
+#ifdef ESCAN_RESULT_PATCH
 static u8 connect_req_bssid[6];
 static u8 broad_bssid[6];
-#endif /* ESCAN_RESULT_PATCH */
+#endif
 
-
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 #define MAX_ROAM_CACHE_NUM 100
-#endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+#endif
 
 #if defined(CUSTOM_SET_CPUCORE) || defined(CONFIG_TCPACK_FASTTX)
 static bool wl_get_chan_isvht80(struct net_device *net, dhd_pub_t *dhd)
@@ -3588,9 +3992,14 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	wl_extjoin_params_t *ext_join_params;
 	struct wl_join_params join_params;
 	size_t join_params_size;
+<<<<<<< HEAD
 #if defined(ROAM_ENABLE) && defined(ROAM_AP_ENV_DETECTION)
 	dhd_pub_t *dhd =  (dhd_pub_t *)(cfg->pub);
 	s32 roam_trigger[2] = {0, 0};
+=======
+#ifdef ROAM_AP_ENV_DETECTION
+	dhd_pub_t *dhd =  (dhd_pub_t *)(wl->pub);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* ROAM_AP_ENV_DETECTION */
 	s32 err = 0;
 	wpa_ie_fixed_t *wpa_ie;
@@ -3599,12 +4008,10 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	u32 wpaie_len = 0;
 	u32 chan_cnt = 0;
 	struct ether_addr bssid;
-	s32 bssidx;
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 	chanspec_t chanspec_list[MAX_ROAM_CACHE_NUM];
-#endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+#endif
 	int ret;
-	int wait_cnt;
 
 	WL_DBG(("In\n"));
 
@@ -3613,6 +4020,7 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 		return -EOPNOTSUPP;
 	}
 
+<<<<<<< HEAD
 	if (unlikely(sme->ssid_len > DOT11_MAX_SSID_LEN)) {
 		WL_ERR(("Invalid SSID info: SSID=%s, length=%zd\n",
 			sme->ssid, sme->ssid_len));
@@ -3620,6 +4028,9 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	}
 
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	/*
 	 * Cancel ongoing scan to sync up with sme state machine of cfg80211.
@@ -3639,11 +4050,13 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	cfg->block_gon_req_tx_count = 0;
 	cfg->block_gon_req_rx_count = 0;
 #endif /* WL_CFG80211_GON_COLLISION */
-#if defined(ESCAN_RESULT_PATCH)
-	if (sme->bssid)
+#ifdef ESCAN_RESULT_PATCH
+	if (sme->bssid) {
 		memcpy(connect_req_bssid, sme->bssid, ETHER_ADDR_LEN);
-	else
+	}
+	else {
 		bzero(connect_req_bssid, ETHER_ADDR_LEN);
+	}
 	bzero(broad_bssid, ETHER_ADDR_LEN);
 #endif
 #if defined(USE_DYNAMIC_MAXPKT_RXGLOM)
@@ -3668,6 +4081,7 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 				WL_ERR(("error (%d)\n", err));
 				return err;
 			}
+<<<<<<< HEAD
 			wait_cnt = 500/10;
 			while (wl_get_drv_status(cfg, DISCONNECTING, dev) && wait_cnt) {
 				WL_DBG(("Waiting for disconnection terminated, wait_cnt: %d\n",
@@ -3685,6 +4099,14 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 			wait_cnt--;
 			OSL_SLEEP(10);
 		}
+=======
+			while (wl_get_drv_status(wl, DISCONNECTING, dev)) {
+				WL_ERR(("Waiting for disconnection terminated.\n"));
+				msleep(20);
+			}
+		} else
+			WL_DBG(("Currently not associated!\n"));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	/* Clean BSSID */
@@ -3694,11 +4116,15 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 
 	if (p2p_is_on(cfg) && (dev != bcmcfg_to_prmry_ndev(cfg))) {
 		/* we only allow to connect using virtual interface in case of P2P */
+<<<<<<< HEAD
 			if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 				WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 				return BCME_ERROR;
 			}
 			wl_cfgp2p_set_management_ie(cfg, dev, bssidx,
+=======
+			wl_cfgp2p_set_management_ie(wl, dev, wl_cfgp2p_find_idx(wl, dev),
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				VNDR_IE_ASSOCREQ_FLAG, sme->ie, sme->ie_len);
 	} else if (dev == bcmcfg_to_prmry_ndev(cfg)) {
 		/* find the RSN_IE */
@@ -3722,16 +4148,21 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 				cfg->ioctl_buf, WLC_IOCTL_MAXLEN, &cfg->ioctl_buf_sync);
 		}
 
+<<<<<<< HEAD
 		if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 			WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 			return BCME_ERROR;
 		}
 		err = wl_cfgp2p_set_management_ie(cfg, dev, bssidx,
+=======
+		err = wl_cfgp2p_set_management_ie(wl, dev, wl_cfgp2p_find_idx(wl, dev),
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			VNDR_IE_ASSOCREQ_FLAG, (u8 *)sme->ie, sme->ie_len);
 		if (unlikely(err)) {
 			return err;
 		}
 	}
+<<<<<<< HEAD
 #if defined(ROAM_ENABLE) && defined(ROAM_AP_ENV_DETECTION)
 	if (dhd->roam_env_detection) {
 		bool is_roamtrig_reset = TRUE;
@@ -3747,6 +4178,12 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 		if (is_roamtrig_reset && is_roam_env_ok) {
 			roam_trigger[0] = WL_AUTO_ROAM_TRIGGER;
 			roam_trigger[1] = WLC_BAND_ALL;
+=======
+#ifdef ROAM_AP_ENV_DETECTION
+	if (dhd->roam_env_detection && (wldev_iovar_setint(dev, "roam_env_detection",
+		AP_ENV_DETECT_NOT_USED) == BCME_OK)) {
+		s32 roam_trigger[2] = {WL_AUTO_ROAM_TRIGGER, WLC_BAND_ALL};
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		err = wldev_ioctl(dev, WLC_SET_ROAM_TRIGGER, roam_trigger,
 			sizeof(roam_trigger), true);
 		if (unlikely(err)) {
@@ -3757,7 +4194,7 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	}
 #endif /* ROAM_ENABLE && ROAM_AP_ENV_DETECTION */
 	if (chan) {
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 		wlc_ssid_t ssid;
 		int band;
 
@@ -3773,8 +4210,13 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 #else
 		cfg->channel = ieee80211_frequency_to_channel(chan->center_freq);
 		chan_cnt = 1;
+<<<<<<< HEAD
 #endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
 		WL_DBG(("channel (%d), center_req (%d), %d channels\n", cfg->channel,
+=======
+#endif /* ROAM_CHANNEL_CACHE */
+		WL_DBG(("channel (%d), center_req (%d), %d channels\n", wl->channel,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			chan->center_freq, chan_cnt));
 	} else
 		cfg->channel = 0;
@@ -3842,7 +4284,10 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	}
 	ext_join_params->ssid.SSID_len = min(sizeof(ext_join_params->ssid.SSID), sme->ssid_len);
 	memcpy(&ext_join_params->ssid.SSID, sme->ssid, ext_join_params->ssid.SSID_len);
+<<<<<<< HEAD
 	wl_update_prof(cfg, dev, NULL, &ext_join_params->ssid, WL_PROF_SSID);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	ext_join_params->ssid.SSID_len = htod32(ext_join_params->ssid.SSID_len);
 	/* increate dwell time to receive probe response or detect Beacon
 	* from target AP at a noisy air only during connect command
@@ -3861,7 +4306,7 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 		memcpy(&ext_join_params->assoc.bssid, &ether_bcast, ETH_ALEN);
 	ext_join_params->assoc.chanspec_num = chan_cnt;
 	if (chan_cnt) {
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 		memcpy(ext_join_params->assoc.chanspec_list, chanspec_list,
 			sizeof(chanspec_t) * chan_cnt);
 #else
@@ -3877,13 +4322,14 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 		ext_join_params->assoc.chanspec_list[0] |= chspec;
 		ext_join_params->assoc.chanspec_list[0] =
 			wl_chspec_host_to_driver(ext_join_params->assoc.chanspec_list[0]);
-#endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+#endif /* ROAM_CHANNEL_CACHE */
 	}
 	ext_join_params->assoc.chanspec_num = htod32(ext_join_params->assoc.chanspec_num);
 	if (ext_join_params->ssid.SSID_len < IEEE80211_MAX_SSID_LEN) {
 		WL_INFO(("ssid \"%s\", len (%d)\n", ext_join_params->ssid.SSID,
 			ext_join_params->ssid.SSID_len));
 	}
+<<<<<<< HEAD
 	wl_set_drv_status(cfg, CONNECTING, dev);
 
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
@@ -3897,6 +4343,11 @@ wl_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 		MAC2STRDBG((u8*)(&ext_join_params->assoc.bssid)), cfg->channel,
 		ext_join_params->ssid.SSID, ext_join_params->ssid.SSID_len));
 
+=======
+	wl_set_drv_status(wl, CONNECTING, dev);
+	err = wldev_iovar_setbuf_bsscfg(dev, "join", ext_join_params, join_params_size,
+		wl->ioctl_buf, WLC_IOCTL_MAXLEN, wl_cfgp2p_find_idx(wl, dev), &wl->ioctl_buf_sync);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	kfree(ext_join_params);
 	if (err) {
 		wl_clr_drv_status(cfg, CONNECTING, dev);
@@ -3923,8 +4374,13 @@ set_ssid:
 	else
 		memcpy(&join_params.params.bssid, &ether_bcast, ETH_ALEN);
 
+<<<<<<< HEAD
 	wl_ch_to_chanspec(cfg->channel, &join_params, &join_params_size);
 	WL_DBG(("join_param_size %zu\n", join_params_size));
+=======
+	wl_ch_to_chanspec(wl->channel, &join_params, &join_params_size);
+	WL_DBG(("join_param_size %d\n", join_params_size));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (join_params.ssid.SSID_len < IEEE80211_MAX_SSID_LEN) {
 		WL_INFO(("ssid \"%s\", len (%d)\n", join_params.ssid.SSID,
@@ -3953,9 +4409,15 @@ wl_cfg80211_disconnect(struct wiphy *wiphy, struct net_device *dev,
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 #endif /* CUSTOM_SET_CPUCORE */
 	WL_ERR(("Reason %d\n", reason_code));
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 	act = *(bool *) wl_read_prof(cfg, dev, WL_PROF_ACT);
 	curbssid = wl_read_prof(cfg, dev, WL_PROF_BSSID);
+=======
+	CHECK_SYS_UP(wl);
+	act = *(bool *) wl_read_prof(wl, dev, WL_PROF_ACT);
+	curbssid = wl_read_prof(wl, dev, WL_PROF_BSSID);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (act) {
 		/*
 		* Cancel ongoing scan to sync up with sme state machine of cfg80211.
@@ -4004,6 +4466,7 @@ wl_cfg80211_set_tx_power(struct wiphy *wiphy,
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	struct net_device *ndev = bcmcfg_to_prmry_ndev(cfg);
 	s32 err = 0;
+<<<<<<< HEAD
 #if defined(WL_CFG80211_P2P_DEV_IF)
 	s32 dbm = MBM_TO_DBM(mbm);
 #elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)) || \
@@ -4012,6 +4475,11 @@ wl_cfg80211_set_tx_power(struct wiphy *wiphy,
 #endif /* WL_CFG80211_P2P_DEV_IF */
 
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	s32 disable = 0;
+
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	switch (type) {
 	case NL80211_TX_POWER_AUTOMATIC:
 		break;
@@ -4051,9 +4519,15 @@ static s32 wl_cfg80211_get_tx_power(struct wiphy *wiphy, s32 *dbm)
 	struct net_device *ndev = bcmcfg_to_prmry_ndev(cfg);
 	s32 err = 0;
 
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 	err = wl_get_tx_power(ndev, dbm);
 	if (unlikely(err))
+=======
+	CHECK_SYS_UP(wl);
+	err = wldev_iovar_getint(ndev, "qtxpower", &txpwrdbm);
+	if (unlikely(err)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_ERR(("error (%d)\n", err));
 
 	return err;
@@ -4067,6 +4541,7 @@ wl_cfg80211_config_default_key(struct wiphy *wiphy, struct net_device *dev,
 	u32 index;
 	s32 wsec;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -4075,12 +4550,22 @@ wl_cfg80211_config_default_key(struct wiphy *wiphy, struct net_device *dev,
 
 	WL_DBG(("key index (%d)\n", key_idx));
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+
+	WL_DBG(("key index (%d)\n", key_idx));
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	err = wldev_iovar_getint_bsscfg(dev, "wsec", &wsec, bssidx);
 	if (unlikely(err)) {
 		WL_ERR(("WLC_GET_WSEC error (%d)\n", err));
 		return err;
 	}
+<<<<<<< HEAD
 	if (wsec == WEP_ENABLED) {
+=======
+	if (wsec & WEP_ENABLED) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		/* Just select a new current key */
 		index = (u32) key_idx;
 		index = htod32(index);
@@ -4100,12 +4585,17 @@ wl_add_keyext(struct wiphy *wiphy, struct net_device *dev,
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	struct wl_wsec_key key;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	s32 mode = wl_get_mode_by_netdev(cfg, dev);
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+	s32 mode = wl_get_mode_by_netdev(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memset(&key, 0, sizeof(key));
 	key.index = (u32) key_idx;
 
@@ -4236,18 +4726,22 @@ wl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	s32 mode = wl_get_mode_by_netdev(cfg, dev);
 	WL_DBG(("key index (%d)\n", key_idx));
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
+=======
+	CHECK_SYS_UP(wl);
 
-	if (mac_addr &&
-		((params->cipher != WLAN_CIPHER_SUITE_WEP40) &&
-		(params->cipher != WLAN_CIPHER_SUITE_WEP104))) {
-			wl_add_keyext(wiphy, dev, key_idx, mac_addr, params);
-			goto exit;
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+
+	if (mac_addr) {
+		wl_add_keyext(wiphy, dev, key_idx, mac_addr, params);
+		goto exit;
 	}
 	memset(&key, 0, sizeof(key));
 
@@ -4300,6 +4794,7 @@ wl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 		val = SMS4_ENABLED;
 		break;
 #endif /* BCMWAPI_WPI */
+<<<<<<< HEAD
 #if defined(WLFBT) && defined(WLAN_CIPHER_SUITE_PMK)
 	case WLAN_CIPHER_SUITE_PMK: {
 		int j;
@@ -4333,6 +4828,8 @@ wl_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 			return err;
 	} break;
 #endif /* WLFBT && WLAN_CIPHER_SUITE_PMK */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	default:
 		WL_ERR(("Invalid cipher (0x%x)\n", params->cipher));
 		return -EINVAL;
@@ -4375,19 +4872,28 @@ wl_cfg80211_del_key(struct wiphy *wiphy, struct net_device *dev,
 	struct wl_wsec_key key;
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 		return BCME_ERROR;
 	}
 	WL_DBG(("Enter\n"));
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
+	WL_DBG(("Enter\n"));
 #ifndef IEEE80211W
 	if ((key_idx >= DOT11_MAX_DEFAULT_KEYS) && (key_idx < DOT11_MAX_DEFAULT_KEYS+2))
 		return -EINVAL;
 #endif
+<<<<<<< HEAD
 
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memset(&key, 0, sizeof(key));
 
 	key.flags = WL_PRIMARY_KEY;
@@ -4424,6 +4930,7 @@ wl_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
 	struct wl_security *sec;
 	s32 wsec;
 	s32 err = 0;
+<<<<<<< HEAD
 	s32 bssidx;
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -4431,6 +4938,12 @@ wl_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
 	}
 	WL_DBG(("key index (%d)\n", key_idx));
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	s32 bssidx = wl_cfgp2p_find_idx(wl, dev);
+
+	WL_DBG(("key index (%d)\n", key_idx));
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memset(&key, 0, sizeof(key));
 	key.index = key_idx;
 	swap_key_to_BE(&key);
@@ -4438,7 +4951,7 @@ wl_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
 	params.key_len = (u8) min_t(u8, DOT11_MAX_KEY_SIZE, key.len);
 	memcpy(params.key, key.data, params.key_len);
 
-	err = wldev_iovar_getint_bsscfg(dev, "wsec", &wsec, bssidx);
+	wldev_iovar_getint_bsscfg(dev, "wsec", &wsec, bssidx);
 	if (unlikely(err)) {
 		WL_ERR(("WLC_GET_WSEC error (%d)\n", err));
 		return err;
@@ -4495,12 +5008,21 @@ wl_cfg80211_get_station(struct wiphy *wiphy, struct net_device *dev,
 	s32 rate;
 	s32 err = 0;
 	sta_info_t *sta;
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0)) || defined(WL_COMPAT_WIRELESS)
 	s8 eabuf[ETHER_ADDR_STR_LEN];
 #endif
 	dhd_pub_t *dhd =  (dhd_pub_t *)(cfg->pub);
 	RETURN_EIO_IF_NOT_UP(cfg);
 	if (wl_get_mode_by_netdev(cfg, dev) == WL_MODE_AP) {
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0)
+	s8 eabuf[ETHER_ADDR_STR_LEN];
+#endif
+	dhd_pub_t *dhd =  (dhd_pub_t *)(wl->pub);
+	CHECK_SYS_UP(wl);
+	if (wl_get_mode_by_netdev(wl, dev) == WL_MODE_AP) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		err = wldev_iovar_getbuf(dev, "sta_info", (struct ether_addr *)mac,
 			ETHER_ADDR_LEN, cfg->ioctl_buf, WLC_IOCTL_SMLEN, &cfg->ioctl_buf_sync);
 		if (err < 0) {
@@ -4515,7 +5037,11 @@ wl_cfg80211_get_station(struct wiphy *wiphy, struct net_device *dev,
 		sta->idle = dtoh32(sta->idle);
 		sta->in = dtoh32(sta->in);
 		sinfo->inactive_time = sta->idle * 1000;
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (sta->flags & WL_STA_ASSOC) {
 			sinfo->filled |= STATION_INFO_CONNECTED_TIME;
 			sinfo->connected_time = sta->in;
@@ -4615,8 +5141,13 @@ wl_cfg80211_get_station(struct wiphy *wiphy, struct net_device *dev,
 get_station_err:
 		if (err && (err != -ERESTARTSYS)) {
 			/* Disconnect due to zero BSSID or error to get RSSI */
+<<<<<<< HEAD
 			WL_ERR(("force cfg80211_disconnected: %d\n", err));
 			wl_clr_drv_status(cfg, CONNECTED, dev);
+=======
+			WL_ERR(("force cfg80211_disconnected\n"));
+			wl_clr_drv_status(wl, CONNECTED, dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			cfg80211_disconnected(dev, 0, NULL, 0, GFP_KERNEL);
 			wl_link_down(cfg);
 		}
@@ -4628,12 +5159,31 @@ get_station_err:
 	return err;
 }
 
+/* Function to update sta power save mode for Kernel wifi stack */
+int wl_cfg80211_update_power_mode(struct net_device *dev)
+{
+	int pm = -1;
+	int err;
+
+	err = wldev_ioctl(dev, WLC_GET_PM, &pm, sizeof(pm), false);
+	if (err || (pm == -1)) {
+		WL_ERR(("error (%d)\n", err));
+	} else {
+		pm = (pm == PM_OFF) ? false : true;
+		WL_DBG(("%s: %d\n", __func__, pm));
+		if (dev->ieee80211_ptr)
+			dev->ieee80211_ptr->ps = pm;
+	}
+	return err;
+}
+
 static s32
 wl_cfg80211_set_power_mgmt(struct wiphy *wiphy, struct net_device *dev,
 	bool enabled, s32 timeout)
 {
 	s32 pm;
 	s32 err = 0;
+<<<<<<< HEAD
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	struct net_info *_net_info = wl_get_netinfo_by_netdev(cfg, dev);
 
@@ -4651,10 +5201,34 @@ wl_cfg80211_set_power_mgmt(struct wiphy *wiphy, struct net_device *dev,
 	if (_net_info->pm_block) {
 		WL_ERR(("%s:Do not enable the power save for pm_block %d\n",
 			dev->name, _net_info->pm_block));
+=======
+	struct wl_priv *wl = wiphy_priv(wiphy);
+	struct net_info *_net_info = wl_get_netinfo_by_netdev(wl, dev);
+#ifndef SUPPORT_PM2_ONLY
+	dhd_pub_t *dhd = (dhd_pub_t *)(wl->pub);
+#endif
+
+	CHECK_SYS_UP(wl);
+
+	if (wl->p2p_net == dev || _net_info == NULL) {
+		return err;
+	}
+
+	/* android has special hooks to change pm when kernel suspended */
+#ifndef SUPPORT_PM2_ONLY
+	pm = enabled ? ((dhd->in_suspend) ? PM_MAX : PM_FAST) : PM_OFF;
+#else
+	pm = enabled ? PM_FAST : PM_OFF;
+#endif
+
+	/* Do not enable the power save after assoc if it is p2p interface */
+	if (_net_info->pm_block || wl->vsdb_mode) {
+		WL_DBG(("Do not enable the power save\n"));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		pm = PM_OFF;
 	}
 	pm = htod32(pm);
-	WL_DBG(("%s:power save %s\n", dev->name, (pm ? "enabled" : "disabled")));
+	WL_DBG(("power save %s\n", (pm ? "enabled" : "disabled")));
 	err = wldev_ioctl(dev, WLC_SET_PM, &pm, sizeof(pm), true);
 	if (unlikely(err)) {
 		if (err == -ENODEV)
@@ -4801,9 +5375,15 @@ wl_cfg80211_set_pmksa(struct wiphy *wiphy, struct net_device *dev,
 	s32 err = 0;
 	int i;
 
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 	for (i = 0; i < cfg->pmk_list->pmkids.npmkid; i++)
 		if (!memcmp(pmksa->bssid, &cfg->pmk_list->pmkids.pmkid[i].BSSID,
+=======
+	CHECK_SYS_UP(wl);
+	for (i = 0; i < wl->pmk_list->pmkids.npmkid; i++)
+		if (!memcmp(pmksa->bssid, &wl->pmk_list->pmkids.pmkid[i].BSSID,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			ETHER_ADDR_LEN))
 			break;
 	if (i < WL_NUM_PMKIDS_MAX) {
@@ -4833,12 +5413,21 @@ static s32
 wl_cfg80211_del_pmksa(struct wiphy *wiphy, struct net_device *dev,
 	struct cfg80211_pmksa *pmksa)
 {
+<<<<<<< HEAD
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	struct _pmkid_list pmkid = {0};
 	s32 err = 0;
 	int i;
 
 	RETURN_EIO_IF_NOT_UP(cfg);
+=======
+	struct wl_priv *wl = wiphy_priv(wiphy);
+	struct _pmkid_list pmkid;
+	s32 err = 0;
+	int i;
+
+	CHECK_SYS_UP(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memcpy(&pmkid.pmkid[0].BSSID, pmksa->bssid, ETHER_ADDR_LEN);
 	memcpy(pmkid.pmkid[0].PMKID, pmksa->pmkid, WPA2_PMKID_LEN);
 
@@ -4881,9 +5470,15 @@ wl_cfg80211_flush_pmksa(struct wiphy *wiphy, struct net_device *dev)
 {
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	s32 err = 0;
+<<<<<<< HEAD
 	RETURN_EIO_IF_NOT_UP(cfg);
 	memset(cfg->pmk_list, 0, sizeof(*cfg->pmk_list));
 	err = wl_update_pmklist(dev, cfg->pmk_list, err);
+=======
+	CHECK_SYS_UP(wl);
+	memset(wl->pmk_list, 0, sizeof(*wl->pmk_list));
+	err = wl_update_pmklist(dev, wl->pmk_list, err);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return err;
 
 }
@@ -4901,7 +5496,7 @@ wl_cfg80211_scan_alloc_params(int channel, int nprobes, int *out_params_size)
 	params_size = WL_SCAN_PARAMS_FIXED_SIZE + 1 * sizeof(uint16);
 	params = (wl_scan_params_t*) kzalloc(params_size, GFP_KERNEL);
 	if (params == NULL) {
-		WL_ERR(("mem alloc failed (%d bytes)\n", params_size));
+		WL_ERR(("%s: mem alloc failed (%d bytes)\n", __func__, params_size));
 		return params;
 	}
 	memset(params, 0, params_size);
@@ -4950,6 +5545,7 @@ wl_cfg80211_remain_on_channel(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 
 	ndev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 
+<<<<<<< HEAD
 	WL_DBG(("Enter, channel: %d, duration ms (%d) SCANNING ?? %s \n",
 		ieee80211_frequency_to_channel(channel->center_freq),
 		duration, (wl_get_drv_status(cfg, SCANNING, ndev)) ? "YES":"NO"));
@@ -4963,6 +5559,16 @@ wl_cfg80211_remain_on_channel(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 #ifndef WL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST
 	if (wl_get_drv_status_all(cfg, SCANNING)) {
 		wl_notify_escan_complete(cfg, cfg->escan_info.ndev, true, true);
+=======
+	if (wl->p2p_net == dev) {
+		ndev = wl_to_prmry_ndev(wl);
+	} else {
+		ndev = dev;
+	}
+#ifndef WL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST
+	if (wl_get_drv_status(wl, SCANNING, ndev)) {
+		wl_notify_escan_complete(wl, ndev, true, true);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #endif /* not WL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST */
 
@@ -5091,9 +5697,14 @@ wl_cfg80211_afx_handler(struct work_struct *work)
 			ret = wl_cfgp2p_discover_listen(cfg, cfg->afx_hdl->my_listen_chan,
 				(100 * (1 + (RANDOM32() % 3)))); /* 100ms ~ 300ms */
 		} else {
+<<<<<<< HEAD
 			ret = wl_cfgp2p_act_frm_search(cfg, cfg->afx_hdl->dev,
 				cfg->afx_hdl->bssidx, cfg->afx_hdl->peer_listen_chan,
 				NULL);
+=======
+			ret = wl_cfgp2p_act_frm_search(wl, wl->afx_hdl->dev,
+				wl->afx_hdl->bssidx, wl->afx_hdl->peer_listen_chan);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		if (unlikely(ret != BCME_OK)) {
 			WL_ERR(("ERROR occurred! returned value is (%d)\n", ret));
@@ -5137,9 +5748,15 @@ wl_cfg80211_af_searching_channel(struct bcm_cfg80211 *cfg, struct net_device *de
 		WL_DBG(("Scheduling the action frame for sending.. retry %d\n",
 			cfg->afx_hdl->retry));
 		/* search peer on peer's listen channel */
+<<<<<<< HEAD
 		schedule_work(&cfg->afx_hdl->work);
 		wait_for_completion_timeout(&cfg->act_frm_scan,
 			msecs_to_jiffies(WL_AF_SEARCH_TIME_MAX));
+=======
+		schedule_work(&wl->afx_hdl->work);
+		wait_for_completion_timeout(&wl->act_frm_scan,
+			msecs_to_jiffies(MAX_WAIT_TIME));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		if ((cfg->afx_hdl->peer_chan != WL_INVALID) ||
 			!(wl_get_drv_status(cfg, FINDING_COMMON_CHANNEL, dev)))
@@ -5153,6 +5770,7 @@ wl_cfg80211_af_searching_channel(struct bcm_cfg80211 *cfg, struct net_device *de
 			WL_DBG(("Scheduling Listen peer in my listen channel = %d\n",
 				cfg->afx_hdl->my_listen_chan));
 			/* listen on my listen channel */
+<<<<<<< HEAD
 			cfg->afx_hdl->is_listen = TRUE;
 			schedule_work(&cfg->afx_hdl->work);
 			wait_for_completion_timeout(&cfg->act_frm_scan,
@@ -5163,6 +5781,16 @@ wl_cfg80211_af_searching_channel(struct bcm_cfg80211 *cfg, struct net_device *de
 			break;
 
 		cfg->afx_hdl->retry++;
+=======
+			wl->afx_hdl->is_listen = TRUE;
+			schedule_work(&wl->afx_hdl->work);
+			wait_for_completion_timeout(&wl->act_frm_scan,
+				msecs_to_jiffies(MAX_WAIT_TIME));
+		}
+		if (!wl_get_drv_status(wl, FINDING_COMMON_CHANNEL, dev))
+			break;
+		wl->afx_hdl->retry++;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		WL_AF_TX_KEEP_PRI_CONNECTION_VSDB(cfg);
 	}
@@ -5233,7 +5861,11 @@ wl_cfg80211_config_p2p_pub_af_tx(struct wiphy *wiphy,
 	case P2P_PAF_GON_RSP: {
 		cfg->next_af_subtype = act_frm->subtype + 1;
 		/* increase dwell time to wait for CONF frame */
+<<<<<<< HEAD
 		af_params->dwell_time = WL_MED_DWELL_TIME + 100;
+=======
+		af_params->dwell_time = WL_MED_DWELL_TIME;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		break;
 	}
 	case P2P_PAF_GON_CONF: {
@@ -5303,8 +5935,14 @@ wl_cfg80211_config_p2p_pub_af_tx(struct wiphy *wiphy,
 		break;
 	}
 	case P2P_PAF_PROVDIS_RSP: {
+<<<<<<< HEAD
 		cfg->next_af_subtype = P2P_PAF_GON_REQ;
 		af_params->dwell_time = WL_MIN_DWELL_TIME;
+=======
+		wl->next_af_subtype = P2P_PAF_GON_REQ;
+		/* increase dwell time to MED level */
+		af_params->dwell_time = WL_MED_DWELL_TIME;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef WL_CFG80211_SYNC_GON
 		config_af_params->extra_listen = false;
 #endif /* WL_CFG80211_SYNC_GON */
@@ -5375,6 +6013,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 #ifdef VSDB
 	ulong off_chan_started_jiffies = 0;
 #endif
+<<<<<<< HEAD
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 #ifdef WL11U
 #if defined(WL_CFG80211_P2P_DEV_IF)
@@ -5383,6 +6022,17 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 	ndev = ndev_to_cfgdev(cfgdev);
 #endif /* WL_CFG80211_P2P_DEV_IF */
 #endif /* WL11U */
+=======
+
+#ifdef WL11U
+	if (!af_params || !action_frame || (!p2p_is_on(wl) && !wl->wl11u))
+#else
+	if (!af_params || !action_frame || !p2p_is_on(wl))
+		return false;
+#endif
+
+	wl_cfgp2p_print_actframe(true, action_frame->data, action_frame->len);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	category = action_frame->data[DOT11_ACTION_CAT_OFF];
 	action = action_frame->data[DOT11_ACTION_ACT_OFF];
@@ -5424,7 +6074,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 		} else if (action_frame_len >= sizeof(wifi_p2psd_gas_pub_act_frame_t)) {
 			/* service discovery process */
 			if (action == P2PSD_ACTION_ID_GAS_IREQ ||
-				action == P2PSD_ACTION_ID_GAS_CREQ) {
+				action == P2PSD_ACTION_ID_GAS_IREQ) {
 				/* configure service discovery query frame */
 
 				config_af_params.search_channel = true;
@@ -5434,7 +6084,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 
 				af_params->dwell_time = WL_MED_DWELL_TIME;
 			} else if (action == P2PSD_ACTION_ID_GAS_IRESP ||
-				action == P2PSD_ACTION_ID_GAS_CRESP) {
+				action == P2PSD_ACTION_ID_GAS_IRESP) {
 				/* configure service discovery response frame */
 				af_params->dwell_time = WL_MIN_DWELL_TIME;
 			} else {
@@ -5443,16 +6093,19 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 		} else {
 			WL_DBG(("Unknown Frame: category 0x%x, action 0x%x, length %d\n",
 				category, action, action_frame_len));
-	}
+		}
 	} else if (category == P2P_AF_CATEGORY) {
 		/* do not configure anything. it will be sent with a default configuration */
 	} else {
 		WL_DBG(("Unknown Frame: category 0x%x, action 0x%x\n",
 			category, action));
+<<<<<<< HEAD
 		if (dhd->op_mode & DHD_FLAG_HOSTAP_MODE) {
 			wl_clr_drv_status(cfg, SENDING_ACT_FRM, dev);
 			return false;
 		}
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	/* To make sure to send successfully action frame, we have to turn off mpc */
@@ -5467,6 +6120,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 	} else {
 		config_af_params.search_channel = false;
 	}
+
 #ifdef WL11U
 	if (ndev == bcmcfg_to_prmry_ndev(cfg))
 		config_af_params.search_channel = false;
@@ -5480,6 +6134,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 #endif
 
 	/* if scan is ongoing, abort current scan. */
+<<<<<<< HEAD
 	if (wl_get_drv_status_all(cfg, SCANNING)) {
 		wl_notify_escan_complete(cfg, cfg->escan_info.ndev, true, true);
 	}
@@ -5488,6 +6143,10 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 	/* handling DFS channel exceptions */
 	if (!wl_cfg80211_check_DFS_channel(cfg, af_params, action_frame->data, action_frame->len)) {
 		return false;	/* the action frame was blocked */
+=======
+	if (wl_get_drv_status_all(wl, SCANNING)) {
+		wl_notify_escan_complete(wl, ndev, true, true);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #endif /* WL11U */
 
@@ -5507,6 +6166,7 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 	/* search peer's channel */
 	if (config_af_params.search_channel) {
 		/* initialize afx_hdl */
+<<<<<<< HEAD
 		if (wl_cfgp2p_find_idx(cfg, dev, &cfg->afx_hdl->bssidx) != BCME_OK) {
 			WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
 			goto exit;
@@ -5514,11 +6174,15 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 		cfg->afx_hdl->dev = dev;
 		cfg->afx_hdl->retry = 0;
 		cfg->afx_hdl->peer_chan = WL_INVALID;
+=======
+		wl->afx_hdl->bssidx = wl_cfgp2p_find_idx(wl, dev);
+		wl->afx_hdl->dev = dev;
+		wl->afx_hdl->retry = 0;
+		wl->afx_hdl->peer_chan = WL_INVALID;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		if (wl_cfg80211_af_searching_channel(cfg, dev) == WL_INVALID) {
 			WL_ERR(("couldn't find peer's channel.\n"));
-			wl_cfgp2p_print_actframe(true, action_frame->data, action_frame->len,
-				af_params->channel);
 			goto exit;
 		}
 
@@ -5542,8 +6206,6 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 	off_chan_started_jiffies = jiffies;
 #endif /* VSDB */
 
-	wl_cfgp2p_print_actframe(true, action_frame->data, action_frame->len, af_params->channel);
-
 	/* Now send a tx action frame */
 	ack = wl_cfgp2p_tx_action_frame(cfg, dev, af_params, bssidx) ? false : true;
 
@@ -5555,8 +6217,12 @@ wl_cfg80211_send_action_frame(struct wiphy *wiphy, struct net_device *dev,
 				OFF_CHAN_TIME_THRESHOLD_MS) {
 				WL_AF_TX_KEEP_PRI_CONNECTION_VSDB(cfg);
 				off_chan_started_jiffies = jiffies;
+<<<<<<< HEAD
 			} else
 				OSL_SLEEP(AF_RETRY_DELAY_TIME);
+=======
+			}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 #endif /* VSDB */
 		ack = wl_cfgp2p_tx_action_frame(cfg, dev, af_params, bssidx) ?
@@ -5627,8 +6293,11 @@ exit:
 	return ack;
 }
 
+<<<<<<< HEAD
 #define MAX_NUM_OF_ASSOCIATED_DEV       64
 #if defined(WL_CFG80211_P2P_DEV_IF)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32
 wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 	struct ieee80211_channel *channel, bool offchan,
@@ -5641,10 +6310,19 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 	enum nl80211_channel_type channel_type,
 	bool channel_type_valid, unsigned int wait,
 	const u8* buf, size_t len,
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)) || defined(WL_COMPAT_WIRELESS)
 	bool no_cck,
 #endif
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)
+#if 1
+	bool no_cck,
+#endif
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
+#if 1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	bool dont_wait_for_ack,
 #endif
 	u64 *cookie)
@@ -5666,9 +6344,18 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 
 	dev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 
+<<<<<<< HEAD
 	/* set bsscfg idx for iovar (wlan0: P2PAPI_BSSCFG_PRIMARY, p2p: P2PAPI_BSSCFG_DEVICE)	*/
 	if (discover_cfgdev(cfgdev, cfg)) {
 		bssidx = wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_DEVICE);
+=======
+	/* find bssidx based on ndev */
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+	if (bssidx == -1) {
+
+		WL_ERR(("Can not find the bssidx for dev( %p )\n", dev));
+		return -ENODEV;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	else {
 		if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
@@ -5698,14 +6385,21 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 		if (ieee80211_is_probe_resp(mgmt->frame_control)) {
 			s32 ie_offset =  DOT11_MGMT_HDR_LEN + DOT11_BCN_PRB_FIXED_LEN;
 			s32 ie_len = len - ie_offset;
+<<<<<<< HEAD
 			if (dev == bcmcfg_to_prmry_ndev(cfg))
 				bssidx = wl_to_p2p_bss_bssidx(cfg, P2PAPI_BSSCFG_DEVICE);
 				wl_cfgp2p_set_management_ie(cfg, dev, bssidx,
+=======
+			if (dev == wl_to_prmry_ndev(wl))
+				bssidx = wl_to_p2p_bss_bssidx(wl, P2PAPI_BSSCFG_DEVICE);
+			wl_cfgp2p_set_management_ie(wl, dev, bssidx,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				VNDR_IE_PRBRSP_FLAG, (u8 *)(buf + ie_offset), ie_len);
 			cfg80211_mgmt_tx_status(cfgdev, *cookie, buf, len, true, GFP_KERNEL);
 			goto exit;
 		} else if (ieee80211_is_disassoc(mgmt->frame_control) ||
 			ieee80211_is_deauth(mgmt->frame_control)) {
+<<<<<<< HEAD
 			char mac_buf[MAX_NUM_OF_ASSOCIATED_DEV *
 				sizeof(struct ether_addr) + sizeof(uint)] = {0};
 			int num_associated = 0;
@@ -5720,20 +6414,27 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 				else
 					num_associated = assoc_maclist->count;
 			}
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			memcpy(scb_val.ea.octet, mgmt->da, ETH_ALEN);
 			scb_val.val = mgmt->u.disassoc.reason_code;
 			err = wldev_ioctl(dev, WLC_SCB_DEAUTHENTICATE_FOR_REASON, &scb_val,
 				sizeof(scb_val_t), true);
 			if (err < 0)
 				WL_ERR(("WLC_SCB_DEAUTHENTICATE_FOR_REASON error %d\n", err));
-			WL_ERR(("Disconnect STA : %s scb_val.val %d\n",
+			WL_DBG(("Disconnect STA : %s scb_val.val %d\n",
 				bcm_ether_ntoa((const struct ether_addr *)mgmt->da, eabuf),
 				scb_val.val));
+<<<<<<< HEAD
 
 			if (num_associated > 0 && ETHER_ISBCAST(mgmt->da))
 				wl_delay(400);
 
 			cfg80211_mgmt_tx_status(cfgdev, *cookie, buf, len, true, GFP_KERNEL);
+=======
+			wl_delay(400);
+			cfg80211_mgmt_tx_status(ndev, *cookie, buf, len, true, GFP_KERNEL);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			goto exit;
 
 		} else if (ieee80211_is_action(mgmt->frame_control)) {
@@ -5809,7 +6510,7 @@ wl_cfg80211_mgmt_frame_register(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 	u16 frame_type, bool reg)
 {
 
-	WL_DBG(("frame_type: %x, reg: %d\n", frame_type, reg));
+	WL_DBG(("%s: frame_type: %x, reg: %d\n", __func__, frame_type, reg));
 
 	if (frame_type != (IEEE80211_FTYPE_MGMT | IEEE80211_STYPE_PROBE_REQ))
 		return;
@@ -5860,11 +6561,12 @@ wl_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 	enum nl80211_channel_type channel_type)
 {
 	s32 _chan;
+#ifdef HT40_GO
+	s32 center_chan;
 	chanspec_t chspec = 0;
-	chanspec_t fw_chspec = 0;
-	u32 bw = WL_CHANSPEC_BW_20;
-
+#endif
 	s32 err = BCME_OK;
+<<<<<<< HEAD
 	s32 bw_cap = 0;
 	struct {
 		u32 band;
@@ -5874,6 +6576,9 @@ wl_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 #ifdef CUSTOM_SET_CPUCORE
 	dhd_pub_t *dhd =  (dhd_pub_t *)(cfg->pub);
 #endif /* CUSTOM_SET_CPUCORE */
+=======
+	struct wl_priv *wl = wiphy_priv(wiphy);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	dev = ndev_to_wlc_ndev(dev, cfg);
 	_chan = ieee80211_frequency_to_channel(chan->center_freq);
@@ -5895,7 +6600,31 @@ wl_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 
 	}
 #endif /* NOT_YET */
+#ifdef HT40_GO
+	switch (_chan) {
+		/* adjust channel to center of 40MHz band */
+		case 40:
+		case 48:
+		case 153:
+		case 161:
+			if (_chan <= (MAXCHANNEL - CH_20MHZ_APART))
+				center_chan = _chan - CH_10MHZ_APART;
+				chspec = CH40MHZ_CHSPEC(center_chan, WL_CHANSPEC_CTL_SB_UPPER);
+			break;
+		case 36:
+		case 44:
+		case 149:
+		case 157:
+			if (_chan <= (MAXCHANNEL - CH_20MHZ_APART))
+				center_chan = _chan + CH_10MHZ_APART;
+				chspec = CH40MHZ_CHSPEC(center_chan, WL_CHANSPEC_CTL_SB_LOWER);
+			break;
+		default:
+			chspec = CH20MHZ_CHSPEC(_chan);
+			break;
+	}
 
+<<<<<<< HEAD
 	if (chan->band == IEEE80211_BAND_5GHZ) {
 		param.band = WLC_BAND_5G;
 		err = wldev_iovar_getbuf(dev, "bw_cap", &param, sizeof(param),
@@ -5920,45 +6649,17 @@ wl_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 			else
 				bw = WL_CHANSPEC_BW_20;
 
+=======
+	chspec = wl_chspec_host_to_driver(chspec);
+	if ((err = wldev_iovar_setint(dev, "chanspec", chspec)) == BCME_BADCHAN) {
+		err = wldev_ioctl(dev, WLC_SET_CHANNEL, &_chan, sizeof(_chan), true);
+		if (err < 0) {
+			WL_ERR(("WLC_SET_CHANNEL error %d"
+				"chip may not be supporting this channel\n", err));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
-
-	} else if (chan->band == IEEE80211_BAND_2GHZ)
-		bw = WL_CHANSPEC_BW_20;
-set_channel:
-	chspec = wf_channel2chspec(_chan, bw);
-	if (wf_chspec_valid(chspec)) {
-		fw_chspec = wl_chspec_host_to_driver(chspec);
-		if (fw_chspec != INVCHANSPEC) {
-			if ((err = wldev_iovar_setint(dev, "chanspec",
-				fw_chspec)) == BCME_BADCHAN) {
-				if (bw == WL_CHANSPEC_BW_80)
-					goto change_bw;
-				err = wldev_ioctl(dev, WLC_SET_CHANNEL,
-					&_chan, sizeof(_chan), true);
-				if (err < 0) {
-					WL_ERR(("WLC_SET_CHANNEL error %d"
-					"chip may not be supporting this channel\n", err));
-				}
-			} else if (err) {
-				WL_ERR(("failed to set chanspec error %d\n", err));
-			}
-		} else {
-			WL_ERR(("failed to convert host chanspec to fw chanspec\n"));
-			err = BCME_ERROR;
-		}
-	} else {
-change_bw:
-		if (bw == WL_CHANSPEC_BW_80)
-			bw = WL_CHANSPEC_BW_40;
-		else if (bw == WL_CHANSPEC_BW_40)
-			bw = WL_CHANSPEC_BW_20;
-		else
-			bw = 0;
-		if (bw)
-			goto set_channel;
-		WL_ERR(("Invalid chanspec 0x%x\n", chspec));
-		err = BCME_ERROR;
 	}
+<<<<<<< HEAD
 #ifdef CUSTOM_SET_CPUCORE
 	if (dhd->op_mode == DHD_FLAG_HOSTAP_MODE) {
 		WL_DBG(("SoftAP mode do not need to set cpucore\n"));
@@ -5969,6 +6670,15 @@ change_bw:
 		dhd_set_cpucore(dhd, TRUE);
 	}
 #endif
+=======
+#else
+	err = wldev_ioctl(dev, WLC_SET_CHANNEL, &_chan, sizeof(_chan), true);
+	if (err < 0) {
+		WL_ERR(("WLC_SET_CHANNEL error %d"
+			"chip may not be supporting this channel\n", err));
+	}
+#endif /* HT40_GO */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return err;
 }
 
@@ -6369,7 +7079,12 @@ wl_cfg80211_bcn_validate_sec(
 
 }
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+#if 1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32 wl_cfg80211_bcn_set_params(
 	struct cfg80211_ap_settings *info,
 	struct net_device *dev,
@@ -6495,10 +7210,14 @@ wl_cfg80211_bcn_bringup_ap(
 				goto exit;
 			}
 
+<<<<<<< HEAD
 			/* Do abort scan before creating GO */
 			wl_cfg80211_scan_abort(cfg);
 
 			if ((err = wl_cfgp2p_bss(cfg, dev, bssidx, 1)) < 0) {
+=======
+			if ((err = wl_cfgp2p_bss(wl, dev, bssidx, 1)) < 0) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				WL_ERR(("GO Bring up error %d\n", err));
 				goto exit;
 			}
@@ -6557,19 +7276,34 @@ exit:
 	return err;
 }
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+#if 1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 s32
-wl_cfg80211_parse_ap_ies(
+wl_cfg80211_parse_set_ies(
 	struct net_device *dev,
 	struct cfg80211_beacon_data *info,
-	struct parsed_ies *ies)
+	struct parsed_ies *ies,
+	u32 dev_role,
+	s32 bssidx)
 {
+<<<<<<< HEAD
 	struct parsed_ies prb_ies;
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 	u8 *vndr = NULL;
 	u32 vndr_ie_len = 0;
+=======
+	struct wl_priv *wl = wlcfg_drv_priv;
+	struct parsed_ies prb_ies;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	s32 err = BCME_OK;
+
+	memset(ies, 0, sizeof(struct parsed_ies));
+	memset(&prb_ies, 0, sizeof(struct parsed_ies));
 
 	/* Parse Beacon IEs */
 	if (wl_cfg80211_parse_ies((u8 *)info->tail,
@@ -6579,6 +7313,7 @@ wl_cfg80211_parse_ap_ies(
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	vndr = (u8 *)info->proberesp_ies;
 	vndr_ie_len = info->proberesp_ies_len;
 
@@ -6616,6 +7351,8 @@ wl_cfg80211_set_ies(
 	u32 vndr_ie_len = 0;
 	s32 err = BCME_OK;
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Set Beacon IEs to FW */
 	if ((err = wl_cfgp2p_set_management_ie(cfg, dev, bssidx,
 		VNDR_IE_BEACON_FLAG, (u8 *)info->tail,
@@ -6625,6 +7362,7 @@ wl_cfg80211_set_ies(
 		WL_DBG(("Applied Vndr IEs for Beacon \n"));
 	}
 
+<<<<<<< HEAD
 	vndr = (u8 *)info->proberesp_ies;
 	vndr_ie_len = info->proberesp_ies_len;
 
@@ -6642,10 +7380,26 @@ wl_cfg80211_set_ies(
 	/* Set Probe Response IEs to FW */
 	if ((err = wl_cfgp2p_set_management_ie(cfg, dev, bssidx,
 		VNDR_IE_PRBRSP_FLAG, vndr, vndr_ie_len)) < 0) {
+=======
+	/* Parse Probe Response IEs */
+	if (wl_cfg80211_parse_ies((u8 *)info->proberesp_ies,
+		info->proberesp_ies_len, &prb_ies) < 0) {
+		WL_ERR(("PRB RESP get IEs failed \n"));
+		err = -EINVAL;
+		goto fail;
+	}
+
+	/* Set Probe Response IEs to FW */
+	if ((err = wl_cfgp2p_set_management_ie(wl, dev, bssidx,
+		VNDR_IE_PRBRSP_FLAG, (u8 *)info->proberesp_ies,
+		info->proberesp_ies_len)) < 0) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_ERR(("Set Probe Resp IE Failed \n"));
 	} else {
 		WL_DBG(("Applied Vndr IEs for Probe Resp \n"));
 	}
+
+fail:
 
 	return err;
 }
@@ -6720,8 +7474,11 @@ static s32 wl_cfg80211_hostapd_sec(
 	return 0;
 }
 
+<<<<<<< HEAD
 #if defined(WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, \
 	2, 0))
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32
 wl_cfg80211_del_station(
 	struct wiphy *wiphy,
@@ -6732,11 +7489,14 @@ wl_cfg80211_del_station(
 	struct bcm_cfg80211 *cfg = wiphy_priv(wiphy);
 	scb_val_t scb_val;
 	s8 eabuf[ETHER_ADDR_STR_LEN];
+<<<<<<< HEAD
 	int err;
 	char mac_buf[MAX_NUM_OF_ASSOCIATED_DEV *
 		sizeof(struct ether_addr) + sizeof(uint)] = {0};
 	struct maclist *assoc_maclist = (struct maclist *)mac_buf;
 	int num_associated = 0;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	WL_DBG(("Entry\n"));
 	if (mac_addr == NULL) {
@@ -6756,6 +7516,7 @@ wl_cfg80211_del_station(
 		}
 	}
 
+<<<<<<< HEAD
 	assoc_maclist->count = MAX_NUM_OF_ASSOCIATED_DEV;
 	err = wldev_ioctl(ndev, WLC_GET_ASSOCLIST,
 		assoc_maclist, sizeof(mac_buf), false);
@@ -6764,15 +7525,17 @@ wl_cfg80211_del_station(
 	else
 		num_associated = assoc_maclist->count;
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memcpy(scb_val.ea.octet, mac_addr, ETHER_ADDR_LEN);
 	scb_val.val = DOT11_RC_DEAUTH_LEAVING;
-	err = wldev_ioctl(dev, WLC_SCB_DEAUTHENTICATE_FOR_REASON, &scb_val,
-		sizeof(scb_val_t), true);
-	if (err < 0)
-		WL_ERR(("WLC_SCB_DEAUTHENTICATE_FOR_REASON err %d\n", err));
-	WL_ERR(("Disconnect STA : %s scb_val.val %d\n",
+	if (wldev_ioctl(dev, WLC_SCB_DEAUTHENTICATE_FOR_REASON, &scb_val,
+		sizeof(scb_val_t), true))
+		WL_ERR(("WLC_SCB_DEAUTHENTICATE_FOR_REASON failed\n"));
+	WL_DBG(("Disconnect STA : %s scb_val.val %d\n",
 		bcm_ether_ntoa((const struct ether_addr *)mac_addr, eabuf),
 		scb_val.val));
+<<<<<<< HEAD
 
 	if (num_associated > 0 && ETHER_ISBCAST(mac_addr))
 		wl_delay(400);
@@ -6810,6 +7573,14 @@ wl_cfg80211_change_station(
 #endif /* WL_SUPPORT_BACKPORTED_KPATCHES || KERNEL_VER >= KERNEL_VERSION(3, 2, 0)) */
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+	wl_delay(400);
+	return 0;
+}
+
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+#if 1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static s32
 wl_cfg80211_start_ap(
 	struct wiphy *wiphy,
@@ -6834,6 +7605,7 @@ wl_cfg80211_start_ap(
 		dev = bcmcfg_to_prmry_ndev(cfg);
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
+<<<<<<< HEAD
 #endif /* WL_ENABLE_P2P_IF */
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -6841,6 +7613,12 @@ wl_cfg80211_start_ap(
 	}
 	if (p2p_is_on(cfg) &&
 		(bssidx == wl_to_p2p_bss_bssidx(cfg,
+=======
+
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+	if (p2p_is_on(wl) &&
+		(bssidx == wl_to_p2p_bss_bssidx(wl,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		P2PAPI_BSSCFG_CONNECTION))) {
 		dev_role = NL80211_IFTYPE_P2P_GO;
 		WL_DBG(("Start AP req on P2P connection iface\n"));
@@ -6864,8 +7642,14 @@ wl_cfg80211_start_ap(
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	/* Parse IEs */
 	if ((err = wl_cfg80211_parse_ap_ies(dev, &info->beacon, &ies)) < 0) {
+=======
+	/* Set IEs to FW */
+	if ((err = wl_cfg80211_parse_set_ies(dev, &info->beacon,
+		&ies, dev_role, bssidx) < 0)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_ERR(("Set IEs failed \n"));
 		goto fail;
 	}
@@ -6885,10 +7669,13 @@ wl_cfg80211_start_ap(
 
 	WL_DBG(("** AP/GO Created **\n"));
 
+<<<<<<< HEAD
 	/* Set IEs to FW */
 	if ((err = wl_cfg80211_set_ies(dev, &info->beacon, bssidx)) < 0)
 		WL_ERR(("Set IEs failed \n"));
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 fail:
 	if (err) {
 		WL_ERR(("ADD/SET beacon failed\n"));
@@ -6920,6 +7707,7 @@ wl_cfg80211_stop_ap(
 		dev = bcmcfg_to_prmry_ndev(cfg);
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
+<<<<<<< HEAD
 #endif /* WL_ENABLE_P2P_IF */
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -6927,6 +7715,11 @@ wl_cfg80211_stop_ap(
 	}
 	if (p2p_is_on(cfg) &&
 		(bssidx == wl_to_p2p_bss_bssidx(cfg,
+=======
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+	if (p2p_is_on(wl) &&
+		(bssidx == wl_to_p2p_bss_bssidx(wl,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		P2PAPI_BSSCFG_CONNECTION))) {
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
@@ -6977,7 +7770,6 @@ wl_cfg80211_stop_ap(
 exit:
 	return err;
 }
-
 static s32
 wl_cfg80211_change_beacon(
 	struct wiphy *wiphy,
@@ -7001,6 +7793,7 @@ wl_cfg80211_change_beacon(
 		dev = bcmcfg_to_prmry_ndev(cfg);
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
+<<<<<<< HEAD
 #endif /* WL_ENABLE_P2P_IF */
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -7008,10 +7801,17 @@ wl_cfg80211_change_beacon(
 	}
 	if (p2p_is_on(cfg) &&
 		(bssidx == wl_to_p2p_bss_bssidx(cfg,
+=======
+
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+	if (p2p_is_on(wl) &&
+		(bssidx == wl_to_p2p_bss_bssidx(wl,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		P2PAPI_BSSCFG_CONNECTION))) {
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
 
+<<<<<<< HEAD
 	if (!check_dev_role_integrity(cfg, dev_role))
 		goto fail;
 
@@ -7023,6 +7823,11 @@ wl_cfg80211_change_beacon(
 
 	/* Set IEs to FW */
 	if ((err = wl_cfg80211_set_ies(dev, info, bssidx)) < 0) {
+=======
+	/* Set IEs to FW */
+	if ((err = wl_cfg80211_parse_set_ies(dev, info,
+		&ies, dev_role, bssidx) < 0)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_ERR(("Set IEs failed \n"));
 		goto fail;
 	}
@@ -7063,6 +7868,7 @@ wl_cfg80211_add_set_beacon(struct wiphy *wiphy, struct net_device *dev,
 		dev = bcmcfg_to_prmry_ndev(cfg);
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
+<<<<<<< HEAD
 #endif /* WL_ENABLE_P2P_IF */
 	if (wl_cfgp2p_find_idx(cfg, dev, &bssidx) != BCME_OK) {
 		WL_ERR(("Find p2p index from dev(%p) failed\n", dev));
@@ -7070,6 +7876,12 @@ wl_cfg80211_add_set_beacon(struct wiphy *wiphy, struct net_device *dev,
 	}
 	if (p2p_is_on(cfg) &&
 		(bssidx == wl_to_p2p_bss_bssidx(cfg,
+=======
+
+	bssidx = wl_cfgp2p_find_idx(wl, dev);
+	if (p2p_is_on(wl) &&
+		(bssidx == wl_to_p2p_bss_bssidx(wl,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		P2PAPI_BSSCFG_CONNECTION))) {
 		dev_role = NL80211_IFTYPE_P2P_GO;
 	}
@@ -7167,6 +7979,7 @@ fail:
 }
 #endif /* LINUX_VERSION < VERSION(3,4,0) || WL_COMPAT_WIRELESS */
 
+<<<<<<< HEAD
 #ifdef WL_SCHED_SCAN
 #define PNO_TIME		30
 #define PNO_REPEAT		4
@@ -7259,6 +8072,8 @@ wl_cfg80211_sched_scan_stop(struct wiphy *wiphy, struct net_device *dev)
 }
 #endif /* WL_SCHED_SCAN */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static struct cfg80211_ops wl_cfg80211_ops = {
 	.add_virtual_intf = wl_cfg80211_add_virtual_iface,
 	.del_virtual_intf = wl_cfg80211_del_virtual_iface,
@@ -7294,8 +8109,13 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 	.change_bss = wl_cfg80211_change_bss,
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 6, 0)) || defined(WL_COMPAT_WIRELESS)
 	.set_channel = wl_cfg80211_set_channel,
+<<<<<<< HEAD
 #endif /* ((LINUX_VERSION < VERSION(3, 6, 0)) || WL_COMPAT_WIRELESS */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)) && !defined(WL_COMPAT_WIRELESS)
+=======
+//#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
+#if 0
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	.set_beacon = wl_cfg80211_add_set_beacon,
 	.add_beacon = wl_cfg80211_add_set_beacon,
 #else
@@ -7306,17 +8126,24 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 #ifdef WL_SCHED_SCAN
 	.sched_scan_start = wl_cfg80211_sched_scan_start,
 	.sched_scan_stop = wl_cfg80211_sched_scan_stop,
+<<<<<<< HEAD
 #endif /* WL_SCHED_SCAN */
 #if defined(WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, \
 	2, 0))
+=======
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0) */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	.del_station = wl_cfg80211_del_station,
 	.change_station = wl_cfg80211_change_station,
 	.mgmt_tx_cancel_wait = wl_cfg80211_mgmt_tx_cancel_wait,
+<<<<<<< HEAD
 #endif /* WL_SUPPORT_BACKPORTED_KPATCHES || KERNEL_VERSION >= (3,2,0) */
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 2, 0)) || defined(WL_COMPAT_WIRELESS)
 	.tdls_oper = wl_cfg80211_tdls_oper,
 #endif /* LINUX_VERSION > VERSION(3, 2, 0) || WL_COMPAT_WIRELESS */
 	CFG80211_TESTMODE_CMD(dhd_cfg80211_testmode_cmd)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 };
 
 s32 wl_mode_to_nl80211_iftype(s32 mode)
@@ -7364,12 +8191,6 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 	/* Report  how many SSIDs Driver can support per Scan request */
 	wdev->wiphy->max_scan_ssids = WL_SCAN_PARAMS_SSID_MAX;
 	wdev->wiphy->max_num_pmkids = WL_NUM_PMKIDS_MAX;
-#ifdef WL_SCHED_SCAN
-	wdev->wiphy->max_sched_scan_ssids = MAX_PFN_LIST_COUNT;
-	wdev->wiphy->max_match_sets = MAX_PFN_LIST_COUNT;
-	wdev->wiphy->max_sched_scan_ie_len = WL_SCAN_IE_LEN_MAX;
-	wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
-#endif /* WL_SCHED_SCAN */
 	wdev->wiphy->interface_modes =
 		BIT(NL80211_IFTYPE_STATION)
 		| BIT(NL80211_IFTYPE_ADHOC)
@@ -7421,6 +8242,7 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 	 * to allow bssid & freq to be sent down to driver even if
 	 * FW ROAM is advertised.
 	 */
+<<<<<<< HEAD
 	wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_FW_ROAM;
 #endif /* ROAM_ENABLE && (LINUX_VERSION 3.2.0  || WL_COMPAT_WIRELESS) && !CUSTOMER_HW4 */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)) || defined(WL_COMPAT_WIRELESS)
@@ -7462,6 +8284,25 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 	wdev->wiphy->wowlan.flags = WIPHY_WOWLAN_ANY;
 #endif /* CONFIG_PM && WL_CFG80211_P2P_DEV_IF */
 
+=======
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)
+#if 1
+/*	wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_FW_ROAM; */
+#endif
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
+#if 1
+	wdev->wiphy->flags |= WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL |
+		WIPHY_FLAG_OFFCHAN_TX;
+#endif
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+#if 1
+		/* From 3.4 kernel ownards AP_SME flag can be advertised
+		  * to remove the patch from supplicant
+		  */
+		wdev->wiphy->flags |= WIPHY_FLAG_HAVE_AP_SME;
+#endif
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	WL_DBG(("Registering custom regulatory)\n"));
 	wdev->wiphy->flags |= WIPHY_FLAG_CUSTOM_REGULATORY;
 	wiphy_apply_custom_regulatory(wdev->wiphy, &brcm_regdom);
@@ -7523,26 +8364,39 @@ static s32 wl_inform_bss(struct bcm_cfg80211 *cfg)
 
 	bss_list = cfg->bss_list;
 	WL_DBG(("scanned AP count (%d)\n", bss_list->count));
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 	reset_roam_cache();
-#endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+#endif
 	bi = next_bss(bss_list, bi);
 	for_each_bss(bss_list, bi, i) {
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 		add_roam_cache(bi);
+<<<<<<< HEAD
 #endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
 		err = wl_inform_single_bss(cfg, bi);
+=======
+#endif
+		err = wl_inform_single_bss(wl, bi);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (unlikely(err))
 			break;
 	}
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 	/* print_roam_cache(); */
+<<<<<<< HEAD
 	update_roam_cache(cfg, ioctl_version);
 #endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
 	return err;
 }
 
 static s32 wl_inform_single_bss(struct bcm_cfg80211 *cfg, struct wl_bss_info *bi)
+=======
+#endif
+	return err;
+}
+
+static s32 wl_inform_single_bss(struct wl_priv *wl, struct wl_bss_info *bi)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	struct wiphy *wiphy = bcmcfg_to_wiphy(cfg);
 	struct ieee80211_mgmt *mgmt;
@@ -7595,10 +8449,17 @@ static s32 wl_inform_single_bss(struct bcm_cfg80211 *cfg, struct wl_bss_info *bi
 	beacon_proberesp->timestamp = 0;
 	beacon_proberesp->beacon_int = cpu_to_le16(bi->beacon_period);
 	beacon_proberesp->capab_info = cpu_to_le16(bi->capability);
+<<<<<<< HEAD
 	wl_rst_ie(cfg);
 	wl_update_hidden_ap_ie(bi, ((u8 *) bi) + bi->ie_offset, &bi->ie_length);
 	wl_mrg_ie(cfg, ((u8 *) bi) + bi->ie_offset, bi->ie_length);
 	wl_cp_ie(cfg, beacon_proberesp->variable, WL_BSS_INFO_MAX -
+=======
+	wl_rst_ie(wl);
+
+	wl_mrg_ie(wl, ((u8 *) bi) + bi->ie_offset, bi->ie_length);
+	wl_cp_ie(wl, beacon_proberesp->variable, WL_BSS_INFO_MAX -
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		offsetof(struct wl_cfg80211_bss_info, frame_buf));
 	notif_bss_info->frame_len = offsetof(struct ieee80211_mgmt,
 		u.beacon.variable) + wl_get_ielen(cfg);
@@ -7731,8 +8592,13 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	u32 reason = ntoh32(e->reason);
 	u32 len = ntoh32(e->datalen);
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT) \
 	&& !defined(WL_COMPAT_WIRELESS)
+=======
+//#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
+#if 0
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	bool isfree = false;
 	u8 *mgmt_frame;
 	u8 bsscfgidx = e->bsscfgidx;
@@ -7753,13 +8619,18 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	WL_DBG(("event %d status %d reason %d\n", event, ntoh32(e->status), reason));
 	/* if link down, bsscfg is disabled. */
 	if (event == WLC_E_LINK && reason == WLC_E_LINK_BSSCFG_DIS &&
+<<<<<<< HEAD
 		wl_get_p2p_status(cfg, IF_DELETING) && (ndev != bcmcfg_to_prmry_ndev(cfg))) {
 		wl_add_remove_eventmsg(ndev, WLC_E_PROBREQ_MSG, false);
+=======
+		wl_get_p2p_status(wl, IF_DELETING) && (ndev != wl_to_prmry_ndev(wl))) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_INFO(("AP mode link down !! \n"));
 		complete(&cfg->iface_disable);
 		return 0;
 	}
 
+<<<<<<< HEAD
 	if (event == WLC_E_DISASSOC_IND || event == WLC_E_DEAUTH_IND || event == WLC_E_DEAUTH) {
 		WL_ERR(("event %s(%d) status %d reason %d\n",
 		bcmevent_names[event].name, event, ntoh32(e->status), reason));
@@ -7767,6 +8638,11 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT) \
 	&& !defined(WL_COMPAT_WIRELESS)
+=======
+//#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
+#if 0
+	body = kzalloc(len, GFP_KERNEL);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	WL_DBG(("Enter \n"));
 	if (!len && (event == WLC_E_DEAUTH)) {
 		len = 2; /* reason code field */
@@ -7843,19 +8719,31 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	isfree = true;
 
 	if (event == WLC_E_ASSOC_IND && reason == DOT11_SC_SUCCESS) {
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
 #endif /* LINUX_VERSION >= VERSION(3,4,0) || WL_COMPAT_WIRELESS */
 	} else if (event == WLC_E_DISASSOC_IND) {
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
 #endif /* LINUX_VERSION >= VERSION(3,4,0) || WL_COMPAT_WIRELESS */
 	} else if ((event == WLC_E_DEAUTH_IND) || (event == WLC_E_DEAUTH)) {
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
@@ -7988,8 +8876,13 @@ wl_notify_connect_status(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 		WL_DBG(("wl_notify_connect_status : event %d status : %d ndev %p\n",
 			ntoh32(e->event_type), ntoh32(e->status), ndev));
 		if (event == WLC_E_ASSOC || event == WLC_E_AUTH) {
+<<<<<<< HEAD
 			wl_get_auth_assoc_status(cfg, ndev, e);
 			return 0;
+=======
+			wl_get_auth_assoc_status(wl, ndev, e);
+			return err;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		if (wl_is_linkup(cfg, e, ndev)) {
 			wl_link_up(cfg);
@@ -8181,8 +9074,8 @@ static s32 wl_get_assoc_ies(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 		if (conn_info->req_ie_len <= MAX_REQ_LINE)
 			memcpy(conn_info->req_ie, cfg->extra_buf, conn_info->req_ie_len);
 		else {
-			WL_ERR(("IE size %d above max %d size \n",
-				conn_info->req_ie_len, MAX_REQ_LINE));
+			WL_ERR(("%s IE size %d above max %d size \n",
+				__FUNCTION__, conn_info->req_ie_len, MAX_REQ_LINE));
 			return err;
 		}
 	} else {
@@ -8199,8 +9092,8 @@ static s32 wl_get_assoc_ies(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 		if (conn_info->resp_ie_len <= MAX_REQ_LINE)
 			memcpy(conn_info->resp_ie, cfg->extra_buf, conn_info->resp_ie_len);
 		else {
-			WL_ERR(("IE size %d above max %d size \n",
-				conn_info->resp_ie_len, MAX_REQ_LINE));
+			WL_ERR(("%s IE size %d above max %d size \n",
+				__FUNCTION__, conn_info->resp_ie_len, MAX_REQ_LINE));
 			return err;
 		}
 	} else {
@@ -8219,7 +9112,7 @@ static void wl_ch_to_chanspec(int ch, struct wl_join_params *join_params,
 	chanspec_t chanspec = 0;
 #endif
 	if (ch != 0) {
-#if defined(CUSTOMER_HW4) && defined(ROAM_CHANNEL_CACHE)
+#ifdef ROAM_CHANNEL_CACHE
 		int n_channels;
 
 		n_channels = get_roam_channel_list(ch, join_params->params.chanspec_list,
@@ -8250,14 +9143,18 @@ static void wl_ch_to_chanspec(int ch, struct wl_join_params *join_params,
 		join_params->params.chanspec_num =
 			htod32(join_params->params.chanspec_num);
 
-#endif /* CUSTOMER_HW4 && ROAM_CHANNEL_CACHE */
+#endif /* ROAM_CHANNEL_CACHE */
 		WL_DBG(("join_params->params.chanspec_list[0]= %X, %d channels\n",
 			join_params->params.chanspec_list[0],
 			join_params->params.chanspec_num));
 	}
 }
 
+<<<<<<< HEAD
 static s32 wl_update_bss_info(struct bcm_cfg80211 *cfg, struct net_device *ndev)
+=======
+static s32 wl_update_bss_info(struct wl_priv *wl, struct net_device *ndev)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	struct cfg80211_bss *bss;
 	struct wl_bss_info *bi;
@@ -8305,7 +9202,18 @@ static s32 wl_update_bss_info(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 			err = -EIO;
 			goto update_bss_info_out;
 		}
+<<<<<<< HEAD
 		err = wl_inform_single_bss(cfg, bi);
+=======
+
+		ie = ((u8 *)bi) + bi->ie_offset;
+		ie_len = bi->ie_length;
+		ssidie = (u8 *)cfg80211_find_ie(WLAN_EID_SSID, ie, ie_len);
+		if (ssidie && ssidie[1] == bi->SSID_len && !ssidie[2] && bi->SSID[0])
+			memcpy(ssidie + 2, bi->SSID, bi->SSID_len);
+
+		err = wl_inform_single_bss(wl, bi);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (unlikely(err))
 			goto update_bss_info_out;
 
@@ -8374,6 +9282,7 @@ wl_bss_roaming_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	struct wl_connect_info *conn_info = wl_to_conn(cfg);
 	s32 err = 0;
 	u8 *curbssid;
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)) || defined(WL_COMPAT_WIRELESS)
 	struct wiphy *wiphy = bcmcfg_to_wiphy(cfg);
 	struct ieee80211_supported_band *band;
@@ -8407,12 +9316,28 @@ wl_bss_roaming_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		memcpy(cfg->fbt_key, data, FBT_KEYLEN);
 	}
 #endif /* WLFBT */
+=======
+
+	wl_get_assoc_ies(wl, ndev);
+	wl_update_prof(wl, ndev, NULL, (void *)(e->addr.octet), WL_PROF_BSSID);
+	curbssid = wl_read_prof(wl, ndev, WL_PROF_BSSID);
+	wl_update_bss_info(wl, ndev);
+	wl_update_pmklist(ndev, wl->pmk_list, err);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	printk("wl_bss_roaming_done succeeded to " MACDBG "\n",
 		MAC2STRDBG((u8*)(&e->addr)));
 
 	cfg80211_roamed(ndev,
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)) || defined(WL_COMPAT_WIRELESS)
 		notify_channel,
+=======
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
+		NULL,	/* struct cfg80211_bss *bss */
+#elif LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 39)
+		NULL,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 		curbssid,
 		conn_info->req_ie, conn_info->req_ie_len,
@@ -8428,12 +9353,20 @@ static s32
 wl_bss_connect_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	const wl_event_msg_t *e, void *data, bool completed)
 {
+<<<<<<< HEAD
 	struct wl_connect_info *conn_info = wl_to_conn(cfg);
 	struct wl_security *sec = wl_read_prof(cfg, ndev, WL_PROF_SEC);
 #if (defined(ROAM_ENABLE) && defined(ROAM_AP_ENV_DETECTION)) || \
 	defined(CUSTOM_SET_CPUCORE)
 	dhd_pub_t *dhd = (dhd_pub_t *)(cfg->pub);
 #endif /* (ROAM_ENABLE && ROAM_AP_ENV_DETECTION) || CUSTOM_SET_CPUCORE */
+=======
+	struct wl_connect_info *conn_info = wl_to_conn(wl);
+	struct wl_security *sec = wl_read_prof(wl, ndev, WL_PROF_SEC);
+#ifdef ROAM_AP_ENV_DETECTION
+	dhd_pub_t *dhd =  (dhd_pub_t *)(wl->pub);
+#endif /* ROAM_AP_ENV_DETECTION */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	s32 err = 0;
 	u8 *curbssid = wl_read_prof(cfg, ndev, WL_PROF_BSSID);
 	if (!sec) {
@@ -8444,7 +9377,7 @@ wl_bss_connect_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 #ifdef ESCAN_RESULT_PATCH
 	if (wl_get_drv_status(cfg, CONNECTED, ndev)) {
 		if (memcmp(curbssid, connect_req_bssid, ETHER_ADDR_LEN) == 0) {
-			WL_DBG((" Connected event of connected device e=%d s=%d, ignore it\n",
+			WL_ERR((" Connected event of connected device e=%d s=%d, ignore it\n",
 				ntoh32(e->event_type), ntoh32(e->status)));
 			return err;
 		}
@@ -8469,6 +9402,7 @@ wl_bss_connect_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		wl_cfg80211_scan_abort(cfg);
 		wl_clr_drv_status(cfg, CONNECTING, ndev);
 		if (completed) {
+<<<<<<< HEAD
 			wl_get_assoc_ies(cfg, ndev);
 			wl_update_prof(cfg, ndev, NULL, (void *)(e->addr.octet), WL_PROF_BSSID);
 			curbssid = wl_read_prof(cfg, ndev, WL_PROF_BSSID);
@@ -8476,10 +9410,20 @@ wl_bss_connect_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 			wl_update_pmklist(ndev, cfg->pmk_list, err);
 			wl_set_drv_status(cfg, CONNECTED, ndev);
 #if defined(ROAM_ENABLE) && defined(ROAM_AP_ENV_DETECTION)
+=======
+			wl_get_assoc_ies(wl, ndev);
+			wl_update_prof(wl, ndev, NULL, (void *)(e->addr.octet), WL_PROF_BSSID);
+			curbssid = wl_read_prof(wl, ndev, WL_PROF_BSSID);
+			wl_update_bss_info(wl, ndev);
+			wl_update_pmklist(ndev, wl->pmk_list, err);
+			wl_set_drv_status(wl, CONNECTED, ndev);
+#ifdef ROAM_AP_ENV_DETECTION
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			if (dhd->roam_env_detection)
 				wldev_iovar_setint(ndev, "roam_env_detection",
 					AP_ENV_INDETERMINATE);
 #endif /* ROAM_AP_ENV_DETECTION */
+<<<<<<< HEAD
 			if (ndev != bcmcfg_to_prmry_ndev(cfg)) {
 				/* reinitialize completion to clear previous count */
 				INIT_COMPLETION(cfg->iface_disable);
@@ -8494,6 +9438,8 @@ wl_bss_connect_done(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 			}
 #endif /* CUSTOM_SET_CPUCORE */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		cfg80211_connect_result(ndev,
 			curbssid,
@@ -8556,12 +9502,19 @@ wl_notify_pfn_status(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 	ndev = cfgdev_to_wlc_ndev(cfgdev, cfg);
 
 #ifndef WL_SCHED_SCAN
+<<<<<<< HEAD
 #ifndef CUSTOMER_HW4
 	mutex_lock(&cfg->usr_sync);
 	/* TODO: Use cfg80211_sched_scan_results(wiphy); */
 	cfg80211_disconnected(ndev, 0, NULL, 0, GFP_KERNEL);
 	mutex_unlock(&cfg->usr_sync);
 #endif /* !CUSTOMER_HW4 */
+=======
+	mutex_lock(&wl->usr_sync);
+	/* TODO: Use cfg80211_sched_scan_results(wiphy); */
+	cfg80211_disconnected(ndev, 0, NULL, 0, GFP_KERNEL);
+	mutex_unlock(&wl->usr_sync);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #else
 	/* If cfg80211 scheduled scan is supported, report the pno results via sched
 	 * scan results
@@ -8730,6 +9683,7 @@ wl_gon_req_collision(struct bcm_cfg80211 *cfg, wl_action_frame_t *tx_act_frm,
 void
 wl_stop_wait_next_action_frame(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 {
+<<<<<<< HEAD
 	if (wl_get_drv_status_all(cfg, FINDING_COMMON_CHANNEL)) {
 		if (timer_pending(&cfg->p2p->listen_timer)) {
 			del_timer_sync(&cfg->p2p->listen_timer);
@@ -8748,18 +9702,35 @@ wl_stop_wait_next_action_frame(struct bcm_cfg80211 *cfg, struct net_device *ndev
 			wl_get_p2p_status(cfg, ACTION_TX_NOACK)))
 			wl_set_p2p_status(cfg, ACTION_TX_COMPLETED);
 
+=======
+	if (wl_get_drv_status_all(wl, SENDING_ACT_FRM) &&
+		(wl_get_p2p_status(wl, ACTION_TX_COMPLETED) ||
+		wl_get_p2p_status(wl, ACTION_TX_NOACK))) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_DBG(("*** Wake UP ** abort actframe iovar\n"));
 		/* if channel is not zero, "actfame" uses off channel scan.
 		 * So abort scan for off channel completion.
 		 */
+<<<<<<< HEAD
 		if (cfg->af_sent_channel)
 			wl_cfg80211_scan_abort(cfg);
+=======
+		if (wl->af_sent_channel)
+			/* wl_cfg80211_scan_abort(wl, ndev); */
+			wl_notify_escan_complete(wl,
+				(ndev == wl->p2p_net) ? wl_to_prmry_ndev(wl) : ndev, true, true);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #ifdef WL_CFG80211_SYNC_GON
 	else if (wl_get_drv_status_all(cfg, WAITING_NEXT_ACT_FRM_LISTEN)) {
 		WL_DBG(("*** Wake UP ** abort listen for next af frame\n"));
 		/* So abort scan to cancel listen */
+<<<<<<< HEAD
 		wl_cfg80211_scan_abort(cfg);
+=======
+		wl_notify_escan_complete(wl,
+			(ndev == wl->p2p_net) ? wl_to_prmry_ndev(wl) : ndev, true, true);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 #endif /* WL_CFG80211_SYNC_GON */
 }
@@ -8782,19 +9753,19 @@ bool wl_cfg80211_is_wes(void *frame, u32 frame_len)
 	unsigned char *data;
 
 	if (frame == NULL) {
-		WL_ERR(("Invalid frame \n"));
+		WL_ERR(("%s: Invalid frame \n", __FUNCTION__));
 		return false;
 	}
 
 	if (frame_len < 4) {
-		WL_ERR(("Invalid frame length [%d] \n", frame_len));
+		WL_ERR(("%s: Invalid frame length [%d] \n", __FUNCTION__, frame_len));
 		return false;
 	}
 
 	data = frame;
 
 	if (memcmp(data, "\x7f\x00\x00\xf0", 4) == 0) {
-		WL_DBG(("Receive WES VS Action Frame \n"));
+		WL_DBG(("%s: Receive WES VS Action Frame \n", __FUNCTION__));
 		return true;
 	}
 
@@ -8860,8 +9831,8 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			&mgmt_frame, &mgmt_frame_len,
 			(u8 *)((wl_event_rx_frame_data_t *)rxframe + 1));
 		if (err < 0) {
-			WL_ERR(("Error in receiving action frame len %d channel %d freq %d\n",
-				mgmt_frame_len, channel, freq));
+			WL_ERR(("%s: Error in receiving action frame len %d channel %d freq %d\n",
+				__func__, mgmt_frame_len, channel, freq));
 			goto exit;
 		}
 		isfree = true;
@@ -8876,7 +9847,6 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			(void) p2p_act_frm;
 		} else if (wl_cfgp2p_is_gas_action(&mgmt_frame[DOT11_MGMT_HDR_LEN],
 			mgmt_frame_len - DOT11_MGMT_HDR_LEN)) {
-
 			sd_act_frm = (wifi_p2psd_gas_pub_act_frame_t *)
 					(&mgmt_frame[DOT11_MGMT_HDR_LEN]);
 			if (sd_act_frm && wl_get_drv_status_all(cfg, WAITING_NEXT_ACT_FRM)) {
@@ -8892,8 +9862,8 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			(void) sd_act_frm;
 		} else {
 			/*
-			 *  if we got normal action frame and ndev is p2p0,
-			 *  we have to change ndev from p2p0 to wlan0
+			*  if we got normal action frame and ndev is p2p0,
+			*  we have to change ndev from p2p0 to wlan0
 			 */
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
 			if (wl_cfg80211_is_wes(&mgmt_frame[DOT11_MGMT_HDR_LEN],
@@ -8954,13 +9924,17 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 					}
 
 					/* Stop waiting for next AF. */
+<<<<<<< HEAD
 					wl_stop_wait_next_action_frame(cfg, ndev);
+=======
+					wl_stop_wait_next_action_frame(wl, ndev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				}
 			}
 		}
 
 		wl_cfgp2p_print_actframe(false, &mgmt_frame[DOT11_MGMT_HDR_LEN],
-			mgmt_frame_len - DOT11_MGMT_HDR_LEN, channel);
+			mgmt_frame_len - DOT11_MGMT_HDR_LEN);
 		/*
 		 * After complete GO Negotiation, roll back to mpc mode
 		 */
@@ -9011,13 +9985,19 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 		}
 	}
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 	cfg80211_rx_mgmt(cfgdev, freq, 0, mgmt_frame, mgmt_frame_len, GFP_ATOMIC);
+=======
+//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+#if 1
+	cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, mgmt_frame_len, GFP_ATOMIC);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #else
 	cfg80211_rx_mgmt(cfgdev, freq, mgmt_frame, mgmt_frame_len, GFP_ATOMIC);
 #endif /* LINUX_VERSION >= VERSION(3, 4, 0) || WL_COMPAT_WIRELESS */
 
-	WL_DBG(("mgmt_frame_len (%d) , e->datalen (%d), channel (%d), freq (%d)\n",
+	WL_DBG(("%s: mgmt_frame_len (%d) , e->datalen (%d), channel (%d), freq (%d)\n", __func__,
 		mgmt_frame_len, ntoh32(e->datalen), channel, freq));
 exit:
 	if (isfree)
@@ -9025,6 +10005,7 @@ exit:
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef WL_SCHED_SCAN
 /* If target scan is not reliable, set the below define to "1" to do a
  * full escan
@@ -9150,6 +10131,8 @@ out_err:
 }
 #endif /* WL_SCHED_SCAN */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static void wl_init_conf(struct wl_conf *conf)
 {
 	WL_DBG(("Enter \n"));
@@ -9235,6 +10218,37 @@ wl_deinit_escan_result_buf(struct bcm_cfg80211 *cfg)
 	cfg->escan_info.escan_buf = NULL;
 #endif
 
+<<<<<<< HEAD
+=======
+	spin_lock_irqsave(&wl->cfgdrv_lock, flags);
+	memset(profile, 0, sizeof(struct wl_profile));
+	spin_unlock_irqrestore(&wl->cfgdrv_lock, flags);
+}
+
+static void wl_init_event_handler(struct wl_priv *wl)
+{
+	memset(wl->evt_handler, 0, sizeof(wl->evt_handler));
+
+	wl->evt_handler[WLC_E_SCAN_COMPLETE] = wl_notify_scan_status;
+	wl->evt_handler[WLC_E_AUTH] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_ASSOC] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_LINK] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_DEAUTH_IND] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_DEAUTH] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_DISASSOC_IND] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_ASSOC_IND] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_REASSOC_IND] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_ROAM] = wl_notify_roaming_status;
+	wl->evt_handler[WLC_E_MIC_ERROR] = wl_notify_mic_status;
+	wl->evt_handler[WLC_E_SET_SSID] = wl_notify_connect_status;
+	wl->evt_handler[WLC_E_ACTION_FRAME_RX] = wl_notify_rx_mgmt_frame;
+	wl->evt_handler[WLC_E_PROBREQ_MSG] = wl_notify_rx_mgmt_frame;
+	wl->evt_handler[WLC_E_P2P_PROBREQ_MSG] = wl_notify_rx_mgmt_frame;
+	wl->evt_handler[WLC_E_P2P_DISC_LISTEN_COMPLETE] = wl_cfgp2p_listen_complete;
+	wl->evt_handler[WLC_E_ACTION_FRAME_COMPLETE] = wl_cfgp2p_action_tx_complete;
+	wl->evt_handler[WLC_E_ACTION_FRAME_OFF_CHAN_COMPLETE] = wl_cfgp2p_action_tx_complete;
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 #endif /* STATIC_WL_PRIV_STRUCT */
 
@@ -9294,7 +10308,19 @@ static s32 wl_init_priv_mem(struct bcm_cfg80211 *cfg)
 		WL_ERR(("cfg->ie  alloc failed\n"));
 		goto init_priv_mem_out;
 	}
+<<<<<<< HEAD
 	wl_init_escan_result_buf(cfg);
+=======
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	wl->escan_info.escan_buf[0] = dhd_os_prealloc(NULL, DHD_PREALLOC_WIPHY_ESCAN0, 0);
+	bzero(wl->escan_info.escan_buf[0], ESCAN_BUF_SIZE);
+	wl->escan_info.escan_buf[1] = dhd_os_prealloc(NULL, DHD_PREALLOC_WIPHY_ESCAN1, 0);
+	bzero(wl->escan_info.escan_buf[1], ESCAN_BUF_SIZE);
+#else
+	wl->escan_info.escan_buf = dhd_os_prealloc(NULL, DHD_PREALLOC_WIPHY_ESCAN0, 0);
+	bzero(wl->escan_info.escan_buf, ESCAN_BUF_SIZE);
+#endif /* DUAL_ESCAN_RESULT_BUFFER */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* STATIC_WL_PRIV_STRUCT */
 	cfg->afx_hdl = (void *)kzalloc(sizeof(*cfg->afx_hdl), GFP_KERNEL);
 	if (unlikely(!cfg->afx_hdl)) {
@@ -9333,11 +10359,24 @@ static void wl_deinit_priv_mem(struct bcm_cfg80211 *cfg)
 	kfree(cfg->sta_info);
 	cfg->sta_info = NULL;
 #if defined(STATIC_WL_PRIV_STRUCT)
+<<<<<<< HEAD
 	kfree(cfg->conn_info);
 	cfg->conn_info = NULL;
 	kfree(cfg->ie);
 	cfg->ie = NULL;
 	wl_deinit_escan_result_buf(cfg);
+=======
+	kfree(wl->conn_info);
+	wl->conn_info = NULL;
+	kfree(wl->ie);
+	wl->ie = NULL;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	wl->escan_info.escan_buf[0] = NULL;
+	wl->escan_info.escan_buf[1] = NULL;
+#else
+	wl->escan_info.escan_buf = NULL;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* STATIC_WL_PRIV_STRUCT */
 	if (cfg->afx_hdl) {
 		cancel_work_sync(&cfg->afx_hdl->work);
@@ -9362,20 +10401,76 @@ static s32 wl_create_event_handler(struct bcm_cfg80211 *cfg)
 	/* Do not use DHD in cfg driver */
 	cfg->event_tsk.thr_pid = -1;
 
+<<<<<<< HEAD
 	PROC_START(wl_event_handler, cfg, &cfg->event_tsk, 0, "wl_event_handler");
 	if (cfg->event_tsk.thr_pid < 0)
+=======
+#ifdef USE_KTHREAD_API
+	PROC_START2(wl_event_handler, wl, &wl->event_tsk, 0, "wl_event_handler");
+#else
+	PROC_START(wl_event_handler, wl, &wl->event_tsk, 0);
+#endif
+	if (wl->event_tsk.thr_pid < 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		ret = -ENOMEM;
 	return ret;
 }
 
 static void wl_destroy_event_handler(struct bcm_cfg80211 *cfg)
 {
+<<<<<<< HEAD
 	if (cfg->event_tsk.thr_pid >= 0)
 		PROC_STOP(&cfg->event_tsk);
+=======
+	struct wl_iscan_ctrl *iscan = wl->iscan;
+	s32 err = 0;
+
+	iscan->state = WL_ISCAN_STATE_IDLE;
+	mutex_lock(&wl->usr_sync);
+	wl_notify_iscan_complete(iscan, true);
+	mutex_unlock(&wl->usr_sync);
+
+	return err;
+}
+
+static s32 wl_iscan_thread(void *data)
+{
+	struct wl_iscan_ctrl *iscan = (struct wl_iscan_ctrl *)data;
+	struct wl_priv *wl = iscan_to_wl(iscan);
+	u32 status;
+	int err = 0;
+
+	allow_signal(SIGTERM);
+	status = WL_SCAN_RESULTS_PARTIAL;
+	while (likely(!down_interruptible(&iscan->sync))) {
+		if (kthread_should_stop())
+			break;
+		if (iscan->timer_on) {
+			del_timer_sync(&iscan->timer);
+			iscan->timer_on = 0;
+		}
+		mutex_lock(&wl->usr_sync);
+		err = wl_get_iscan_results(iscan, &status, &wl->bss_list);
+		if (unlikely(err)) {
+			status = WL_SCAN_RESULTS_ABORTED;
+			WL_ERR(("Abort iscan\n"));
+		}
+		mutex_unlock(&wl->usr_sync);
+		iscan->iscan_handler[status] (wl);
+	}
+	if (iscan->timer_on) {
+		del_timer_sync(&iscan->timer);
+		iscan->timer_on = 0;
+	}
+	WL_DBG(("%s was terminated\n", __func__));
+
+	return 0;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 static void wl_scan_timeout(unsigned long data)
 {
+<<<<<<< HEAD
 	wl_event_msg_t msg;
 	struct bcm_cfg80211 *cfg = (struct bcm_cfg80211 *)data;
 
@@ -9393,6 +10488,56 @@ static void wl_scan_timeout(unsigned long data)
 	if (!wl_scan_timeout_dbg_enabled)
 		wl_scan_timeout_dbg_set();
 #endif /* CUSTOMER_HW4 && DHD_DEBUG */
+=======
+	struct wl_priv *wl = (struct wl_priv *)data;
+
+	if (wl->scan_request) {
+		WL_ERR(("timer expired\n"));
+		if (wl->escan_on)
+			wl_notify_escan_complete(wl, wl->escan_info.ndev, true, true);
+		else
+			wl_notify_iscan_complete(wl_to_iscan(wl), true);
+	}
+}
+static void wl_iscan_timer(unsigned long data)
+{
+	struct wl_iscan_ctrl *iscan = (struct wl_iscan_ctrl *)data;
+
+	if (iscan) {
+		iscan->timer_on = 0;
+		WL_DBG(("timer expired\n"));
+		wl_wakeup_iscan(iscan);
+	}
+}
+
+static s32 wl_invoke_iscan(struct wl_priv *wl)
+{
+	struct wl_iscan_ctrl *iscan = wl_to_iscan(wl);
+	int err = 0;
+
+	if (wl->iscan_on && !iscan->tsk) {
+		iscan->state = WL_ISCAN_STATE_IDLE;
+		sema_init(&iscan->sync, 0);
+		iscan->tsk = kthread_run(wl_iscan_thread, iscan, "wl_iscan");
+		if (IS_ERR(iscan->tsk)) {
+			WL_ERR(("Could not create iscan thread\n"));
+			iscan->tsk = NULL;
+			return -ENOMEM;
+		}
+	}
+
+	return err;
+}
+
+static void wl_init_iscan_handler(struct wl_iscan_ctrl *iscan)
+{
+	memset(iscan->iscan_handler, 0, sizeof(iscan->iscan_handler));
+	iscan->iscan_handler[WL_SCAN_RESULTS_SUCCESS] = wl_iscan_done;
+	iscan->iscan_handler[WL_SCAN_RESULTS_PARTIAL] = wl_iscan_inprogress;
+	iscan->iscan_handler[WL_SCAN_RESULTS_PENDING] = wl_iscan_pending;
+	iscan->iscan_handler[WL_SCAN_RESULTS_ABORTED] = wl_iscan_aborted;
+	iscan->iscan_handler[WL_SCAN_RESULTS_NO_MEM] = wl_iscan_aborted;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 static s32
@@ -9412,6 +10557,7 @@ wl_cfg80211_netdev_notifier_call(struct notifier_block * nb,
 
 	switch (state) {
 		case NETDEV_DOWN:
+<<<<<<< HEAD
 		{
 			int max_wait_timeout = 5;
 			int max_wait_count = 100;
@@ -9436,6 +10582,12 @@ wl_cfg80211_netdev_notifier_call(struct notifier_block * nb,
 						max_wait_count));
 					break;
 				}
+=======
+			while (work_pending(&wdev->cleanup_work) && refcnt < 100) {
+				if (refcnt%5 == 0)
+					WL_ERR(("%s : [NETDEV_DOWN] work_pending (%d th)\n",
+						__FUNCTION__, refcnt));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				set_current_state(TASK_INTERRUPTIBLE);
 				schedule_timeout(100);
 				set_current_state(TASK_RUNNING);
@@ -9469,6 +10621,7 @@ static struct notifier_block wl_cfg80211_netdev_notifier = {
  */
 static bool wl_cfg80211_netdev_notifier_registered = FALSE;
 
+<<<<<<< HEAD
 static void wl_cfg80211_scan_abort(struct bcm_cfg80211 *cfg)
 {
 	wl_scan_params_t *params = NULL;
@@ -9493,14 +10646,20 @@ static void wl_cfg80211_scan_abort(struct bcm_cfg80211 *cfg)
 }
 
 static s32 wl_notify_escan_complete(struct bcm_cfg80211 *cfg,
+=======
+static s32 wl_notify_escan_complete(struct wl_priv *wl,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	struct net_device *ndev,
 	bool aborted, bool fw_abort)
 {
+	wl_scan_params_t *params = NULL;
+	s32 params_size = 0;
 	s32 err = BCME_OK;
 	unsigned long flags;
 	struct net_device *dev;
 
 	WL_DBG(("Enter \n"));
+<<<<<<< HEAD
 	if (!ndev) {
 		WL_ERR(("ndev is null\n"));
 		err = BCME_ERROR;
@@ -9510,6 +10669,12 @@ static s32 wl_notify_escan_complete(struct bcm_cfg80211 *cfg,
 	if (cfg->escan_info.ndev != ndev) {
 		WL_ERR(("ndev is different %p %p\n", cfg->escan_info.ndev, ndev));
 		err = BCME_ERROR;
+=======
+
+	if (wl->escan_info.ndev != ndev)
+	{
+		WL_ERR(("ndev is different %p %p\n", wl->escan_info.ndev, ndev));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		return err;
 	}
 
@@ -9526,6 +10691,7 @@ static s32 wl_notify_escan_complete(struct bcm_cfg80211 *cfg,
 				ndev, bcmcfg_to_prmry_ndev(cfg)));
 		dev = ndev;
 	}
+<<<<<<< HEAD
 	if (fw_abort && !in_atomic())
 		wl_cfg80211_scan_abort(cfg);
 	if (timer_pending(&cfg->scan_timeout))
@@ -9554,6 +10720,51 @@ static s32 wl_notify_escan_complete(struct bcm_cfg80211 *cfg,
 		wl_clr_p2p_status(cfg, SCANNING);
 	wl_clr_drv_status(cfg, SCANNING, dev);
 	spin_unlock_irqrestore(&cfg->cfgdrv_lock, flags);
+=======
+	if (fw_abort && !in_atomic()) {
+		/* Our scan params only need space for 1 channel and 0 ssids */
+		params = wl_cfg80211_scan_alloc_params(-1, 0, &params_size);
+		if (params == NULL) {
+			WL_ERR(("scan params allocation failed \n"));
+			err = -ENOMEM;
+		} else {
+			/* Do a scan abort to stop the driver's scan engine */
+			err = wldev_ioctl(dev, WLC_SCAN, params, params_size, true);
+			if (err < 0) {
+				WL_ERR(("scan abort  failed \n"));
+			}
+		}
+	}
+	if (timer_pending(&wl->scan_timeout))
+		del_timer_sync(&wl->scan_timeout);
+#if defined(ESCAN_RESULT_PATCH)
+	if (likely(wl->scan_request)) {
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		u8 temp_id = wl->escan_info.cur_sync_id;
+		if (aborted)
+			wl->bss_list =
+				(wl_scan_results_t *)wl->escan_info.escan_buf[(temp_id+1)%2];
+		else
+			wl->bss_list =
+				(wl_scan_results_t *)wl->escan_info.escan_buf[(temp_id)%2];
+#else
+		wl->bss_list = (wl_scan_results_t *)wl->escan_info.escan_buf;
+#endif
+		wl_inform_bss(wl);
+	}
+#endif /* ESCAN_RESULT_PATCH */
+	spin_lock_irqsave(&wl->cfgdrv_lock, flags);
+	if (likely(wl->scan_request)) {
+		cfg80211_scan_done(wl->scan_request, aborted);
+		wl->scan_request = NULL;
+	}
+	if (p2p_is_on(wl))
+		wl_clr_p2p_status(wl, SCANNING);
+	wl_clr_drv_status(wl, SCANNING, dev);
+	spin_unlock_irqrestore(&wl->cfgdrv_lock, flags);
+	if (params)
+		kfree(params);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return err;
 }
@@ -9587,6 +10798,7 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			ndev = cfg->escan_info.ndev;
 
 	}
+<<<<<<< HEAD
 	if (!ndev || (!wl_get_drv_status(cfg, SCANNING, ndev) && !cfg->sched_scan_running)) {
 		WL_ERR(("escan is not ready ndev %p drv_status 0x%x e_type %d e_states %d\n",
 			ndev, wl_get_drv_status(cfg, SCANNING, ndev),
@@ -9595,6 +10807,24 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 	}
 	escan_result = (wl_escan_result_t *)data;
 
+=======
+	if (!ndev || !wl->escan_on ||
+		!wl_get_drv_status(wl, SCANNING, ndev)) {
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		WL_ERR(("escan is not ready ndev %p wl->escan_on %d"
+			" drv_status 0x%x e_type %d e_states %d\n",
+			ndev, wl->escan_on, wl_get_drv_status(wl, SCANNING, ndev),
+			ntoh32(e->event_type), ntoh32(e->status)));
+#else
+		WL_ERR(("escan is not ready ndev %p wl->escan_on %d drv_status 0x%x\n",
+			ndev, wl->escan_on, wl_get_drv_status(wl, SCANNING, ndev)));
+#endif
+		goto exit;
+	}
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	escan_result = (wl_escan_result_t *) data;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (status == WLC_E_STATUS_PARTIAL) {
 		WL_INFO(("WLC_E_STATUS_PARTIAL \n"));
 		if (!escan_result) {
@@ -9615,9 +10845,20 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			WL_ERR(("Invalid bss_info length %d: ignoring\n", bi_length));
 			goto exit;
 		}
+<<<<<<< HEAD
 		if (wl_escan_check_sync_id(status, escan_result->sync_id,
 			cfg->escan_info.cur_sync_id) < 0)
 			goto exit;
+=======
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		if (escan_result->sync_id != wl->escan_info.cur_sync_id) {
+			WL_ERR(("Escan sync id mismatch: status %d "
+			"cur_sync_id %d coming_sync_id %d\n",
+			status, wl->escan_info.cur_sync_id, escan_result->sync_id));
+			goto exit;
+		}
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 		if (!(bcmcfg_to_wiphy(cfg)->interface_modes & BIT(NL80211_IFTYPE_ADHOC))) {
 			if (dtoh16(bi->capability) & DOT11_CAP_IBSS) {
@@ -9629,6 +10870,7 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 		if (wl_get_drv_status_all(cfg, FINDING_COMMON_CHANNEL)) {
 			p2p_dev_addr = wl_cfgp2p_retreive_p2p_dev_addr(bi, bi_length);
 			if (p2p_dev_addr && !memcmp(p2p_dev_addr,
+<<<<<<< HEAD
 				cfg->afx_hdl->tx_dst_addr.octet, ETHER_ADDR_LEN)) {
 				s32 channel = wf_chspec_ctlchan(
 					wl_chspec_driver_to_host(bi->chanspec));
@@ -9644,20 +10886,50 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 				wl_clr_p2p_status(cfg, SCANNING);
 				cfg->afx_hdl->peer_chan = channel;
 				complete(&cfg->act_frm_scan);
+=======
+				wl->afx_hdl->tx_dst_addr.octet, ETHER_ADDR_LEN)) {
+				s32 channel = CHSPEC_CHANNEL(
+					wl_chspec_driver_to_host(bi->chanspec));
+				WL_DBG(("ACTION FRAME SCAN : Peer " MACDBG " found, channel : %d\n",
+					MAC2STRDBG(wl->afx_hdl->tx_dst_addr.octet), channel));
+				wl_clr_p2p_status(wl, SCANNING);
+				wl->afx_hdl->peer_chan = channel;
+				complete(&wl->act_frm_scan);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				goto exit;
 			}
 
 		} else {
+<<<<<<< HEAD
 			int cur_len = WL_SCAN_RESULTS_FIXED_SIZE;
 			list = wl_escan_get_buf(cfg, FALSE);
 			if (scan_req_match(cfg)) {
+=======
+			int cur_len = 0;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+			list = (wl_scan_results_t *)
+				wl->escan_info.escan_buf[wl->escan_info.cur_sync_id%2];
+#else
+			list = (wl_scan_results_t *)wl->escan_info.escan_buf;
+#endif
+#if defined(WLP2P) && defined(WL_ENABLE_P2P_IF)
+			if (wl->p2p_net && wl->scan_request &&
+				wl->scan_request->dev == wl->p2p_net) {
+#else
+			if (p2p_is_on(wl) && p2p_scan(wl)) {
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef WL_HOST_BAND_MGMT
 				s32 channel = 0;
 				s32 channel_band = 0;
 #endif /* WL_HOST_BAND_MGMT */
 				/* p2p scan && allow only probe response */
+<<<<<<< HEAD
 				if ((cfg->p2p->search_state != WL_P2P_DISC_ST_SCAN) &&
 					(bi->flags & WL_BSS_FLAGS_FROM_BEACON))
+=======
+				if (bi->flags & WL_BSS_FLAGS_FROM_BEACON)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 					goto exit;
 				if ((p2p_ie = wl_cfgp2p_find_p2pie(((u8 *) bi) + bi->ie_offset,
 					bi->ie_length)) == NULL) {
@@ -9764,16 +11036,25 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 				WL_ERR(("Buffer is too small: ignoring\n"));
 				goto exit;
 			}
+<<<<<<< HEAD
 
 			memcpy(&(((char *)list)[list->buflen]), bi, bi_length);
+=======
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+			memcpy(&(wl->escan_info.escan_buf[wl->escan_info.cur_sync_id%2]
+				[list->buflen]), bi, bi_length);
+#else
+			memcpy(&(wl->escan_info.escan_buf[list->buflen]), bi, bi_length);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			list->version = dtoh32(bi->version);
 			list->buflen += bi_length;
 			list->count++;
-
 		}
 
 	}
 	else if (status == WLC_E_STATUS_SUCCESS) {
+<<<<<<< HEAD
 		cfg->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
 		wl_escan_print_sync_id(status, cfg->escan_info.cur_sync_id,
 			escan_result->sync_id);
@@ -9853,11 +11134,105 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			wl_notify_escan_complete(cfg, ndev, true, false);
 		}
 		wl_escan_increment_sync_id(cfg, 2);
+=======
+		wl->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		if (escan_result->sync_id != wl->escan_info.cur_sync_id)
+			WL_ERR(("Escan sync id mismatch: status %d "
+			"cur_sync_id %d coming_sync_id %d\n",
+			status, wl->escan_info.cur_sync_id, escan_result->sync_id));
+#endif
+		if (wl_get_drv_status_all(wl, FINDING_COMMON_CHANNEL)) {
+			WL_INFO(("ACTION FRAME SCAN DONE\n"));
+			wl_clr_p2p_status(wl, SCANNING);
+			wl_clr_drv_status(wl, SCANNING, wl->afx_hdl->dev);
+			if (wl->afx_hdl->peer_chan == WL_INVALID)
+				complete(&wl->act_frm_scan);
+		} else if (likely(wl->scan_request)) {
+			WL_INFO(("ESCAN COMPLETED\n"));
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+			wl->bss_list = (wl_scan_results_t *)
+				wl->escan_info.escan_buf[wl->escan_info.cur_sync_id%2];
+#else
+			wl->bss_list = (wl_scan_results_t *)wl->escan_info.escan_buf;
+#endif
+			wl_inform_bss(wl);
+			wl_notify_escan_complete(wl, ndev, false, false);
+		}
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		wl->escan_info.cur_sync_id++;
+#endif
+	}
+	else if (status == WLC_E_STATUS_ABORT) {
+		wl->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		if (escan_result->sync_id != wl->escan_info.cur_sync_id)
+			WL_ERR(("Escan sync id mismatch: status %d "
+			"cur_sync_id %d coming_sync_id %d\n",
+			status, wl->escan_info.cur_sync_id, escan_result->sync_id));
+#endif
+		if (wl_get_drv_status_all(wl, FINDING_COMMON_CHANNEL)) {
+			WL_INFO(("ACTION FRAME SCAN DONE\n"));
+			wl_clr_drv_status(wl, SCANNING, wl->afx_hdl->dev);
+			wl_clr_p2p_status(wl, SCANNING);
+			if (wl->afx_hdl->peer_chan == WL_INVALID)
+				complete(&wl->act_frm_scan);
+		} else if (likely(wl->scan_request)) {
+			WL_INFO(("ESCAN ABORTED\n"));
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+			wl->bss_list = (wl_scan_results_t *)
+				wl->escan_info.escan_buf[(wl->escan_info.cur_sync_id+1)%2];
+#else
+			wl->bss_list = (wl_scan_results_t *)wl->escan_info.escan_buf;
+#endif
+			wl_inform_bss(wl);
+			wl_notify_escan_complete(wl, ndev, true, false);
+		}
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		wl->escan_info.cur_sync_id += 2;
+#endif
+	}
+	else if (status == WLC_E_STATUS_NEWSCAN)
+	{
+		escan_result = (wl_escan_result_t *) data;
+		WL_ERR(("WLC_E_STATUS_NEWSCAN : scan_request[%p]\n", wl->scan_request));
+		WL_ERR(("sync_id[%d], bss_count[%d]\n", escan_result->sync_id,
+			escan_result->bss_count));
+	} else {
+		WL_ERR(("unexpected Escan Event %d : abort\n", status));
+		wl->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		if (escan_result->sync_id != wl->escan_info.cur_sync_id)
+			WL_ERR(("Escan sync id mismatch: status %d "
+			"cur_sync_id %d coming_sync_id %d\n",
+			status, wl->escan_info.cur_sync_id, escan_result->sync_id));
+#endif
+		if (wl_get_drv_status_all(wl, FINDING_COMMON_CHANNEL)) {
+			WL_INFO(("ACTION FRAME SCAN DONE\n"));
+			wl_clr_p2p_status(wl, SCANNING);
+			wl_clr_drv_status(wl, SCANNING, wl->afx_hdl->dev);
+			if (wl->afx_hdl->peer_chan == WL_INVALID)
+				complete(&wl->act_frm_scan);
+		} else if (likely(wl->scan_request)) {
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+			wl->bss_list = (wl_scan_results_t *)
+				wl->escan_info.escan_buf[(wl->escan_info.cur_sync_id+1)%2];
+#else
+			wl->bss_list = (wl_scan_results_t *)wl->escan_info.escan_buf;
+#endif
+			wl_inform_bss(wl);
+			wl_notify_escan_complete(wl, ndev, true, false);
+		}
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		wl->escan_info.cur_sync_id += 2;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 exit:
 	mutex_unlock(&cfg->usr_sync);
 	return err;
 }
+<<<<<<< HEAD
 
 static void wl_cfg80211_concurrent_roam(struct bcm_cfg80211 *cfg, int enable)
 {
@@ -9945,13 +11320,20 @@ static void wl_cfg80211_determine_vsdb_mode(struct bcm_cfg80211 *cfg)
 }
 
 static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_net_info,
+=======
+static s32 wl_notifier_change_state(struct wl_priv *wl, struct net_info *_net_info,
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	enum wl_status state, bool set)
 {
 	s32 pm = PM_FAST;
 	s32 err = BCME_OK;
 	u32 mode;
 	u32 chan = 0;
+	u32 chanspec = 0;
+	u32 prev_chan = 0;
+	u32 connected_cnt  = 0;
 	struct net_info *iter, *next;
+<<<<<<< HEAD
 	struct net_device *primary_dev = bcmcfg_to_prmry_ndev(cfg);
 	WL_DBG(("Enter state %d set %d _net_info->pm_restore %d iface %s\n",
 		state, set, _net_info->pm_restore, _net_info->ndev->name));
@@ -9981,17 +11363,82 @@ static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_
 			pm = PM_OFF;
 			for_each_ndev(cfg, iter, next) {
 				if (iter->pm_restore)
-					continue;
-				/* Save the current power mode */
-				err = wldev_ioctl(iter->ndev, WLC_GET_PM, &iter->pm,
-					sizeof(iter->pm), false);
-				WL_DBG(("%s:power save %s\n", iter->ndev->name,
-					iter->pm ? "enabled" : "disabled"));
-				if (!err && iter->pm) {
-					iter->pm_restore = true;
-				}
-
+=======
+	struct net_device *primary_dev = wl_to_prmry_ndev(wl);
+	if (set) { /* set */
+		switch (state) {
+		case WL_STATUS_CONNECTED: {
+			if ((connected_cnt = wl_get_drv_status_all(wl, CONNECTED)) > 1) {
+				pm = PM_OFF;
+				WL_INFO(("Do not enable the power save for VSDB mode\n"));
+			} else if (_net_info->pm_block) {
+				pm = PM_OFF;
+			} else {
+				pm = PM_FAST;
 			}
+			for_each_ndev(wl, iter, next) {
+				if ((connected_cnt == 1) && (iter->ndev != _net_info->ndev))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+					continue;
+				chanspec = 0;
+				chan = 0;
+				if (wl_get_drv_status(wl, CONNECTED, iter->ndev)) {
+					if (wldev_iovar_getint(iter->ndev, "chanspec",
+						(s32 *)&chanspec) == BCME_OK) {
+						chan = CHSPEC_CHANNEL(chanspec);
+						if (CHSPEC_IS40(chanspec)) {
+							if (CHSPEC_SB_UPPER(chanspec))
+								chan += CH_10MHZ_APART;
+							else
+								chan -= CH_10MHZ_APART;
+						}
+						wl_update_prof(wl, iter->ndev, NULL,
+							&chan, WL_PROF_CHAN);
+					}
+					if ((wl_get_mode_by_netdev(wl, iter->ndev)
+						== WL_MODE_BSS)) {
+						pm = htod32(pm);
+						WL_DBG(("power save %s\n",
+							(pm ? "enabled" : "disabled")));
+						err = wldev_ioctl(iter->ndev, WLC_SET_PM,
+							&pm, sizeof(pm), true);
+						if (unlikely(err)) {
+							if (err == -ENODEV)
+								WL_DBG(("net_device"
+									" is not ready\n"));
+							else
+								WL_ERR(("error"
+									" (%d)\n", err));
+								break;
+						} else {
+							wl_cfg80211_update_power_mode(iter->ndev);
+						}
+					}
+					if (connected_cnt  > 1) {
+						if (!prev_chan && chan)
+							prev_chan = chan;
+						else if (prev_chan && (prev_chan != chan)) {
+							wl->vsdb_mode = true;
+						}
+						if (wl->roamoff_on_concurrent) {
+							if ((err = wldev_iovar_getint(iter->ndev,
+								"roam_off", (s32 *)&iter->roam_off))
+								== BCME_OK) {
+								if ((err =
+								wldev_iovar_setint(iter->ndev,
+									"roam_off", 1)) !=
+									BCME_OK) {
+									WL_ERR((" failed to set "
+									"roam_off : %d\n", err));
+								}
+							} else
+								WL_ERR(("failed to get"
+									" roam_off : %d\n", err));
+						}
+					}
+				}
+			}
+<<<<<<< HEAD
 			for_each_ndev(cfg, iter, next) {
 				if ((err = wldev_ioctl(iter->ndev, WLC_SET_PM, &pm,
 					sizeof(pm), true)) != 0) {
@@ -10057,14 +11504,77 @@ static s32 wl_notifier_change_state(struct bcm_cfg80211 *cfg, struct net_info *_
 				}
 				iter->pm_restore = 0;
 				wl_cfg80211_update_power_mode(iter->ndev);
+=======
+			if (wl_get_mode_by_netdev(wl, _net_info->ndev) == WL_MODE_AP) {
+					if (wl_add_remove_eventmsg(primary_dev,
+						WLC_E_P2P_PROBREQ_MSG, false))
+							WL_ERR((" failed to unset"
+								" WLC_E_P2P_PROPREQ_MSG\n"));
 			}
+			break;
 		}
+		default:
+			break;
+		}
+	} else { /* clear */
+		switch (state) {
+		case WL_STATUS_CONNECTED: {
+			chan = 0;
+			/* clear chan information when the net device is disconnected */
+			wl_update_prof(wl, _net_info->ndev, NULL, &chan, WL_PROF_CHAN);
+			if (wl_get_drv_status_all(wl, CONNECTED) == 1) {
+				wl->vsdb_mode = false;
+				for_each_ndev(wl, iter, next) {
+					if (wl_get_drv_status(wl, CONNECTED, iter->ndev) &&
+						(wl_get_mode_by_netdev(wl, iter->ndev)
+							 == WL_MODE_BSS)) {
+						if (wl_get_netinfo_by_netdev(wl,
+							iter->ndev)->pm_block)
+							pm = PM_OFF;
+						else
+							pm = PM_FAST;
+						pm = htod32(pm);
+						WL_DBG(("power save %s\n",
+							(pm ? "enabled" : "disabled")));
+						err = wldev_ioctl(iter->ndev,
+							WLC_SET_PM, &pm, sizeof(pm), true);
+						if (unlikely(err)) {
+							if (err == -ENODEV)
+								WL_DBG(("net_device"
+									" is not ready\n"));
+							else
+								WL_ERR(("error"
+									" (%d)\n", err));
+							break;
+						} else {
+							wl_cfg80211_update_power_mode(iter->ndev);
+						}
+					}
+				}
+			}
+			if (wl->roamoff_on_concurrent) {
+				for_each_ndev(wl, iter, next) {
+					if ((iter->roam_off != WL_INVALID) &&
+						((err = wldev_iovar_setint(iter->ndev, "roam_off",
+						iter->roam_off)) == BCME_OK)) {
+						iter->roam_off = WL_INVALID;
+					} else if (err)
+						WL_ERR((" failed to set roam_off : %d\n", err));
+				}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+			}
+			break;
+		}
+<<<<<<< HEAD
 		wl_cfg80211_concurrent_roam(cfg, 0);
 #if defined(CUSTOMER_HW4) && defined(WLTDLS)
 		if (!cfg->vsdb_mode) {
 			err = wldev_iovar_setint(primary_dev, "tdls_enable", 1);
+=======
+		default:
+			break;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
-#endif /* defined(CUSTOMER_HW4) && defined(WLTDLS) */
 	}
 	return err;
 }
@@ -10072,10 +11582,36 @@ static s32 wl_init_scan(struct bcm_cfg80211 *cfg)
 {
 	int err = 0;
 
+<<<<<<< HEAD
 	cfg->evt_handler[WLC_E_ESCAN_RESULT] = wl_escan_handler;
 	cfg->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
 	wl_escan_init_sync_id(cfg);
 
+=======
+	if (wl->iscan_on) {
+		iscan->dev = wl_to_prmry_ndev(wl);
+		iscan->state = WL_ISCAN_STATE_IDLE;
+		wl_init_iscan_handler(iscan);
+		iscan->timer_ms = WL_ISCAN_TIMER_INTERVAL_MS;
+		init_timer(&iscan->timer);
+		iscan->timer.data = (unsigned long) iscan;
+		iscan->timer.function = wl_iscan_timer;
+		sema_init(&iscan->sync, 0);
+		iscan->tsk = kthread_run(wl_iscan_thread, iscan, "wl_iscan");
+		if (IS_ERR(iscan->tsk)) {
+			WL_ERR(("Could not create iscan thread\n"));
+			iscan->tsk = NULL;
+			return -ENOMEM;
+		}
+		iscan->data = wl;
+	} else if (wl->escan_on) {
+		wl->evt_handler[WLC_E_ESCAN_RESULT] = wl_escan_handler;
+		wl->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+		wl->escan_info.cur_sync_id = 0;
+#endif
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Init scan_timeout timer */
 	init_timer(&cfg->scan_timeout);
 	cfg->scan_timeout.data = (unsigned long) cfg;
@@ -10147,8 +11683,13 @@ static s32 wl_cfg80211_attach_p2p(void)
 
 	WL_TRACE(("Enter \n"));
 
+<<<<<<< HEAD
 	if (wl_cfgp2p_register_ndev(cfg) < 0) {
 		WL_ERR(("P2P attach failed. \n"));
+=======
+	if (wl_cfgp2p_register_ndev(wl) < 0) {
+		WL_ERR(("%s: P2P attach failed. \n", __func__));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		return -ENODEV;
 	}
 
@@ -10157,6 +11698,7 @@ static s32 wl_cfg80211_attach_p2p(void)
 
 static s32  wl_cfg80211_detach_p2p(void)
 {
+<<<<<<< HEAD
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
 	struct wireless_dev *wdev;
 
@@ -10169,6 +11711,13 @@ static s32  wl_cfg80211_detach_p2p(void)
 
 #ifndef WL_NEWCFG_PRIVCMD_SUPPORT
 	if (!wdev) {
+=======
+	struct wl_priv *wl = wlcfg_drv_priv;
+	struct wireless_dev *wdev = wl->p2p_wdev;
+
+	WL_DBG(("Enter \n"));
+	if (!wdev || !wl) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		WL_ERR(("Invalid Ptr\n"));
 		return -EINVAL;
 	}
@@ -10294,6 +11843,7 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *context)
 		WL_ERR(("Failed to setup rfkill %d\n", err));
 		goto cfg80211_attach_out;
 	}
+<<<<<<< HEAD
 #ifdef DEBUGFS_CFG80211
 	err = wl_setup_debugfs(cfg);
 	if (err) {
@@ -10313,6 +11863,15 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *context)
 #if defined(COEX_DHCP)
 	cfg->btcoex_info = wl_cfg80211_btcoex_init(cfg->wdev->netdev);
 	if (!cfg->btcoex_info)
+=======
+	err = register_netdevice_notifier(&wl_cfg80211_netdev_notifier);
+	if (err) {
+		WL_ERR(("Failed to register notifierl %d\n", err));
+		goto cfg80211_attach_out;
+	}
+#if defined(COEX_DHCP)
+	if (wl_cfg80211_btcoex_init(wl))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		goto cfg80211_attach_out;
 #endif 
 
@@ -10327,8 +11886,13 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *context)
 	return err;
 
 cfg80211_attach_out:
+<<<<<<< HEAD
 	wl_setup_rfkill(cfg, FALSE);
 	wl_free_wdev(cfg);
+=======
+	err = wl_setup_rfkill(wl, FALSE);
+	wl_free_wdev(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return err;
 }
 
@@ -10348,6 +11912,7 @@ void wl_cfg80211_detach(void *para)
 	cfg->btcoex_info = NULL;
 #endif 
 
+<<<<<<< HEAD
 	wl_setup_rfkill(cfg, FALSE);
 #ifdef DEBUGFS_CFG80211
 	wl_free_debugfs(cfg);
@@ -10356,6 +11921,12 @@ void wl_cfg80211_detach(void *para)
 		if (timer_pending(&cfg->p2p->listen_timer))
 			del_timer_sync(&cfg->p2p->listen_timer);
 		wl_cfgp2p_deinit_priv(cfg);
+=======
+	wl_setup_rfkill(wl, FALSE);
+	if (wl->p2p_supported) {
+		WL_ERR(("wl_cfgp2p_down() is not called yet\n"));
+		wl_cfgp2p_down(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	if (timer_pending(&cfg->scan_timeout))
@@ -10432,9 +12003,19 @@ static s32 wl_event_handler(void *data)
 	tsk_ctl_t *tsk = (tsk_ctl_t *)data;
 	bcm_struct_cfgdev *cfgdev = NULL;
 
+<<<<<<< HEAD
 	cfg = (struct bcm_cfg80211 *)tsk->parent;
 
 	WL_ERR(("tsk Enter, tsk = 0x%p\n", tsk));
+=======
+	wl = (struct wl_priv *)tsk->parent;
+#ifndef USE_KTHREAD_API
+	DAEMONIZE("dhd_cfg80211_event");
+	complete(&tsk->completed);
+#else
+	WL_ERR(("tsk Enter, tsk = 0x%08x\n", (unsigned int)tsk));
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	while (down_interruptible (&tsk->sema) == 0) {
 		SMP_RD_BARRIER_DEPENDS();
@@ -10481,7 +12062,7 @@ static s32 wl_event_handler(void *data)
 		}
 		DHD_OS_WAKE_UNLOCK(cfg->pub);
 	}
-	WL_ERR(("was terminated\n"));
+	WL_ERR(("%s was terminated\n", __func__));
 	complete_and_exit(&tsk->completed, 0);
 	return 0;
 }
@@ -10491,6 +12072,10 @@ wl_cfg80211_event(struct net_device *ndev, const wl_event_msg_t * e, void *data)
 {
 	u32 event_type = ntoh32(e->event_type);
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
+
+#if defined(CUSTOMER_HW4) && defined(PNO_SUPPORT) && defined(CONFIG_HAS_WAKELOCK)
+	int pno_wakelock_timeout = 10; /* 10 second */
+#endif
 
 #if (WL_DBG_LEVEL > 0)
 	s8 *estr = (event_type <= sizeof(wl_dbg_estr) / WL_DBG_ESTR_MAX - 1) ?
@@ -10518,6 +12103,9 @@ wl_cfg80211_event(struct net_device *ndev, const wl_event_msg_t * e, void *data)
 	}
 
 	if (event_type == WLC_E_PFN_NET_FOUND) {
+#if defined(CUSTOMER_HW4) && defined(PNO_SUPPORT) && defined(CONFIG_HAS_WAKELOCK)
+		net_os_wake_lock_timeout_for_pno(ndev, pno_wakelock_timeout);
+#endif
 		WL_DBG((" PNOEVENT: PNO_NET_FOUND\n"));
 	}
 	else if (event_type == WLC_E_PFN_NET_LOST) {
@@ -10762,7 +12350,6 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 	bool update;
 	bool ht40_allowed;
 	u8 *pbuf = NULL;
-	bool dfs_radar_disabled = FALSE;
 
 #define LOCAL_BUF_LEN 1024
 	pbuf = kzalloc(LOCAL_BUF_LEN, GFP_KERNEL);
@@ -10771,7 +12358,7 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 		WL_ERR(("failed to allocate local buf\n"));
 		return -ENOMEM;
 	}
-	list = (wl_uint32_list_t *)(void *)pbuf;
+	list = (wl_uint32_list_t *)(void *) pbuf;
 	list->count = htod32(WL_NUMCHANSPECS);
 
 
@@ -10798,18 +12385,14 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 				channel += CH_10MHZ_APART;
 			else
 				channel -= CH_10MHZ_APART;
-		} else if (CHSPEC_IS80(c)) {
-			WL_DBG(("HT80 center channel : %d\n", channel));
-			continue;
 		}
-		if (CHSPEC_IS2G(c) && (channel >= CH_MIN_2G_CHANNEL) &&
-			(channel <= CH_MAX_2G_CHANNEL)) {
+		if (CHSPEC_IS2G(c) && channel <= CH_MAX_2G_CHANNEL) {
 			band_chan_arr = __wl_2ghz_channels;
 			array_size = ARRAYSIZE(__wl_2ghz_channels);
 			n_cnt = &n_2g;
 			band = IEEE80211_BAND_2GHZ;
 			ht40_allowed = (bw_cap  == WLC_N_BW_40ALL)? true : false;
-		} else if (CHSPEC_IS5G(c) && channel >= CH_MIN_5G_CHANNEL) {
+		} else if (CHSPEC_IS5G(c) && channel > CH_MAX_2G_CHANNEL) {
 			band_chan_arr = __wl_5ghz_a_channels;
 			array_size = ARRAYSIZE(__wl_5ghz_a_channels);
 			n_cnt = &n_5g;
@@ -10819,8 +12402,6 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 			WL_ERR(("Invalid channel Sepc. 0x%x.\n", c));
 			continue;
 		}
-		if (!ht40_allowed && CHSPEC_IS40(c))
-			continue;
 		for (j = 0; (j < *n_cnt && (*n_cnt < array_size)); j++) {
 			if (band_chan_arr[j].hw_value == channel) {
 				update = true;
@@ -10843,8 +12424,8 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 
 			if (CHSPEC_IS40(c) && ht40_allowed) {
 				/* assuming the order is HT20, HT40 Upper,
-				 *  HT40 lower from chanspecs
-				 */
+				   HT40 lower from chanspecs
+				*/
 				u32 ht40_flag = band_chan_arr[index].flags & IEEE80211_CHAN_NO_HT40;
 				if (CHSPEC_SB_UPPER(c)) {
 					if (ht40_flag == IEEE80211_CHAN_NO_HT40)
@@ -10853,8 +12434,8 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 					band_chan_arr[index].flags |= IEEE80211_CHAN_NO_HT40PLUS;
 				} else {
 					/* It should be one of
-					 * IEEE80211_CHAN_NO_HT40 or IEEE80211_CHAN_NO_HT40PLUS
-					 */
+						IEEE80211_CHAN_NO_HT40 or IEEE80211_CHAN_NO_HT40PLUS
+					*/
 					band_chan_arr[index].flags &= ~IEEE80211_CHAN_NO_HT40;
 					if (ht40_flag == IEEE80211_CHAN_NO_HT40)
 						band_chan_arr[index].flags |=
@@ -10862,6 +12443,7 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 				}
 			} else {
 				band_chan_arr[index].flags = IEEE80211_CHAN_NO_HT40;
+<<<<<<< HEAD
 				if (!dfs_radar_disabled) {
 					if (band == IEEE80211_BAND_2GHZ)
 						channel |= WL_CHANSPEC_BAND_2G;
@@ -10882,6 +12464,23 @@ static int wl_construct_reginfo(struct bcm_cfg80211 *cfg, s32 bw_cap)
 						dfs_radar_disabled = TRUE;
 						WL_ERR(("does not support per_chan_info\n"));
 					}
+=======
+				if (band == IEEE80211_BAND_2GHZ)
+					channel |= WL_CHANSPEC_BAND_2G;
+				else
+					channel |= WL_CHANSPEC_BAND_5G;
+				channel |= WL_CHANSPEC_BW_20;
+				channel = wl_chspec_host_to_driver(channel);
+				err = wldev_iovar_getint(dev, "per_chan_info", &channel);
+				if (!err) {
+					if (channel & WL_CHAN_RADAR)
+						band_chan_arr[index].flags |=
+							(IEEE80211_CHAN_RADAR |
+							IEEE80211_CHAN_NO_IBSS);
+					if (channel & WL_CHAN_PASSIVE)
+						band_chan_arr[index].flags |=
+							IEEE80211_CHAN_PASSIVE_SCAN;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 				}
 			}
 			if (!update)
@@ -10908,11 +12507,17 @@ s32 wl_update_wiphybands(struct bcm_cfg80211 *cfg, bool notify)
 	bool rollback_lock = false;
 	s32 bw_cap = 0;
 	s32 cur_band = -1;
+<<<<<<< HEAD
 	struct ieee80211_supported_band *bands[IEEE80211_NUM_BANDS] = {NULL, };
 
 	if (cfg == NULL) {
 		cfg = g_bcm_cfg;
 		mutex_lock(&cfg->usr_sync);
+=======
+	if (wl == NULL) {
+		wl = wlcfg_drv_priv;
+		mutex_lock(&wl->usr_sync);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		rollback_lock = true;
 	}
 	dev = bcmcfg_to_prmry_ndev(cfg);
@@ -10935,10 +12540,10 @@ s32 wl_update_wiphybands(struct bcm_cfg80211 *cfg, bool notify)
 	if (unlikely(err)) {
 		WL_ERR(("error reading nmode (%d)\n", err));
 	} else {
-		/* For nmodeonly  check bw cap */
+		/* For nmodeonly check bw cap */
 		err = wldev_iovar_getint(dev, "mimo_bw_cap", &bw_cap);
 		if (unlikely(err)) {
-			WL_ERR(("error get mimo_bw_cap (%d)\n", err));
+			 WL_ERR(("error get mimo_bw_cap (%d)\n", err));
 		}
 	}
 
@@ -10951,36 +12556,38 @@ s32 wl_update_wiphybands(struct bcm_cfg80211 *cfg, bool notify)
 	}
 	wiphy = bcmcfg_to_wiphy(cfg);
 	nband = bandlist[0];
-
+	wiphy->bands[IEEE80211_BAND_5GHZ] = NULL;
+	wiphy->bands[IEEE80211_BAND_2GHZ] = NULL;
 	for (i = 1; i <= nband && i < ARRAYSIZE(bandlist); i++) {
 		index = -1;
 		if (bandlist[i] == WLC_BAND_5G && __wl_band_5ghz_a.n_channels > 0) {
-			bands[IEEE80211_BAND_5GHZ] =
+			wiphy->bands[IEEE80211_BAND_5GHZ] =
 				&__wl_band_5ghz_a;
-			index = IEEE80211_BAND_5GHZ;
+				index = IEEE80211_BAND_5GHZ;
 			if (bw_cap == WLC_N_BW_40ALL || bw_cap == WLC_N_BW_20IN2G_40IN5G)
-				bands[index]->ht_cap.cap |= IEEE80211_HT_CAP_SGI_40;
+				wiphy->bands[index]->ht_cap.cap |= IEEE80211_HT_CAP_SGI_40;
 		}
 		else if (bandlist[i] == WLC_BAND_2G && __wl_band_2ghz.n_channels > 0) {
-			bands[IEEE80211_BAND_2GHZ] =
+			wiphy->bands[IEEE80211_BAND_2GHZ] =
 				&__wl_band_2ghz;
-			index = IEEE80211_BAND_2GHZ;
+				index = IEEE80211_BAND_2GHZ;
 			if (bw_cap == WLC_N_BW_40ALL)
-				bands[index]->ht_cap.cap |= IEEE80211_HT_CAP_SGI_40;
+				wiphy->bands[index]->ht_cap.cap |= IEEE80211_HT_CAP_SGI_40;
 		}
 
 		if ((index >= 0) && nmode) {
-			bands[index]->ht_cap.cap |=
+			wiphy->bands[index]->ht_cap.cap |=
 				(IEEE80211_HT_CAP_SGI_20 | IEEE80211_HT_CAP_DSSSCCK40);
-			bands[index]->ht_cap.ht_supported = TRUE;
-			bands[index]->ht_cap.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K;
-			bands[index]->ht_cap.ampdu_density = IEEE80211_HT_MPDU_DENSITY_16;
+			wiphy->bands[index]->ht_cap.ht_supported = TRUE;
+			wiphy->bands[index]->ht_cap.ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K;
+			wiphy->bands[index]->ht_cap.ampdu_density = IEEE80211_HT_MPDU_DENSITY_16;
 			/* An HT shall support all EQM rates for one spatial stream */
-			bands[index]->ht_cap.mcs.rx_mask[0] = 0xff;
+			wiphy->bands[index]->ht_cap.mcs.rx_mask[0] = 0xff;
 		}
 
 	}
 
+<<<<<<< HEAD
 	wiphy->bands[IEEE80211_BAND_2GHZ] = bands[IEEE80211_BAND_2GHZ];
 	wiphy->bands[IEEE80211_BAND_5GHZ] = bands[IEEE80211_BAND_5GHZ];
 
@@ -10998,15 +12605,26 @@ s32 wl_update_wiphybands(struct bcm_cfg80211 *cfg, bool notify)
 		if (rollback_lock)
 			mutex_unlock(&cfg->usr_sync);
 	return err;
+=======
+	wiphy_apply_custom_regulatory(wiphy, &brcm_regdom);
+	end_bands:
+		if (rollback_lock)
+			mutex_unlock(&wl->usr_sync);
+		return err;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 static s32 __wl_cfg80211_up(struct bcm_cfg80211 *cfg)
 {
 	s32 err = 0;
+<<<<<<< HEAD
 #ifdef WL_HOST_BAND_MGMT
 	s32 ret = 0;
 #endif /* WL_HOST_BAND_MGMT */
 	struct net_device *ndev = bcmcfg_to_prmry_ndev(cfg);
+=======
+	struct net_device *ndev = wl_to_prmry_ndev(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	struct wireless_dev *wdev = ndev->ieee80211_ptr;
 
 	WL_DBG(("In\n"));
@@ -11036,17 +12654,9 @@ static s32 __wl_cfg80211_up(struct bcm_cfg80211 *cfg)
 
 #ifdef WL_HOST_BAND_MGMT
 	/* By default the curr_band is initialized to BAND_AUTO */
-	if ((ret = wl_cfg80211_set_band(ndev, WLC_BAND_AUTO)) < 0) {
-		if (ret == BCME_UNSUPPORTED) {
-			/* Don't fail the initialization, lets just
-			 * fall back to the original method
-			 */
-			WL_ERR(("WL_HOST_BAND_MGMT defined, "
-				"but roam_band iovar not supported \n"));
-		} else {
-			WL_ERR(("roam_band failed. ret=%d", ret));
-			err = -1;
-		}
+	if (wl_cfg80211_set_band(ndev, WLC_BAND_AUTO) < 0) {
+		WL_ERR(("roam_band set failed\n"));
+		err = -1;
 	}
 #endif /* WL_HOST_BAND_MGMT */
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
@@ -11063,6 +12673,7 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 	s32 err = 0;
 	unsigned long flags;
 	struct net_info *iter, *next;
+<<<<<<< HEAD
 	struct net_device *ndev = bcmcfg_to_prmry_ndev(cfg);
 #if defined(WL_CFG80211) && (defined(WL_ENABLE_P2P_IF) || \
 	defined(WL_NEWCFG_PRIVCMD_SUPPORT))
@@ -11099,9 +12710,19 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 			WL_ERR(("BSS down failed \n"));
 	}
 
+=======
+	struct net_device *ndev = wl_to_prmry_ndev(wl);
+#ifdef WL_ENABLE_P2P_IF
+#if !defined(CUSTOMER_HW4)
+	struct net_device *p2p_net = wl->p2p_net;
+#endif /* !defined(CUSTOMER_HW4) */
+#endif /* WL_ENABLE_P2P_IF */
+	WL_DBG(("In\n"));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Check if cfg80211 interface is already down */
 	if (!wl_get_drv_status(cfg, READY, ndev))
 		return err;	/* it is even not ready */
+<<<<<<< HEAD
 	for_each_ndev(cfg, iter, next)
 		wl_set_drv_status(cfg, SCAN_ABORTING, iter->ndev);
 
@@ -11110,6 +12731,17 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 	if (cfg->scan_request) {
 		cfg80211_scan_done(cfg->scan_request, true);
 		cfg->scan_request = NULL;
+=======
+
+	for_each_ndev(wl, iter, next)
+		wl_set_drv_status(wl, SCAN_ABORTING, iter->ndev);
+
+	wl_term_iscan(wl);
+	spin_lock_irqsave(&wl->cfgdrv_lock, flags);
+	if (wl->scan_request) {
+		cfg80211_scan_done(wl->scan_request, true);
+		wl->scan_request = NULL;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	spin_unlock_irqrestore(&cfg->cfgdrv_lock, flags);
 
@@ -11125,6 +12757,7 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 	}
 	bcmcfg_to_prmry_ndev(cfg)->ieee80211_ptr->iftype =
 		NL80211_IFTYPE_STATION;
+<<<<<<< HEAD
 #if defined(WL_CFG80211) && (defined(WL_ENABLE_P2P_IF) || \
 	defined(WL_NEWCFG_PRIVCMD_SUPPORT))
 #ifdef SUPPORT_DEEP_SLEEP
@@ -11138,6 +12771,17 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 	wl_link_down(cfg);
 	if (cfg->p2p_supported)
 		wl_cfgp2p_down(cfg);
+=======
+#if !defined(CUSTOMER_HW4)
+	if (p2p_net)
+		dev_close(p2p_net);
+#endif
+	DNGL_FUNC(dhd_cfg80211_down, (wl));
+	wl_flush_eq(wl);
+	wl_link_down(wl);
+	if (wl->p2p_supported)
+		wl_cfgp2p_down(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	dhd_monitor_uninit();
 
 	return err;
@@ -11175,11 +12819,15 @@ s32 wl_cfg80211_up(void *para)
 		if (unlikely(err))
 			return err;
 	}
+<<<<<<< HEAD
 #if defined(BCMSUP_4WAY_HANDSHAKE) && defined(WLAN_AKM_SUITE_FT_8021X)
 	if (dhd->fw_4way_handshake)
 		cfg->wdev->wiphy->features |= NL80211_FEATURE_FW_4WAY_HANDSHAKE;
 #endif
 	err = __wl_cfg80211_up(cfg);
+=======
+	err = __wl_cfg80211_up(wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (unlikely(err))
 		WL_ERR(("__wl_cfg80211_up failed\n"));
 #ifdef ROAM_CHANNEL_CACHE
@@ -11240,7 +12888,6 @@ static void *wl_read_prof(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32
 		break;
 	case WL_PROF_SSID:
 		rptr = &profile->ssid;
-		break;
 	case WL_PROF_CHAN:
 		rptr = &profile->channel;
 		break;
@@ -11291,14 +12938,13 @@ wl_update_prof(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		break;
 	case WL_PROF_CHAN:
 		profile->channel = *(u32*)data;
-		break;
 	default:
 		err = -EOPNOTSUPP;
 		break;
 	}
 	spin_unlock_irqrestore(&cfg->cfgdrv_lock, flags);
 
-	if (err == -EOPNOTSUPP)
+	if (err == EOPNOTSUPP)
 		WL_ERR(("unsupported item (%d)\n", item));
 
 	return err;
@@ -11493,6 +13139,7 @@ s32 wl_cfg80211_set_p2p_ps(struct net_device *net, char* buf, int len)
 	return wl_cfgp2p_set_p2p_ps(cfg, net, buf, len);
 }
 
+<<<<<<< HEAD
 s32 wl_cfg80211_channel_to_freq(u32 channel)
 {
 	int freq = 0;
@@ -11595,6 +13242,8 @@ out:
 }
 #endif /* LINUX_VERSION > VERSION(3,2,0) || WL_COMPAT_WIRELESS */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 s32 wl_cfg80211_set_wps_p2p_ie(struct net_device *net, char *buf, int len,
 	enum wl_management_type type)
 {
@@ -12035,6 +13684,7 @@ static int wl_setup_rfkill(struct bcm_cfg80211 *cfg, bool setup)
 err_out:
 	return err;
 }
+<<<<<<< HEAD
 
 #ifdef DEBUGFS_CFG80211
 /**
@@ -12158,6 +13808,9 @@ static s32 wl_free_debugfs(struct bcm_cfg80211 *cfg)
 }
 #endif /* DEBUGFS_CFG80211 */
 
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 struct device *wl_cfg80211_get_parent_dev(void)
 {
 	return cfg80211_parent_dev;
@@ -12213,6 +13866,7 @@ void wl_cfg80211_enable_trace(bool set, u32 level)
 	else
 		wl_dbg_level |= (WL_DBG_LEVEL & level);
 }
+<<<<<<< HEAD
 #if defined(WL_SUPPORT_BACKPORTED_KPATCHES) || (LINUX_VERSION_CODE >= KERNEL_VERSION(3, \
 	2, 0))
 static s32
@@ -12228,6 +13882,8 @@ wl_cfg80211_mgmt_tx_cancel_wait(struct wiphy *wiphy,
 	return 0;
 }
 #endif /* WL_SUPPORT_BACKPORTED_PATCHES || KERNEL >= 3.2.0 */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef WL11U
 bcm_tlv_t *
@@ -12276,8 +13932,7 @@ wl_cfg80211_add_iw_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 bss
 
 	if (cfg->iw_ie_len == data_len && !memcmp(cfg->iw_ie, data, data_len)) {
 		WL_ERR(("Previous IW IE is equals to current IE\n"));
-		err = BCME_OK;
-		goto exit;
+		return err;
 	}
 
 	strncpy(ie_setbuf->cmd, "add", VNDR_IE_CMD_LEN - 1);
@@ -12301,7 +13956,7 @@ wl_cfg80211_add_iw_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 bss
 			cfg->ioctl_buf, WLC_IOCTL_MAXLEN, bssidx, &cfg->ioctl_buf_sync);
 
 		if (err != BCME_OK)
-			goto exit;
+			return err;
 	}
 
 	ie_setbuf->ie_buffer.ie_list[0].ie_data.len = data_len;
@@ -12318,17 +13973,16 @@ wl_cfg80211_add_iw_ie(struct bcm_cfg80211 *cfg, struct net_device *ndev, s32 bss
 		err = wldev_iovar_setint_bsscfg(ndev, "grat_arp", 1, bssidx);
 	}
 
-exit:
-	if (ie_setbuf)
-		kfree(ie_setbuf);
+	kfree(ie_setbuf);
 	return err;
 }
 #endif /* WL11U */
 
-#ifdef WL_HOST_BAND_MGMT
-s32
-wl_cfg80211_set_band(struct net_device *ndev, int band)
+static s32
+wl_cfg80211_mgmt_tx_cancel_wait(struct wiphy *wiphy,
+	struct net_device *dev, u64 cookie)
 {
+<<<<<<< HEAD
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
 	int ret = 0;
 	char ioctl_buf[50];
@@ -12487,3 +14141,13 @@ wl_cfg80211_get_fbt_key(uint8 *key)
 	memcpy(key, g_bcm_cfg->fbt_key, FBT_KEYLEN);
 }
 #endif /* WLFBT */
+=======
+	/* CFG80211 checks for tx_cancel_wait callback when ATTR_DURATION
+	 * is passed with CMD_FRAME. This callback is supposed to cancel
+	 * the OFFCHANNEL Wait. Since we are already taking care of that
+	 *  with the tx_mgmt logic, do nothing here.
+	 */
+
+	return 0;
+}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

@@ -23,7 +23,11 @@
  *
  * Dependencies: proto/bcmeth.h
  *
+<<<<<<< HEAD
  * $Id: bcmevent.h 433217 2013-10-31 00:39:54Z $
+=======
+ * $Id: bcmevent.h 326276 2012-04-06 23:16:42Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  *
  */
 
@@ -175,6 +179,7 @@ typedef BWL_PRE_PACKED_STRUCT struct bcm_event {
 #define WLC_E_PROBRESP_MSG	71	/* probe response received */
 #define WLC_E_P2P_PROBREQ_MSG	72	/* P2P Probe request received */
 #define WLC_E_DCS_REQUEST	73
+<<<<<<< HEAD
 #define WLC_E_FIFO_CREDIT_MAP	74	/* credits for D11 FIFOs. [AC0,AC1,AC2,AC3,BC_MC,ATIM] */
 #define WLC_E_ACTION_FRAME_RX	75	/* Received action frame event WITH
 					 * wl_event_rx_frame_data_t header
@@ -246,6 +251,34 @@ typedef BWL_PRE_PACKED_STRUCT struct bcm_event {
 
 
 /* Table of event name strings for UIs and debugging dumps */
+=======
+
+#define WLC_E_FIFO_CREDIT_MAP	74	
+
+#define WLC_E_ACTION_FRAME_RX	75	
+#define WLC_E_WAKE_EVENT	76	
+#define WLC_E_RM_COMPLETE	77	
+#define WLC_E_HTSFSYNC		78	
+#define WLC_E_OVERLAY_REQ	79	
+#define WLC_E_CSA_COMPLETE_IND		80	
+#define WLC_E_EXCESS_PM_WAKE_EVENT	81	
+#define WLC_E_PFN_SCAN_NONE		82	
+#define WLC_E_PFN_SCAN_ALLGONE		83	
+#define WLC_E_GTK_PLUMBED 		84
+#define WLC_E_ASSOC_IND_NDIS		85	
+#define WLC_E_REASSOC_IND_NDIS		86	
+#define WLC_E_ASSOC_REQ_IE 		87
+#define WLC_E_ASSOC_RESP_IE 		88
+#define WLC_E_ASSOC_RECREATED	89	
+#define WLC_E_ACTION_FRAME_RX_NDIS	90	
+#define WLC_E_AUTH_REQ		91	
+#define WLC_E_TDLS_PEER_EVENT 	92	
+#define WLC_E_SPEEDY_RECREATE_FAIL	93	
+#define WLC_E_LAST			94	
+
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 typedef struct {
 	uint event;
 	const char *name;
@@ -270,6 +303,7 @@ extern const int		bcmevent_names_size;
 #define WLC_E_STATUS_SUPPRESS		12	/* user disabled scanning (WLC_SET_SCANSUPPRESS) */
 #define WLC_E_STATUS_NOCHANS		13	/* no allowable channels to scan */
 #ifdef BCMCCX
+<<<<<<< HEAD
 #define WLC_E_STATUS_CCXFASTRM		14	/* scan aborted due to CCX fast roam */
 #endif /* BCMCCX */
 #define WLC_E_STATUS_CS_ABORT		15	/* abort channel select */
@@ -344,6 +378,76 @@ extern const int		bcmevent_names_size;
 #ifdef WLAWDL
 #define WLC_E_AWDL_SCAN_START		1	/* Scan start indication to host */
 #define WLC_E_AWDL_SCAN_DONE		0	/* Scan Done indication to host */
+=======
+#define WLC_E_STATUS_CCXFASTRM		14
+#endif
+#define WLC_E_STATUS_CS_ABORT		15	
+#define WLC_E_STATUS_ERROR		16	
+
+
+#define WLC_E_REASON_INITIAL_ASSOC	0	
+#define WLC_E_REASON_LOW_RSSI		1	
+#define WLC_E_REASON_DEAUTH		2	
+#define WLC_E_REASON_DISASSOC		3	
+#define WLC_E_REASON_BCNS_LOST		4	
+#define WLC_E_REASON_MINTXRATE		9	
+#define WLC_E_REASON_TXFAIL		10	
+
+
+#define WLC_E_REASON_FAST_ROAM_FAILED	5	
+#define WLC_E_REASON_DIRECTED_ROAM	6	
+#define WLC_E_REASON_TSPEC_REJECTED	7	
+#define WLC_E_REASON_BETTER_AP		8	
+
+
+#define WLC_E_REASON_REQUESTED_ROAM 11	
+
+
+#define WLC_E_PRUNE_ENCR_MISMATCH	1	
+#define WLC_E_PRUNE_BCAST_BSSID		2	
+#define WLC_E_PRUNE_MAC_DENY		3	
+#define WLC_E_PRUNE_MAC_NA		4	
+#define WLC_E_PRUNE_REG_PASSV		5	
+#define WLC_E_PRUNE_SPCT_MGMT		6	
+#define WLC_E_PRUNE_RADAR		7	
+#define WLC_E_RSN_MISMATCH		8	
+#define WLC_E_PRUNE_NO_COMMON_RATES	9	
+#define WLC_E_PRUNE_BASIC_RATES		10	
+#ifdef BCMCCX
+#define WLC_E_PRUNE_CCXFAST_PREVAP	11
+#endif
+#define WLC_E_PRUNE_CIPHER_NA		12	
+#define WLC_E_PRUNE_KNOWN_STA		13	
+#ifdef BCMCCX
+#define WLC_E_PRUNE_CCXFAST_DROAM	14
+#endif
+#define WLC_E_PRUNE_WDS_PEER		15	
+#define WLC_E_PRUNE_QBSS_LOAD		16	
+#define WLC_E_PRUNE_HOME_AP		17	
+#ifdef BCMCCX
+#define WLC_E_PRUNE_AP_BLOCKED		18
+#define WLC_E_PRUNE_NO_DIAG_SUPPORT	19
+#endif
+
+
+#define WLC_E_SUP_OTHER			0	
+#define WLC_E_SUP_DECRYPT_KEY_DATA	1	
+#define WLC_E_SUP_BAD_UCAST_WEP128	2	
+#define WLC_E_SUP_BAD_UCAST_WEP40	3	
+#define WLC_E_SUP_UNSUP_KEY_LEN		4	
+#define WLC_E_SUP_PW_KEY_CIPHER		5	
+#define WLC_E_SUP_MSG3_TOO_MANY_IE	6	
+#define WLC_E_SUP_MSG3_IE_MISMATCH	7	
+#define WLC_E_SUP_NO_INSTALL_FLAG	8	
+#define WLC_E_SUP_MSG3_NO_GTK		9	
+#define WLC_E_SUP_GRP_KEY_CIPHER	10	
+#define WLC_E_SUP_GRP_MSG1_NO_GTK	11	
+#define WLC_E_SUP_GTK_DECRYPT_FAIL	12	
+#define WLC_E_SUP_SEND_FAIL		13	
+#define WLC_E_SUP_DEAUTH		14	
+#define WLC_E_SUP_WPA_PSK_TMO		15	
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 #endif
@@ -382,12 +486,15 @@ typedef struct wl_event_data_if {
 #define WLC_E_IF_ROLE_BTA_ACCEPTOR	6	/* BT-AMP Acceptor */
 #endif
 
+<<<<<<< HEAD
 /* WLC_E_RSSI event data */
 typedef struct wl_event_data_rssi {
 	int32 rssi;
 	int32 snr;
 	int32 noise;
 } wl_event_data_rssi_t;
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* WLC_E_IF flag */
 #define WLC_E_IF_FLAGS_BSSCFG_NOIF	0x1	/* no host I/F creation needed */
@@ -417,6 +524,7 @@ typedef struct wl_event_data_rssi {
 #define WLC_E_AWDL_PHYCAL_DONE		0	/* Phy calibration done indication to host */
 #endif
 
+<<<<<<< HEAD
 /* GAS event data */
 typedef BWL_PRE_PACKED_STRUCT struct wl_event_gas {
 	uint16	channel;		/* channel of GAS protocol */
@@ -487,6 +595,8 @@ typedef struct wl_psta_primary_intf_event {
 } wl_psta_primary_intf_event_t;
 
 /* This marks the end of a packed structure section. */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #include <packed_section_end.h>
 
 #endif /* _BCMEVENT_H_ */

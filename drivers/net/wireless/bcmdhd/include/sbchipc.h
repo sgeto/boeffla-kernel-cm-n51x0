@@ -5,7 +5,11 @@
  * JTAG, 0/1/2 UARTs, clock frequency control, a watchdog interrupt timer,
  * GPIO interface, extbus, and support for serial and parallel flashes.
  *
+<<<<<<< HEAD
  * $Id: sbchipc.h 433333 2013-10-31 10:34:27Z $
+=======
+ * $Id: sbchipc.h 347614 2012-07-27 10:24:51Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  *
  * Copyright (C) 1999-2014, Broadcom Corporation
  * 
@@ -296,12 +300,21 @@ typedef volatile struct {
 	uint32	regcontrol_data;
 	uint32	pllcontrol_addr;
 	uint32	pllcontrol_data;
+<<<<<<< HEAD
 	uint32	pmustrapopt;		/* 0x668, corerev >= 28 */
 	uint32	pmu_xtalfreq;		/* 0x66C, pmurev >= 10 */
 	uint32  retention_ctl;		/* 0x670 */
 	uint32  PAD[3];
 	uint32  retention_grpidx;	/* 0x680 */
 	uint32  retention_grpctl;	/* 0x684 */
+=======
+	uint32	pmustrapopt;		
+	uint32	pmu_xtalfreq;		
+	uint32  retention_ctl;         
+	uint32  PAD[3];
+	uint32  retention_grpidx;      
+	uint32  retention_grpctl;      
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	uint32  PAD[94];
 	uint16	sromotp[512];		/* 0x800 */
 #ifdef NFLASH_SUPPORT
@@ -367,6 +380,7 @@ typedef volatile struct {
 	uint32	nand_cache_data;
 	uint32	nand_ctrl_config;
 	uint32	nand_ctrl_status;
+<<<<<<< HEAD
 #endif /* NFLASH_SUPPORT */
 	uint32  gci_corecaps0; /* GCI starting at 0xC00 */
 	uint32  gci_corecaps1;
@@ -420,6 +434,18 @@ typedef volatile struct {
 	uint32  PAD;
 	uint32  gci_chipctrl; /* 0xE00 */
 	uint32  gci_chipsts; /* 0xE04 */
+=======
+#endif
+	uint32  gci_corecaps0;
+	uint32	gci_corecaps1;
+	uint32	gci_corecaps2;
+	uint32	gci_corectrl;
+	uint32	gci_corestat;
+	uint32	PAD[11];
+	uint32	gci_indirect_addr;
+	uint32	PAD[111];
+	uint32	gci_chipctrl;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } chipcregs_t;
 
 #endif /* _LANGUAGE_ASSEMBLY */
@@ -533,6 +559,7 @@ typedef volatile struct {
 #define	CID_TYPE_MASK		0xf0000000	/* Chip Type */
 #define CID_TYPE_SHIFT		28
 
+<<<<<<< HEAD
 /* capabilities */
 #define	CC_CAP_UARTS_MASK	0x00000003	/* Number of UARTs */
 #define CC_CAP_MIPSEB		0x00000004	/* MIPS is in big-endian mode */
@@ -567,6 +594,39 @@ typedef volatile struct {
 /* WL Channel Info to BT via GCI - bits 40 - 47 */
 #define GCI_WL_CHN_INFO_MASK 	(0xFF00)
 /* PLL type */
+=======
+
+#define	CC_CAP_UARTS_MASK	0x00000003	
+#define CC_CAP_MIPSEB		0x00000004	
+#define CC_CAP_UCLKSEL		0x00000018	
+#define CC_CAP_UINTCLK		0x00000008	
+#define CC_CAP_UARTGPIO		0x00000020	
+#define CC_CAP_EXTBUS_MASK	0x000000c0	
+#define CC_CAP_EXTBUS_NONE	0x00000000	
+#define CC_CAP_EXTBUS_FULL	0x00000040	
+#define CC_CAP_EXTBUS_PROG	0x00000080	
+#define	CC_CAP_FLASH_MASK	0x00000700	
+#define	CC_CAP_PLL_MASK		0x00038000	
+#define CC_CAP_PWR_CTL		0x00040000	
+#define CC_CAP_OTPSIZE		0x00380000	
+#define CC_CAP_OTPSIZE_SHIFT	19		
+#define CC_CAP_OTPSIZE_BASE	5		
+#define CC_CAP_JTAGP		0x00400000	
+#define CC_CAP_ROM		0x00800000	
+#define CC_CAP_BKPLN64		0x08000000	
+#define	CC_CAP_PMU		0x10000000	
+#define	CC_CAP_ECI		0x20000000	
+#define	CC_CAP_SROM		0x40000000	
+#define	CC_CAP_NFLASH		0x80000000	
+
+#define	CC_CAP2_SECI		0x00000001	
+#define	CC_CAP2_GSIO		0x00000002	
+
+
+#define CC_CAP_EXT_SECI_PRESENT   0x00000001    
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define PLL_NONE		0x00000000
 #define PLL_TYPE1		0x00010000	/* 48MHz base, 3 dividers */
 #define PLL_TYPE2		0x00020000	/* 48MHz, 4 dividers */
@@ -582,6 +642,7 @@ typedef volatile struct {
 /* ALP clock on pre-PMU chips */
 #define	ALP_CLOCK		20000000
 
+<<<<<<< HEAD
 #ifdef CFG_SIM
 #define NS_ALP_CLOCK		84922
 #define NS_SLOW_ALP_CLOCK	84922
@@ -603,6 +664,8 @@ typedef volatile struct {
 #define NS_MEM_CLOCK		533000000
 #define NS_SLOW_MEM_CLOCK	400000000
 #endif /* CFG_SIM */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* HT clock */
 #define	HT_CLOCK		80000000
@@ -932,6 +995,7 @@ typedef volatile struct {
 #define	PCTL_ILP_DIV_EN		0x00000002
 #define	PCTL_LPO_SEL		0x00000001
 
+<<<<<<< HEAD
 /*  Retention Control */
 #define PMU_RCTL_CLK_DIV_SHIFT		0
 #define PMU_RCTL_CHAIN_LEN_SHIFT	12
@@ -960,6 +1024,9 @@ typedef volatile struct {
 #define PMU43341_RCTLGRP_CHAIN_LEN_GRP1	330
 
 /* Fields in clkstretch */
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define CSTRETCH_HT		0xffff0000
 #define CSTRETCH_ALP		0x0000ffff
 
@@ -1025,9 +1092,13 @@ typedef volatile struct {
 #define SFLASH_ST		0x100		/* ST serial flash */
 #define SFLASH_AT		0x200		/* Atmel serial flash */
 #define NFLASH			0x300
+<<<<<<< HEAD
 #define	PFLASH			0x700		/* Parallel flash */
 #define QSPIFLASH_ST		0x800
 #define QSPIFLASH_AT		0x900
+=======
+#define	PFLASH			0x700		
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Bits in the ExtBus config registers */
 #define	CC_CFG_EN		0x0001		/* Enable */
@@ -1916,6 +1987,7 @@ typedef volatile struct {
 #define CST43239_SFLASH_MASK		0x00000004
 #define	CST43239_RES_INIT_MODE_SHIFT	7
 #define	CST43239_RES_INIT_MODE_MASK		0x000001f0
+<<<<<<< HEAD
 #define CST43239_CHIPMODE_SDIOD(cs)	((cs) & (1 << 15))	/* SDIO || gSPI */
 #define CST43239_CHIPMODE_USB20D(cs)	(~(cs) & (1 << 15))	/* USB || USBDA */
 #define CST43239_CHIPMODE_SDIO(cs)	(((cs) & (1 << 0)) == 0)	/* SDIO */
@@ -1950,8 +2022,17 @@ typedef volatile struct {
 #define RES4324_SR_SUBCORE_PWRSW		26
 #define RES4324_SR_SUBCORE_PIC			27
 #define RES4324_SR_MEM_PM0			28
+=======
+#define CST43239_CHIPMODE_SDIOD(cs)	((cs) & (1 << 15))	
+#define CST43239_CHIPMODE_USB20D(cs)	(~(cs) & (1 << 15))	
+#define CST43239_CHIPMODE_SDIO(cs)	(((cs) & (1 << 0)) == 0)	
+#define CST43239_CHIPMODE_GSPI(cs)	(((cs) & (1 << 0)) == (1 << 0))	
+
+
+#define RES4324_OTP_PU				10
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define RES4324_HT_AVAIL			29
-#define RES4324_MACPHY_CLKAVAIL			30
+#define RES4324_MACPHY_CLKAVAIL		30
 
 /* 4324 Chip specific ChipStatus register bits */
 #define CST4324_SPROM_MASK			0x00000080
@@ -1962,12 +2043,15 @@ typedef volatile struct {
 #define CST4324_CHIPMODE_SDIOD(cs)	((~(cs)) & (1 << 2))	/* SDIO || gSPI */
 #define CST4324_CHIPMODE_USB20D(cs)	(((cs) & CST4324_CHIPMODE_MASK) == 0x6)	/* USB || USBDA */
 
+<<<<<<< HEAD
 /* 43242 Chip specific ChipStatus register bits */
 #define CST43242_SFLASH_MASK                    0x00000008
 #define CST43242_SR_HALT			(1<<25)
 #define CST43242_SR_CHIP_STATUS_2		27 /* bit 27 */
 
 /* 4331 resources */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define RES4331_REGULATOR		0
 #define RES4331_ILP_REQUEST		1
 #define RES4331_XTAL_PU			2
@@ -2202,6 +2286,7 @@ typedef volatile struct {
 #define PMU_VREG0_DISABLE_PULLD_BT_SHIFT	2
 #define PMU_VREG0_DISABLE_PULLD_WL_SHIFT	3
 
+<<<<<<< HEAD
 #define PMU_VREG4_ADDR			4
 
 #define PMU_VREG4_CLDO_PWM_SHIFT	4
@@ -2239,6 +2324,9 @@ typedef volatile struct {
 #define PMU_VREG5_HSICDVDD_PD_MASK	0x1
 
 /* 4334 resources */
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define RES4334_LPLDO_PU		0
 #define RES4334_RESET_PULLDN_DIS	1
 #define RES4334_PMU_BG_PU		2
@@ -2292,6 +2380,7 @@ typedef volatile struct {
 /* 4334 Chip specific PMU ChipControl register bits */
 #define PCTL_4334_GPIO3_ENAB    (1  << 3)
 
+<<<<<<< HEAD
 /* 4334 Chip control */
 #define CCTRL4334_PMU_WAKEUP_GPIO1	(1  << 0)
 #define CCTRL4334_PMU_WAKEUP_HSIC	(1  << 1)
@@ -2367,6 +2456,17 @@ typedef volatile struct {
 #define PMU43143_XTAL_CORE_SIZE_MASK	0x3F
 
 /* 4313 resources */
+=======
+
+#define CCTRL4334_HSIC_LDO_PU		(1  << 23)
+
+
+#define CCTRL1_4324_GPIO_SEL            (1 << 0)    
+#define CCTRL1_4324_SDIO_HOST_WAKE (1 << 2)  
+
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	RES4313_BB_PU_RSRC		0
 #define	RES4313_ILP_REQ_RSRC		1
 #define	RES4313_XTAL_PU_RSRC		2
@@ -2453,6 +2553,7 @@ typedef volatile struct {
 
 /* 4706 flashstrconfig reg bits */
 #define FLSTRCF4706_MASK		0x000000ff
+<<<<<<< HEAD
 #define FLSTRCF4706_SF1			0x00000001	/* 2nd serial flash present */
 #define FLSTRCF4706_PF1			0x00000002	/* 2nd parallel flash present */
 #define FLSTRCF4706_SF1_TYPE	0x00000004	/* 2nd serial flash type : 0 : ST, 1 : Atmel */
@@ -2469,19 +2570,34 @@ typedef volatile struct {
 /* 4360 Chip specific ChipControl register bits */
 #define CCTRL4360_I2C_MODE			(1 << 0)
 #define CCTRL4360_UART_MODE			(1 << 1)
+=======
+#define FLSTRCF4706_SF1			0x00000001	
+#define FLSTRCF4706_PF1			0x00000002	
+#define FLSTRCF4706_SF1_TYPE	0x00000004	
+#define FLSTRCF4706_NF1			0x00000008	
+#define FLSTRCF4706_1ST_MADDR_SEG_MASK		0x000000f0	
+#define FLSTRCF4706_1ST_MADDR_SEG_4MB		0x00000010	
+#define FLSTRCF4706_1ST_MADDR_SEG_8MB		0x00000020	
+#define FLSTRCF4706_1ST_MADDR_SEG_16MB		0x00000030	
+#define FLSTRCF4706_1ST_MADDR_SEG_32MB		0x00000040	
+#define FLSTRCF4706_1ST_MADDR_SEG_64MB		0x00000050	
+#define FLSTRCF4706_1ST_MADDR_SEG_128MB		0x00000060	
+#define FLSTRCF4706_1ST_MADDR_SEG_256MB		0x00000070	
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define CCTRL4360_SECI_MODE			(1 << 2)
 #define CCTRL4360_BTSWCTRL_MODE			(1 << 3)
-#define CCTRL4360_DISCRETE_FEMCTRL_MODE		(1 << 4)
-#define CCTRL4360_DIGITAL_PACTRL_MODE		(1 << 5)
-#define CCTRL4360_BTSWCTRL_AND_DIGPA_PRESENT	(1 << 6)
-#define CCTRL4360_EXTRA_GPIO_MODE		(1 << 7)
 #define CCTRL4360_EXTRA_FEMCTRL_MODE		(1 << 8)
 #define CCTRL4360_BT_LGCY_MODE			(1 << 9)
 #define CCTRL4360_CORE2FEMCTRL4_ON		(1 << 21)
+<<<<<<< HEAD
 #define CCTRL4360_SECI_ON_GPIO01		(1 << 24)
 
 /* 4360 Chip specific Regulator Control register bits */
 #define RCTRL4360_RFLDO_PWR_DOWN		(1 << 1)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* 4360 PMU resources and chip status bits */
 #define RES4360_REGULATOR          0
@@ -2610,6 +2726,7 @@ typedef volatile struct {
 #define	CST4335_RES_INIT_MODE_SHIFT	7
 #define	CST4335_RES_INIT_MODE_MASK	0x00000180
 #define CST4335_CHIPMODE_MASK		0xF
+<<<<<<< HEAD
 #define CST4335_CHIPMODE_SDIOD(cs)	(((cs) & (1 << 0)) != 0)	/* SDIO */
 #define CST4335_CHIPMODE_GSPI(cs)	(((cs) & (1 << 1)) != 0)	/* gSPI */
 #define CST4335_CHIPMODE_USB20D(cs)	(((cs) & (1 << 2)) != 0)	/* HSIC || USBDA */
@@ -2839,6 +2956,21 @@ typedef volatile struct {
 #define CC4350_PIN_GPIO_13		(13)
 #define CC4350_PIN_GPIO_14		(14)
 #define CC4350_PIN_GPIO_15		(15)
+=======
+#define CST4335_CHIPMODE_SDIOD(cs)	(((cs) & (1 << 0)) != 0)
+#define CST4335_CHIPMODE_GSPI(cs)	(((cs) & (1 << 1)) != 0)
+#define CST4335_CHIPMODE_USB20D(cs)	(((cs) & (1 << 2)) != 0)
+#define CST4335_CHIPMODE_PCIE(cs)	(((cs) & (1 << 3)) != 0)
+
+
+#define CCTRL1_4335_GPIO_SEL		(1 << 0)
+#define CCTRL1_4335_SDIO_HOST_WAKE (1 << 2)
+
+
+#define CR4_RAM_BASE                    (0x180000)
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define CC2_4350_PHY_PWRSW_UPTIME_MASK		(0xf << 0)
 #define CC2_4350_PHY_PWRSW_UPTIME_SHIFT		(0)

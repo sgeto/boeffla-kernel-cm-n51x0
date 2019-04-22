@@ -23,7 +23,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh.h 455573 2014-02-14 17:49:31Z $
+=======
+ * $Id: bcmsdh.h 347614 2012-07-27 10:24:51Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 /**
@@ -48,9 +52,18 @@ extern const uint bcmsdh_msglevel;
 typedef struct bcmsdh_info bcmsdh_info_t;
 typedef void (*bcmsdh_cb_fn_t)(void *);
 
+<<<<<<< HEAD
 extern bcmsdh_info_t *bcmsdh_attach(osl_t *osh, void *sdioh, ulong *regsva);
 /**
  * BCMSDH API context
+=======
+/* Attach and build an interface to the underlying SD host driver.
+ *  - Allocates resources (structs, arrays, mem, OS handles, etc) needed by bcmsdh.
+ *  - Returns the bcmsdh handle and virtual address base for register access.
+ *    The returned handle should be used in all subsequent calls, but the bcmsh
+ *    implementation may maintain a single "default" handle (e.g. the first or
+ *    most recent one) to enable single-instance implementations to pass NULL.
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 struct bcmsdh_info
 {
@@ -145,7 +158,7 @@ extern int bcmsdh_recv_buf(void *sdh, uint32 addr, uint fn, uint flags,
                            uint8 *buf, uint nbytes, void *pkt,
                            bcmsdh_cmplt_fn_t complete_fn, void *handle);
 
-extern void bcmsdh_glom_post(void *sdh, uint8 *frame, void *pkt, uint len);
+extern void bcmsdh_glom_post(void *sdh, uint8 *frame, uint len);
 extern void bcmsdh_glom_clear(void *sdh);
 extern uint bcmsdh_set_mode(void *sdh, uint mode);
 extern bool bcmsdh_glom_enabled(void);

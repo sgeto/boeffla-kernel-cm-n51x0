@@ -38,6 +38,7 @@ s32 dhd_cfg80211_set_p2p_info(struct bcm_cfg80211 *cfg, int val);
 s32 dhd_cfg80211_clean_p2p_info(struct bcm_cfg80211 *cfg);
 s32 dhd_config_dongle(struct bcm_cfg80211 *cfg);
 
+<<<<<<< HEAD
 #ifdef CONFIG_NL80211_TESTMODE
 int dhd_cfg80211_testmode_cmd(struct wiphy *wiphy, void *data, int len);
 #else
@@ -46,5 +47,9 @@ static inline int dhd_cfg80211_testmode_cmd(struct wiphy *wiphy, void *data, int
 	return 0;
 }
 #endif
+=======
+int wl_cfg80211_btcoex_init(struct wl_priv *wl);
+void wl_cfg80211_btcoex_deinit(struct wl_priv *wl);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #endif /* __DHD_CFG80211__ */

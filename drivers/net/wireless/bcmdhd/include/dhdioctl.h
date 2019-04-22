@@ -25,7 +25,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhdioctl.h 454792 2014-02-11 20:40:19Z $
+=======
+ * $Id: dhdioctl.h 354894 2012-09-04 12:34:07Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _dhdioctl_h_
@@ -90,9 +94,13 @@ enum {
 #define DHD_ARPOE_VAL	0x4000
 #define DHD_REORDER_VAL	0x8000
 #define DHD_WL_VAL		0x10000
+<<<<<<< HEAD
 #define DHD_NOCHECKDIED_VAL		0x20000 /* UTF WAR */
 #define DHD_WL_VAL2		0x40000
 #define DHD_PNO_VAL		0x80000
+=======
+#define DHD_WL_VAL2		0x20000
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef SDTEST
 /* For pktgen iovar */

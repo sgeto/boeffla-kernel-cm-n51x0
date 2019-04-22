@@ -24,7 +24,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wlioctl.h 450748 2014-01-23 00:49:46Z $
+=======
+ * $Id: wlioctl.h 357627 2012-09-19 12:42:22Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _wlioctl_h_
@@ -45,6 +49,15 @@
 #include <bcm_mpool_pub.h>
 #include <bcmcdc.h>
 
+<<<<<<< HEAD
+=======
+#include <dhd_sec_feature.h>
+
+/*  LINUX_POSTMOGRIFY_REMOVAL: undefined during compile phase, so its
+ *  a no-op for most cases. For hybrid and other open source releases,
+ *  its defined during a second pass and mogrified out for distribution.
+ */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 
@@ -215,8 +228,13 @@ typedef struct wl_bss_info {
 	uint32		nbss_cap;		/* 802.11N+AC BSS Capabilities */
 	uint8		ctl_ch;			/* 802.11N BSS control channel number */
 	uint8		padding1[3];		/* explicit struct alignment padding */
+<<<<<<< HEAD
 	uint16		vht_rxmcsmap;	/* VHT rx mcs map (802.11ac IE, VHT_CAP_MCS_MAP_*) */
 	uint16		vht_txmcsmap;	/* VHT tx mcs map (802.11ac IE, VHT_CAP_MCS_MAP_*) */
+=======
+	uint16		vht_rxmcsmap;		/* VHT rx mcs map */
+	uint16		vht_txmcsmap;		/* VHT tx mcs map */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	uint8		flags;			/* flags */
 	uint8		vht_cap;		/* BSS is vht capable */
 	uint8		reserved[2];		/* Reserved for expansion of BSS properties */
@@ -311,7 +329,7 @@ typedef struct wl_clm_dload_info wl_clm_dload_info_t;
 
 typedef struct wlc_ssid {
 	uint32		SSID_len;
-	uchar		SSID[DOT11_MAX_SSID_LEN];
+	uchar		SSID[32];
 } wlc_ssid_t;
 
 
@@ -356,6 +374,18 @@ typedef struct wl_extdscan_params {
 
 #define WL_EXTDSCAN_PARAMS_FIXED_SIZE 	(sizeof(wl_extdscan_params_t) - sizeof(chan_scandata_t))
 
+<<<<<<< HEAD
+=======
+#define WL_BSSTYPE_INFRA 1
+#define WL_BSSTYPE_INDEP 0
+#define WL_BSSTYPE_ANY   2
+
+/* Bitmask for scan_type */
+#define WL_SCANFLAGS_PASSIVE	0x01	/* force passive scan */
+#define WL_SCANFLAGS_RESERVED	0x02	/* Reserved */
+#define WL_SCANFLAGS_PROHIBITED	0x04	/* allow scanning prohibited channels */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define WL_SCAN_PARAMS_SSID_MAX 	10
 
 typedef struct wl_scan_params {
@@ -501,7 +531,6 @@ typedef struct wl_rateset_args {
 	uint32	count;			/* # rates in this set */
 	uint8	rates[WL_MAXRATES_IN_SET];	/* rates in 500kbps units w/hi bit set if basic */
 	uint8   mcs[MCSSET_LEN];        /* supported mcs index bit map */
-	uint16 vht_mcs[VHT_CAP_MCS_MAP_NSS_MAX]; /* supported mcs index bit map per nss */
 } wl_rateset_args_t;
 
 #define TXBF_RATE_MCS_ALL		4
@@ -544,12 +573,15 @@ typedef struct wl_uint32_list {
 /* used for association with a specific BSSID and chanspec list */
 typedef struct wl_assoc_params {
 	struct ether_addr bssid;	/* 00:00:00:00:00:00: broadcast scan */
+<<<<<<< HEAD
 	uint16 bssid_cnt;		/* 0: use chanspec_num, and the single bssid,
 					* otherwise count of chanspecs in chanspec_list
 					* AND paired bssids following chanspec_list
 					* also, chanspec_num has to be set to zero
 					* for bssid list to be used
 					*/
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	int32 chanspec_num;		/* 0: all available channels,
 					* otherwise count of chanspecs in chanspec_list
 					*/
@@ -603,6 +635,86 @@ typedef struct wl_extjoin_params {
 #define WL_EXTJOIN_PARAMS_FIXED_SIZE 	(OFFSETOF(wl_extjoin_params_t, assoc) + \
 					 WL_JOIN_ASSOC_PARAMS_FIXED_SIZE)
 
+<<<<<<< HEAD
+=======
+/* All builds use the new 11ac ratespec/chanspec */
+#undef  D11AC_IOTYPES
+#define D11AC_IOTYPES
+
+#ifndef D11AC_IOTYPES
+
+/* defines used by the nrate iovar */
+#define NRATE_MCS_INUSE	0x00000080	/* MSC in use,indicates b0-6 holds an mcs */
+#define NRATE_RATE_MASK 0x0000007f	/* rate/mcs value */
+#define NRATE_STF_MASK	0x0000ff00	/* stf mode mask: siso, cdd, stbc, sdm */
+#define NRATE_STF_SHIFT	8			/* stf mode shift */
+#define NRATE_OVERRIDE	0x80000000	/* bit indicates override both rate & mode */
+#define NRATE_OVERRIDE_MCS_ONLY 0x40000000 /* bit indicate to override mcs only */
+#define NRATE_SGI_MASK  0x00800000      /* sgi mode */
+#define NRATE_SGI_SHIFT 23              /* sgi mode */
+#define NRATE_LDPC_CODING 0x00400000    /* bit indicates adv coding in use */
+#define NRATE_LDPC_SHIFT 22             /* ldpc shift */
+
+#define NRATE_STF_SISO	0		/* stf mode SISO */
+#define NRATE_STF_CDD	1		/* stf mode CDD */
+#define NRATE_STF_STBC	2		/* stf mode STBC */
+#define NRATE_STF_SDM	3		/* stf mode SDM */
+
+#else /* D11AC_IOTYPES */
+
+/* WL_RSPEC defines for rate information */
+#define WL_RSPEC_RATE_MASK      0x000000FF      /* rate or HT MCS value */
+#define WL_RSPEC_VHT_MCS_MASK   0x0000000F      /* VHT MCS value */
+#define WL_RSPEC_VHT_NSS_MASK   0x000000F0      /* VHT Nss value */
+#define WL_RSPEC_VHT_NSS_SHIFT  4               /* VHT Nss value shift */
+#define WL_RSPEC_TXEXP_MASK     0x00000300
+#define WL_RSPEC_TXEXP_SHIFT    8
+#define WL_RSPEC_BW_MASK        0x00070000      /* bandwidth mask */
+#define WL_RSPEC_BW_SHIFT       16              /* bandwidth shift */
+#define WL_RSPEC_STBC           0x00100000      /* STBC encoding, Nsts = 2 x Nss */
+#define WL_RSPEC_LDPC           0x00400000      /* bit indicates adv coding in use */
+#define WL_RSPEC_SGI            0x00800000      /* Short GI mode */
+#define WL_RSPEC_ENCODING_MASK  0x03000000      /* Encoding of Rate/MCS field */
+#define WL_RSPEC_OVERRIDE_RATE  0x40000000      /* bit indicate to override mcs only */
+#define WL_RSPEC_OVERRIDE_MODE  0x80000000      /* bit indicates override both rate & mode */
+
+/* WL_RSPEC_ENCODING field defs */
+#define WL_RSPEC_ENCODE_RATE    0x00000000      /* Legacy rate is stored in RSPEC_RATE_MASK */
+#define WL_RSPEC_ENCODE_HT      0x01000000      /* HT MCS is stored in RSPEC_RATE_MASK */
+#define WL_RSPEC_ENCODE_VHT     0x02000000      /* VHT MCS and Nss is stored in RSPEC_RATE_MASK */
+
+/* WL_RSPEC_BW field defs */
+#define WL_RSPEC_BW_UNSPECIFIED 0
+#define WL_RSPEC_BW_20MHZ       0x00010000
+#define WL_RSPEC_BW_40MHZ       0x00020000
+#define WL_RSPEC_BW_80MHZ       0x00030000
+#define WL_RSPEC_BW_160MHZ      0x00040000
+
+/* Legacy defines for the nrate iovar */
+#define OLD_NRATE_MCS_INUSE         0x00000080 /* MSC in use,indicates b0-6 holds an mcs */
+#define OLD_NRATE_RATE_MASK         0x0000007f /* rate/mcs value */
+#define OLD_NRATE_STF_MASK          0x0000ff00 /* stf mode mask: siso, cdd, stbc, sdm */
+#define OLD_NRATE_STF_SHIFT         8          /* stf mode shift */
+#define OLD_NRATE_OVERRIDE          0x80000000 /* bit indicates override both rate & mode */
+#define OLD_NRATE_OVERRIDE_MCS_ONLY 0x40000000 /* bit indicate to override mcs only */
+#define OLD_NRATE_SGI               0x00800000 /* sgi mode */
+#define OLD_NRATE_LDPC_CODING       0x00400000 /* bit indicates adv coding in use */
+
+#define OLD_NRATE_STF_SISO	0		/* stf mode SISO */
+#define OLD_NRATE_STF_CDD	1		/* stf mode CDD */
+#define OLD_NRATE_STF_STBC	2		/* stf mode STBC */
+#define OLD_NRATE_STF_SDM	3		/* stf mode SDM */
+
+#endif /* D11AC_IOTYPES */
+
+#define ANTENNA_NUM_1	1		/* total number of antennas to be used */
+#define ANTENNA_NUM_2	2
+#define ANTENNA_NUM_3	3
+#define ANTENNA_NUM_4	4
+
+#define ANT_SELCFG_AUTO		0x80	/* bit indicates antenna sel AUTO */
+#define ANT_SELCFG_MASK		0x33	/* antenna configuration mask */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define ANT_SELCFG_MAX		4	/* max number of antenna configurations */
 #define MAX_STREAMS_SUPPORTED	4	/* max number of streams supported */
 typedef struct {
@@ -772,6 +884,49 @@ typedef enum sup_auth_status {
 	WLC_SUP_KEYXCHANGE_WAIT_G1,	/* Waiting to receive handshake msg G1 */
 	WLC_SUP_KEYXCHANGE_PREP_G2	/* Preparing to send handshake msg G2 */
 } sup_auth_status_t;
+<<<<<<< HEAD
+=======
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+
+/* Enumerate crypto algorithms */
+#define	CRYPTO_ALGO_OFF			0
+#define	CRYPTO_ALGO_WEP1		1
+#define	CRYPTO_ALGO_TKIP		2
+#define	CRYPTO_ALGO_WEP128		3
+#define CRYPTO_ALGO_AES_CCM		4
+#define CRYPTO_ALGO_AES_OCB_MSDU	5
+#define CRYPTO_ALGO_AES_OCB_MPDU	6
+#if !defined(BCMCCX)
+#define CRYPTO_ALGO_NALG		7
+#else
+#define CRYPTO_ALGO_CKIP		7
+#define CRYPTO_ALGO_CKIP_MMH		8
+#define CRYPTO_ALGO_WEP_MMH		9
+#define CRYPTO_ALGO_NALG		10
+#endif
+#ifdef BCMWAPI_WPI
+#define CRYPTO_ALGO_SMS4		11
+#endif /* BCMWAPI_WPI */
+#define CRYPTO_ALGO_PMK			12	/* for 802.1x supp to set PMK before 4-way */
+
+#define WSEC_GEN_MIC_ERROR	0x0001
+#define WSEC_GEN_REPLAY		0x0002
+#define WSEC_GEN_ICV_ERROR	0x0004
+#define WSEC_GEN_MFP_ACT_ERROR	0x0008
+#define WSEC_GEN_MFP_DISASSOC_ERROR	0x0010
+#define WSEC_GEN_MFP_DEAUTH_ERROR	0x0020
+
+#define WL_SOFT_KEY	(1 << 0)	/* Indicates this key is using soft encrypt */
+#define WL_PRIMARY_KEY	(1 << 1)	/* Indicates this key is the primary (ie tx) key */
+#if defined(BCMCCX)
+#define WL_CKIP_KP	(1 << 4)	/* CMIC */
+#define WL_CKIP_MMH	(1 << 5)	/* CKIP */
+#else
+#define WL_KF_RES_4	(1 << 4)	/* Reserved for backward compat */
+#define WL_KF_RES_5	(1 << 5)	/* Reserved for backward compat */
+#endif
+#define WL_IBSS_PEER_GROUP_KEY	(1 << 6)	/* Indicates a group key for a IBSS PEER */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct wl_wsec_key {
 	uint32		index;		/* key index */
@@ -806,6 +961,88 @@ typedef struct {
 	uint8	key[WSEC_MAX_PSK_LEN];	/* PMK material */
 } wsec_pmk_t;
 
+<<<<<<< HEAD
+=======
+/* wireless security bitvec */
+#define WEP_ENABLED		0x0001
+#define TKIP_ENABLED		0x0002
+#define AES_ENABLED		0x0004
+#define WSEC_SWFLAG		0x0008
+#ifdef BCMCCX
+#define CKIP_KP_ENABLED		0x0010
+#define CKIP_MIC_ENABLED	0x0020
+#endif /* BCMCCX */
+#define SES_OW_ENABLED		0x0040	/* to go into transition mode without setting wep */
+#ifdef BCMWAPI_WPI
+#define SMS4_ENABLED		0x0100
+#endif /* BCMWAPI_WPI */
+
+/* wsec macros for operating on the above definitions */
+#define WSEC_WEP_ENABLED(wsec)	((wsec) & WEP_ENABLED)
+#define WSEC_TKIP_ENABLED(wsec)	((wsec) & TKIP_ENABLED)
+#define WSEC_AES_ENABLED(wsec)	((wsec) & AES_ENABLED)
+
+#ifdef BCMCCX
+#define WSEC_CKIP_KP_ENABLED(wsec)	((wsec) & CKIP_KP_ENABLED)
+#define WSEC_CKIP_MIC_ENABLED(wsec)	((wsec) & CKIP_MIC_ENABLED)
+#define WSEC_CKIP_ENABLED(wsec)	((wsec) & (CKIP_KP_ENABLED|CKIP_MIC_ENABLED))
+
+#ifdef BCMWAPI_WPI
+#define WSEC_ENABLED(wsec) \
+	((wsec) & (WEP_ENABLED | TKIP_ENABLED | AES_ENABLED | CKIP_KP_ENABLED |	\
+	  CKIP_MIC_ENABLED | SMS4_ENABLED))
+#else /* BCMWAPI_WPI */
+#define WSEC_ENABLED(wsec) \
+		((wsec) & \
+		 (WEP_ENABLED | TKIP_ENABLED | AES_ENABLED | CKIP_KP_ENABLED | CKIP_MIC_ENABLED))
+#endif /* BCMWAPI_WPI */
+#else /* defined BCMCCX */
+#ifdef BCMWAPI_WPI
+#define WSEC_ENABLED(wsec)	((wsec) & (WEP_ENABLED | TKIP_ENABLED | AES_ENABLED | SMS4_ENABLED))
+#else /* BCMWAPI_WPI */
+#define WSEC_ENABLED(wsec)	((wsec) & (WEP_ENABLED | TKIP_ENABLED | AES_ENABLED))
+#endif /* BCMWAPI_WPI */
+#endif /* BCMCCX */
+#define WSEC_SES_OW_ENABLED(wsec)	((wsec) & SES_OW_ENABLED)
+#ifdef BCMWAPI_WAI
+#define WSEC_SMS4_ENABLED(wsec)	((wsec) & SMS4_ENABLED)
+#endif /* BCMWAPI_WAI */
+
+#ifdef MFP
+#define MFP_CAPABLE		0x0200
+#define MFP_REQUIRED	0x0400
+#define MFP_SHA256		0x0800 /* a special configuration for STA for WIFI test tool */
+#endif /* MFP */
+
+/* WPA authentication mode bitvec */
+#define WPA_AUTH_DISABLED	0x0000	/* Legacy (i.e., non-WPA) */
+#define WPA_AUTH_NONE		0x0001	/* none (IBSS) */
+#define WPA_AUTH_UNSPECIFIED	0x0002	/* over 802.1x */
+#define WPA_AUTH_PSK		0x0004	/* Pre-shared key */
+#if defined(BCMCCX)
+#define WPA_AUTH_CCKM		0x0008	/* CCKM */
+#define WPA2_AUTH_CCKM		0x0010	/* CCKM2 */
+#endif
+/* #define WPA_AUTH_8021X 0x0020 */	/* 802.1x, reserved */
+#define WPA2_AUTH_UNSPECIFIED	0x0040	/* over 802.1x */
+#define WPA2_AUTH_PSK		0x0080	/* Pre-shared key */
+#define BRCM_AUTH_PSK           0x0100  /* BRCM specific PSK */
+#define BRCM_AUTH_DPT		0x0200	/* DPT PSK without group keys */
+#if defined(BCMWAPI_WAI) || defined(BCMWAPI_WPI)
+#define WPA_AUTH_WAPI           0x0400
+#define WAPI_AUTH_NONE		WPA_AUTH_NONE	/* none (IBSS) */
+#define WAPI_AUTH_UNSPECIFIED	0x0400	/* over AS */
+#define WAPI_AUTH_PSK		0x0800	/* Pre-shared key */
+#endif /* BCMWAPI_WAI || BCMWAPI_WPI */
+#define WPA2_AUTH_MFP           0x1000  /* MFP (11w) in contrast to CCX */
+#define WPA2_AUTH_TPK		0x2000 	/* TDLS Peer Key */
+#define WPA2_AUTH_FT		0x4000 	/* Fast Transition. */
+#define WPA_AUTH_PFN_ANY	0xffffffff	/* for PFN, match only ssid */
+
+/* pmkid */
+#define	MAXPMKID		16
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 typedef struct _pmkid {
 	struct ether_addr	BSSID;
 	uint8			PMKID[WPA2_PMKID_LEN];
@@ -889,6 +1126,7 @@ typedef struct wme_tx_params_s wme_tx_params_t;
 
 #define WL_WME_TX_PARAMS_IO_BYTES (sizeof(wme_tx_params_t) * AC_COUNT)
 
+<<<<<<< HEAD
 typedef struct wl_plc_nodelist {
 	uint32 count;			/* Number of nodes */
 	struct _node {
@@ -904,6 +1142,18 @@ typedef struct wl_plc_params {
 	struct	ether_addr node_ea;	/* Node ether address */
 	uint32	cost;			/* Link cost or mac cost */
 } wl_plc_params_t;
+=======
+/* defines used by poweridx iovar - it controls power in a-band */
+/* current gain setting is maintained */
+#define WL_PWRIDX_PCL_OFF	-2	/* turn off PCL.  */
+#define WL_PWRIDX_PCL_ON	-1	/* turn on PCL */
+#define WL_PWRIDX_LOWER_LIMIT	-2	/* lower limit */
+#define WL_PWRIDX_UPPER_LIMIT	63	/* upper limit */
+/* value >= 0 causes
+ *	- input to be set to that value
+ *	- PCL to be off
+ */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Used to get specific link/ac parameters */
 typedef struct {
@@ -1046,7 +1296,7 @@ typedef struct {
 
 /* Get MAC rate histogram response */
 typedef struct {
-	uint32	rate[DOT11_RATE_MAX + 1];	/* Rates */
+	uint32	rate[WLC_MAXRATE + 1];	/* Rates */
 	uint32	mcs[WL_RATESET_SZ_HT_MCS * WL_TX_CHAINS_MAX];	/* MCS counts */
 	uint32	vht[WL_RATESET_SZ_VHT_MCS][WL_TX_CHAINS_MAX];	/* VHT counts */
 	uint32	tsf_timer[2][2];	/* Start and End time for 8bytes value */
@@ -1084,7 +1334,6 @@ typedef struct wlc_rev_info {
 	uint		phyrev;		/* phy revision */
 	uint		anarev;		/* anacore rev */
 	uint		chippkg;	/* chip package info */
-	uint		nvramrev;	/* nvram revision number */
 } wlc_rev_info_t;
 
 #define WL_REV_INFO_LEGACY_LENGTH	48
@@ -1114,6 +1363,415 @@ typedef struct wlc_iov_trx_s {
 /* bump this number if you change the ioctl interface */
 #define WLC_IOCTL_VERSION	2
 #define WLC_IOCTL_VERSION_LEGACY_IOTYPES	1
+<<<<<<< HEAD
+=======
+#else
+#define WLC_IOCTL_VERSION	1
+#endif /* D11AC_IOTYPES */
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+
+#define	WLC_IOCTL_MAXLEN		8192	/* max length ioctl buffer required */
+#define	WLC_IOCTL_SMLEN			256	/* "small" length ioctl buffer required */
+#define WLC_IOCTL_MEDLEN		1536    /* "med" length ioctl buffer required */
+#if defined(LCNCONF) || defined(LCN40CONF)
+#define WLC_SAMPLECOLLECT_MAXLEN	8192	/* Max Sample Collect buffer */
+#else
+#define WLC_SAMPLECOLLECT_MAXLEN	10240	/* Max Sample Collect buffer for two cores */
+#endif
+
+/* common ioctl definitions */
+#define WLC_GET_MAGIC				0
+#define WLC_GET_VERSION				1
+#define WLC_UP					2
+#define WLC_DOWN				3
+#define WLC_GET_LOOP				4
+#define WLC_SET_LOOP				5
+#define WLC_DUMP				6
+#define WLC_GET_MSGLEVEL			7
+#define WLC_SET_MSGLEVEL			8
+#define WLC_GET_PROMISC				9
+#define WLC_SET_PROMISC				10
+/* #define WLC_OVERLAY_IOCTL			11 */ /* not supported */
+#define WLC_GET_RATE				12
+#define WLC_GET_MAX_RATE			13
+#define WLC_GET_INSTANCE			14
+/* #define WLC_GET_FRAG				15 */ /* no longer supported */
+/* #define WLC_SET_FRAG				16 */ /* no longer supported */
+/* #define WLC_GET_RTS				17 */ /* no longer supported */
+/* #define WLC_SET_RTS				18 */ /* no longer supported */
+#define WLC_GET_INFRA				19
+#define WLC_SET_INFRA				20
+#define WLC_GET_AUTH				21
+#define WLC_SET_AUTH				22
+#define WLC_GET_BSSID				23
+#define WLC_SET_BSSID				24
+#define WLC_GET_SSID				25
+#define WLC_SET_SSID				26
+#define WLC_RESTART				27
+#define WLC_TERMINATED             		28
+/* #define WLC_DUMP_SCB				28 */ /* no longer supported */
+#define WLC_GET_CHANNEL				29
+#define WLC_SET_CHANNEL				30
+#define WLC_GET_SRL				31
+#define WLC_SET_SRL				32
+#define WLC_GET_LRL				33
+#define WLC_SET_LRL				34
+#define WLC_GET_PLCPHDR				35
+#define WLC_SET_PLCPHDR				36
+#define WLC_GET_RADIO				37
+#define WLC_SET_RADIO				38
+#define WLC_GET_PHYTYPE				39
+#define WLC_DUMP_RATE				40
+#define WLC_SET_RATE_PARAMS			41
+#define WLC_GET_FIXRATE				42
+#define WLC_SET_FIXRATE				43
+/* #define WLC_GET_WEP				42 */ /* no longer supported */
+/* #define WLC_SET_WEP				43 */ /* no longer supported */
+#define WLC_GET_KEY				44
+#define WLC_SET_KEY				45
+#define WLC_GET_REGULATORY			46
+#define WLC_SET_REGULATORY			47
+#define WLC_GET_PASSIVE_SCAN			48
+#define WLC_SET_PASSIVE_SCAN			49
+#define WLC_SCAN				50
+#define WLC_SCAN_RESULTS			51
+#define WLC_DISASSOC				52
+#define WLC_REASSOC				53
+#define WLC_GET_ROAM_TRIGGER			54
+#define WLC_SET_ROAM_TRIGGER			55
+#define WLC_GET_ROAM_DELTA			56
+#define WLC_SET_ROAM_DELTA			57
+#define WLC_GET_ROAM_SCAN_PERIOD		58
+#define WLC_SET_ROAM_SCAN_PERIOD		59
+#define WLC_EVM					60	/* diag */
+#define WLC_GET_TXANT				61
+#define WLC_SET_TXANT				62
+#define WLC_GET_ANTDIV				63
+#define WLC_SET_ANTDIV				64
+/* #define WLC_GET_TXPWR			65 */ /* no longer supported */
+/* #define WLC_SET_TXPWR			66 */ /* no longer supported */
+#define WLC_GET_CLOSED				67
+#define WLC_SET_CLOSED				68
+#define WLC_GET_MACLIST				69
+#define WLC_SET_MACLIST				70
+#define WLC_GET_RATESET				71
+#define WLC_SET_RATESET				72
+/* #define WLC_GET_LOCALE			73 */ /* no longer supported */
+#define WLC_LONGTRAIN				74
+#define WLC_GET_BCNPRD				75
+#define WLC_SET_BCNPRD				76
+#define WLC_GET_DTIMPRD				77
+#define WLC_SET_DTIMPRD				78
+#define WLC_GET_SROM				79
+#define WLC_SET_SROM				80
+#define WLC_GET_WEP_RESTRICT			81
+#define WLC_SET_WEP_RESTRICT			82
+#define WLC_GET_COUNTRY				83
+#define WLC_SET_COUNTRY				84
+#define WLC_GET_PM				85
+#define WLC_SET_PM				86
+#define WLC_GET_WAKE				87
+#define WLC_SET_WAKE				88
+/* #define WLC_GET_D11CNTS			89 */ /* -> "counters" iovar */
+#define WLC_GET_FORCELINK			90	/* ndis only */
+#define WLC_SET_FORCELINK			91	/* ndis only */
+#define WLC_FREQ_ACCURACY			92	/* diag */
+#define WLC_CARRIER_SUPPRESS			93	/* diag */
+#define WLC_GET_PHYREG				94
+#define WLC_SET_PHYREG				95
+#define WLC_GET_RADIOREG			96
+#define WLC_SET_RADIOREG			97
+#define WLC_GET_REVINFO				98
+#define WLC_GET_UCANTDIV			99
+#define WLC_SET_UCANTDIV			100
+#define WLC_R_REG				101
+#define WLC_W_REG				102
+/* #define WLC_DIAG_LOOPBACK			103	old tray diag */
+/* #define WLC_RESET_D11CNTS			104 */ /* -> "reset_d11cnts" iovar */
+#define WLC_GET_MACMODE				105
+#define WLC_SET_MACMODE				106
+#define WLC_GET_MONITOR				107
+#define WLC_SET_MONITOR				108
+#define WLC_GET_GMODE				109
+#define WLC_SET_GMODE				110
+#define WLC_GET_LEGACY_ERP			111
+#define WLC_SET_LEGACY_ERP			112
+#define WLC_GET_RX_ANT				113
+#define WLC_GET_CURR_RATESET			114	/* current rateset */
+#define WLC_GET_SCANSUPPRESS			115
+#define WLC_SET_SCANSUPPRESS			116
+#define WLC_GET_AP				117
+#define WLC_SET_AP				118
+#define WLC_GET_EAP_RESTRICT			119
+#define WLC_SET_EAP_RESTRICT			120
+#define WLC_SCB_AUTHORIZE			121
+#define WLC_SCB_DEAUTHORIZE			122
+#define WLC_GET_WDSLIST				123
+#define WLC_SET_WDSLIST				124
+#define WLC_GET_ATIM				125
+#define WLC_SET_ATIM				126
+#define WLC_GET_RSSI				127
+#define WLC_GET_PHYANTDIV			128
+#define WLC_SET_PHYANTDIV			129
+#define WLC_AP_RX_ONLY				130
+#define WLC_GET_TX_PATH_PWR			131
+#define WLC_SET_TX_PATH_PWR			132
+#define WLC_GET_WSEC				133
+#define WLC_SET_WSEC				134
+#define WLC_GET_PHY_NOISE			135
+#define WLC_GET_BSS_INFO			136
+#define WLC_GET_PKTCNTS				137
+#define WLC_GET_LAZYWDS				138
+#define WLC_SET_LAZYWDS				139
+#define WLC_GET_BANDLIST			140
+
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+#define WLC_GET_BAND				141
+#define WLC_SET_BAND				142
+#define WLC_SCB_DEAUTHENTICATE			143
+#define WLC_GET_SHORTSLOT			144
+#define WLC_GET_SHORTSLOT_OVERRIDE		145
+#define WLC_SET_SHORTSLOT_OVERRIDE		146
+#define WLC_GET_SHORTSLOT_RESTRICT		147
+#define WLC_SET_SHORTSLOT_RESTRICT		148
+#define WLC_GET_GMODE_PROTECTION		149
+#define WLC_GET_GMODE_PROTECTION_OVERRIDE	150
+#define WLC_SET_GMODE_PROTECTION_OVERRIDE	151
+#define WLC_UPGRADE				152
+/* #define WLC_GET_MRATE			153 */ /* no longer supported */
+/* #define WLC_SET_MRATE			154 */ /* no longer supported */
+#define WLC_GET_IGNORE_BCNS			155
+#define WLC_SET_IGNORE_BCNS			156
+#define WLC_GET_SCB_TIMEOUT			157
+#define WLC_SET_SCB_TIMEOUT			158
+#define WLC_GET_ASSOCLIST			159
+#define WLC_GET_CLK				160
+#define WLC_SET_CLK				161
+#define WLC_GET_UP				162
+#define WLC_OUT					163
+#define WLC_GET_WPA_AUTH			164
+#define WLC_SET_WPA_AUTH			165
+#define WLC_GET_UCFLAGS				166
+#define WLC_SET_UCFLAGS				167
+#define WLC_GET_PWRIDX				168
+#define WLC_SET_PWRIDX				169
+#define WLC_GET_TSSI				170
+#define WLC_GET_SUP_RATESET_OVERRIDE		171
+#define WLC_SET_SUP_RATESET_OVERRIDE		172
+/* #define WLC_SET_FAST_TIMER			173 */ /* no longer supported */
+/* #define WLC_GET_FAST_TIMER			174 */ /* no longer supported */
+/* #define WLC_SET_SLOW_TIMER			175 */ /* no longer supported */
+/* #define WLC_GET_SLOW_TIMER			176 */ /* no longer supported */
+/* #define WLC_DUMP_PHYREGS			177 */ /* no longer supported */
+#define WLC_GET_PROTECTION_CONTROL		178
+#define WLC_SET_PROTECTION_CONTROL		179
+#endif /* LINUX_POSTMOGRIFY_REMOVAL  */
+#define WLC_GET_PHYLIST				180
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+#define WLC_ENCRYPT_STRENGTH			181	/* ndis only */
+#define WLC_DECRYPT_STATUS			182	/* ndis only */
+#define WLC_GET_KEY_SEQ				183
+#define WLC_GET_SCAN_CHANNEL_TIME		184
+#define WLC_SET_SCAN_CHANNEL_TIME		185
+#define WLC_GET_SCAN_UNASSOC_TIME		186
+#define WLC_SET_SCAN_UNASSOC_TIME		187
+#define WLC_GET_SCAN_HOME_TIME			188
+#define WLC_SET_SCAN_HOME_TIME			189
+#define WLC_GET_SCAN_NPROBES			190
+#define WLC_SET_SCAN_NPROBES			191
+#define WLC_GET_PRB_RESP_TIMEOUT		192
+#define WLC_SET_PRB_RESP_TIMEOUT		193
+#define WLC_GET_ATTEN				194
+#define WLC_SET_ATTEN				195
+#define WLC_GET_SHMEM				196	/* diag */
+#define WLC_SET_SHMEM				197	/* diag */
+/* #define WLC_GET_GMODE_PROTECTION_CTS		198 */ /* no longer supported */
+/* #define WLC_SET_GMODE_PROTECTION_CTS		199 */ /* no longer supported */
+#define WLC_SET_WSEC_TEST			200
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+#define WLC_SCB_DEAUTHENTICATE_FOR_REASON	201
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+#define WLC_TKIP_COUNTERMEASURES		202
+#define WLC_GET_PIOMODE				203
+#define WLC_SET_PIOMODE				204
+#define WLC_SET_ASSOC_PREFER			205
+#define WLC_GET_ASSOC_PREFER			206
+#define WLC_SET_ROAM_PREFER			207
+#define WLC_GET_ROAM_PREFER			208
+#define WLC_SET_LED				209
+#define WLC_GET_LED				210
+#define WLC_GET_INTERFERENCE_MODE		211
+#define WLC_SET_INTERFERENCE_MODE		212
+#define WLC_GET_CHANNEL_QA			213
+#define WLC_START_CHANNEL_QA			214
+#define WLC_GET_CHANNEL_SEL			215
+#define WLC_START_CHANNEL_SEL			216
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+#define WLC_GET_VALID_CHANNELS			217
+#define WLC_GET_FAKEFRAG			218
+#define WLC_SET_FAKEFRAG			219
+#define WLC_GET_PWROUT_PERCENTAGE		220
+#define WLC_SET_PWROUT_PERCENTAGE		221
+#define WLC_SET_BAD_FRAME_PREEMPT		222
+#define WLC_GET_BAD_FRAME_PREEMPT		223
+#define WLC_SET_LEAP_LIST			224
+#define WLC_GET_LEAP_LIST			225
+#define WLC_GET_CWMIN				226
+#define WLC_SET_CWMIN				227
+#define WLC_GET_CWMAX				228
+#define WLC_SET_CWMAX				229
+#define WLC_GET_WET				230
+#define WLC_SET_WET				231
+#define WLC_GET_PUB				232
+/* #define WLC_SET_GLACIAL_TIMER		233 */ /* no longer supported */
+/* #define WLC_GET_GLACIAL_TIMER		234 */ /* no longer supported */
+#define WLC_GET_KEY_PRIMARY			235
+#define WLC_SET_KEY_PRIMARY			236
+
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+
+/* #define WLC_DUMP_RADIOREGS			237 */ /* no longer supported */
+#define WLC_GET_ACI_ARGS			238
+#define WLC_SET_ACI_ARGS			239
+#define WLC_UNSET_CALLBACK			240
+#define WLC_SET_CALLBACK			241
+#define WLC_GET_RADAR				242
+#define WLC_SET_RADAR				243
+#define WLC_SET_SPECT_MANAGMENT			244
+#define WLC_GET_SPECT_MANAGMENT			245
+#define WLC_WDS_GET_REMOTE_HWADDR		246	/* handled in wl_linux.c/wl_vx.c */
+#define WLC_WDS_GET_WPA_SUP			247
+#define WLC_SET_CS_SCAN_TIMER			248
+#define WLC_GET_CS_SCAN_TIMER			249
+#define WLC_MEASURE_REQUEST			250
+#define WLC_INIT				251
+#define WLC_SEND_QUIET				252
+#define WLC_KEEPALIVE			253
+#define WLC_SEND_PWR_CONSTRAINT			254
+#define WLC_UPGRADE_STATUS			255
+#define WLC_CURRENT_PWR				256
+#define WLC_GET_SCAN_PASSIVE_TIME		257
+#define WLC_SET_SCAN_PASSIVE_TIME		258
+#define WLC_LEGACY_LINK_BEHAVIOR		259
+#define WLC_GET_CHANNELS_IN_COUNTRY		260
+#define WLC_GET_COUNTRY_LIST			261
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+#define WLC_GET_VAR				262	/* get value of named variable */
+#define WLC_SET_VAR				263	/* set named variable to value */
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+#define WLC_NVRAM_GET				264	/* deprecated */
+#define WLC_NVRAM_SET				265
+#define WLC_NVRAM_DUMP				266
+#define WLC_REBOOT				267
+#define WLC_SET_WSEC_PMK			268
+#define WLC_GET_AUTH_MODE			269
+#define WLC_SET_AUTH_MODE			270
+#define WLC_GET_WAKEENTRY			271
+#define WLC_SET_WAKEENTRY			272
+#define WLC_NDCONFIG_ITEM			273	/* currently handled in wl_oid.c */
+#define WLC_NVOTPW				274
+#define WLC_OTPW				275
+#define WLC_IOV_BLOCK_GET			276
+#define WLC_IOV_MODULES_GET			277
+#define WLC_SOFT_RESET				278
+#define WLC_GET_ALLOW_MODE			279
+#define WLC_SET_ALLOW_MODE			280
+#define WLC_GET_DESIRED_BSSID			281
+#define WLC_SET_DESIRED_BSSID			282
+#define	WLC_DISASSOC_MYAP			283
+#define WLC_GET_NBANDS				284	/* for Dongle EXT_STA support */
+#define WLC_GET_BANDSTATES			285	/* for Dongle EXT_STA support */
+#define WLC_GET_WLC_BSS_INFO			286	/* for Dongle EXT_STA support */
+#define WLC_GET_ASSOC_INFO			287	/* for Dongle EXT_STA support */
+#define WLC_GET_OID_PHY				288	/* for Dongle EXT_STA support */
+#define WLC_SET_OID_PHY				289	/* for Dongle EXT_STA support */
+#define WLC_SET_ASSOC_TIME			290	/* for Dongle EXT_STA support */
+#define WLC_GET_DESIRED_SSID			291	/* for Dongle EXT_STA support */
+#define WLC_GET_CHANSPEC			292	/* for Dongle EXT_STA support */
+#define WLC_GET_ASSOC_STATE			293	/* for Dongle EXT_STA support */
+#define WLC_SET_PHY_STATE			294	/* for Dongle EXT_STA support */
+#define WLC_GET_SCAN_PENDING			295	/* for Dongle EXT_STA support */
+#define WLC_GET_SCANREQ_PENDING			296	/* for Dongle EXT_STA support */
+#define WLC_GET_PREV_ROAM_REASON		297	/* for Dongle EXT_STA support */
+#define WLC_SET_PREV_ROAM_REASON		298	/* for Dongle EXT_STA support */
+#define WLC_GET_BANDSTATES_PI			299	/* for Dongle EXT_STA support */
+#define WLC_GET_PHY_STATE			300	/* for Dongle EXT_STA support */
+#define WLC_GET_BSS_WPA_RSN			301	/* for Dongle EXT_STA support */
+#define WLC_GET_BSS_WPA2_RSN			302	/* for Dongle EXT_STA support */
+#define WLC_GET_BSS_BCN_TS			303	/* for Dongle EXT_STA support */
+#define WLC_GET_INT_DISASSOC			304	/* for Dongle EXT_STA support */
+#define WLC_SET_NUM_PEERS			305     /* for Dongle EXT_STA support */
+#define WLC_GET_NUM_BSS				306	/* for Dongle EXT_STA support */
+#define WLC_PHY_SAMPLE_COLLECT			307	/* phy sample collect mode */
+/* #define WLC_UM_PRIV				308 */	/* Deprecated: usermode driver */
+#define WLC_GET_CMD				309
+/* #define WLC_LAST				310 */	/* Never used - can be reused */
+#define WLC_SET_INTERFERENCE_OVERRIDE_MODE	311	/* set inter mode override */
+#define WLC_GET_INTERFERENCE_OVERRIDE_MODE	312	/* get inter mode override */
+/* #define WLC_GET_WAI_RESTRICT			313 */	/* for WAPI, deprecated use iovar instead */
+/* #define WLC_SET_WAI_RESTRICT			314 */	/* for WAPI, deprecated use iovar instead */
+/* #define WLC_SET_WAI_REKEY			315 */	/* for WAPI, deprecated use iovar instead */
+#define WLC_SET_NAT_CONFIG			316	/* for configuring NAT filter driver */
+#define WLC_GET_NAT_STATE			317
+#define WLC_LAST				318
+
+#ifndef EPICTRL_COOKIE
+#define EPICTRL_COOKIE		0xABADCEDE
+#endif
+
+/* vx wlc ioctl's offset */
+#define CMN_IOCTL_OFF 0x180
+
+/*
+ * custom OID support
+ *
+ * 0xFF - implementation specific OID
+ * 0xE4 - first byte of Broadcom PCI vendor ID
+ * 0x14 - second byte of Broadcom PCI vendor ID
+ * 0xXX - the custom OID number
+ */
+
+/* begin 0x1f values beyond the start of the ET driver range. */
+#define WL_OID_BASE		0xFFE41420
+
+/* NDIS overrides */
+#define OID_WL_GETINSTANCE	(WL_OID_BASE + WLC_GET_INSTANCE)
+#define OID_WL_GET_FORCELINK	(WL_OID_BASE + WLC_GET_FORCELINK)
+#define OID_WL_SET_FORCELINK	(WL_OID_BASE + WLC_SET_FORCELINK)
+#define	OID_WL_ENCRYPT_STRENGTH	(WL_OID_BASE + WLC_ENCRYPT_STRENGTH)
+#define OID_WL_DECRYPT_STATUS	(WL_OID_BASE + WLC_DECRYPT_STATUS)
+#define OID_LEGACY_LINK_BEHAVIOR (WL_OID_BASE + WLC_LEGACY_LINK_BEHAVIOR)
+#define OID_WL_NDCONFIG_ITEM	(WL_OID_BASE + WLC_NDCONFIG_ITEM)
+
+/* EXT_STA Dongle suuport */
+#define OID_STA_CHANSPEC	(WL_OID_BASE + WLC_GET_CHANSPEC)
+#define OID_STA_NBANDS		(WL_OID_BASE + WLC_GET_NBANDS)
+#define OID_STA_GET_PHY		(WL_OID_BASE + WLC_GET_OID_PHY)
+#define OID_STA_SET_PHY		(WL_OID_BASE + WLC_SET_OID_PHY)
+#define OID_STA_ASSOC_TIME	(WL_OID_BASE + WLC_SET_ASSOC_TIME)
+#define OID_STA_DESIRED_SSID	(WL_OID_BASE + WLC_GET_DESIRED_SSID)
+#define OID_STA_SET_PHY_STATE	(WL_OID_BASE + WLC_SET_PHY_STATE)
+#define OID_STA_SCAN_PENDING	(WL_OID_BASE + WLC_GET_SCAN_PENDING)
+#define OID_STA_SCANREQ_PENDING (WL_OID_BASE + WLC_GET_SCANREQ_PENDING)
+#define OID_STA_GET_ROAM_REASON (WL_OID_BASE + WLC_GET_PREV_ROAM_REASON)
+#define OID_STA_SET_ROAM_REASON (WL_OID_BASE + WLC_SET_PREV_ROAM_REASON)
+#define OID_STA_GET_PHY_STATE	(WL_OID_BASE + WLC_GET_PHY_STATE)
+#define OID_STA_INT_DISASSOC	(WL_OID_BASE + WLC_GET_INT_DISASSOC)
+#define OID_STA_SET_NUM_PEERS	(WL_OID_BASE + WLC_SET_NUM_PEERS)
+#define OID_STA_GET_NUM_BSS	(WL_OID_BASE + WLC_GET_NUM_BSS)
+
+/* NAT filter driver support */
+#define OID_NAT_SET_CONFIG	(WL_OID_BASE + WLC_SET_NAT_CONFIG)
+#define OID_NAT_GET_STATE	(WL_OID_BASE + WLC_GET_NAT_STATE)
+
+#define WL_DECRYPT_STATUS_SUCCESS	1
+#define WL_DECRYPT_STATUS_FAILURE	2
+#define WL_DECRYPT_STATUS_UNKNOWN	3
+
+/* allows user-mode app to poll the status of USB image upgrade */
+#define WLC_UPGRADE_SUCCESS			0
+#define WLC_UPGRADE_PENDING			1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef CONFIG_USBRNDIS_RETAIL
 /* struct passed in for WLC_NDCONFIG_ITEM */
@@ -1124,19 +1782,41 @@ typedef struct {
 #endif
 
 
+<<<<<<< HEAD
+=======
+/* WLC_GET_AUTH, WLC_SET_AUTH values */
+#define WL_AUTH_OPEN_SYSTEM		0	/* d11 open authentication */
+#define WL_AUTH_SHARED_KEY		1	/* d11 shared authentication */
+#ifdef BCM4330_CHIP
+#define WL_AUTH_OPEN_SHARED		2	/* try open, then shared if open failed w/rc 13 */
+#else
+/* BCM4334(Phoenex branch) value changed to 3 */
+#define WL_AUTH_OPEN_SHARED		3	/* try open, then shared if open failed w/rc 13 */
+#endif
+#ifdef USE_WEP_AUTH_SHARED_OPEN
+#define WL_AUTH_SHARED_OPEN		4	/* try shared, then open if shared failed w/rc 13 */
+#endif /* USE_WEP_AUTH_SHARED_OPEN */
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+
+/* Bit masks for radio disabled status - returned by WL_GET_RADIO */
+#define WL_RADIO_SW_DISABLE		(1<<0)
+#define WL_RADIO_HW_DISABLE		(1<<1)
+#define WL_RADIO_MPC_DISABLE		(1<<2)
+#define WL_RADIO_COUNTRY_DISABLE	(1<<3)	/* some countries don't support any channel */
+
+#define	WL_SPURAVOID_OFF	0
+#define	WL_SPURAVOID_ON1	1
+#define	WL_SPURAVOID_ON2	2
+
+/* Override bit for WLC_SET_TXPWR.  if set, ignore other level limits */
+#define WL_TXPWR_OVERRIDE	(1U<<31)
+#define WL_TXPWR_NEG   (1U<<30)
+
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define WL_PHY_PAVARS_LEN	32	/* Phy type, Band range, chain, a1[0], b0[0], b1[0] ... */
 
 #define WL_PHY_PAVAR_VER	1	/* pavars version */
-#define WL_PHY_PAVARS2_NUM	3	/* a1, b0, b1 */
-typedef struct wl_pavars2 {
-	uint16 ver;		/* version of this struct */
-	uint16 len;		/* len of this structure */
-	uint16 inuse;		/* driver return 1 for a1,b0,b1 in current band range */
-	uint16 phy_type;	/* phy type */
-	uint16 bandrange;
-	uint16 chain;
-	uint16 inpa[WL_PHY_PAVARS2_NUM];	/* phy pavars for one band range */
-} wl_pavars2_t;
 
 typedef struct wl_po {
 	uint16	phy_type;	/* Phy type */
@@ -1146,12 +1826,202 @@ typedef struct wl_po {
 	uint16	mcspo[8];
 } wl_po_t;
 
+<<<<<<< HEAD
 #define WL_NUM_RPCALVARS 5	/* number of rpcal vars */
 
 typedef struct wl_rpcal {
 	uint16 value;
 	uint16 update;
 } wl_rpcal_t;
+=======
+/* a large TX Power as an init value to factor out of MIN() calculations,
+ * keep low enough to fit in an int8, units are .25 dBm
+ */
+#define WLC_TXPWR_MAX		(127)	/* ~32 dBm = 1,500 mW */
+
+/* "diag" iovar argument and error code */
+#define WL_DIAG_INTERRUPT			1	/* d11 loopback interrupt test */
+#define WL_DIAG_LOOPBACK			2	/* d11 loopback data test */
+#define WL_DIAG_MEMORY				3	/* d11 memory test */
+#define WL_DIAG_LED				4	/* LED test */
+#define WL_DIAG_REG				5	/* d11/phy register test */
+#define WL_DIAG_SROM				6	/* srom read/crc test */
+#define WL_DIAG_DMA				7	/* DMA test */
+#define WL_DIAG_LOOPBACK_EXT			8	/* enhenced d11 loopback data test */
+
+#define WL_DIAGERR_SUCCESS			0
+#define WL_DIAGERR_FAIL_TO_RUN			1	/* unable to run requested diag */
+#define WL_DIAGERR_NOT_SUPPORTED		2	/* diag requested is not supported */
+#define WL_DIAGERR_INTERRUPT_FAIL		3	/* loopback interrupt test failed */
+#define WL_DIAGERR_LOOPBACK_FAIL		4	/* loopback data test failed */
+#define WL_DIAGERR_SROM_FAIL			5	/* srom read failed */
+#define WL_DIAGERR_SROM_BADCRC			6	/* srom crc failed */
+#define WL_DIAGERR_REG_FAIL			7	/* d11/phy register test failed */
+#define WL_DIAGERR_MEMORY_FAIL			8	/* d11 memory test failed */
+#define WL_DIAGERR_NOMEM			9	/* diag test failed due to no memory */
+#define WL_DIAGERR_DMA_FAIL			10	/* DMA test failed */
+
+#define WL_DIAGERR_MEMORY_TIMEOUT		11	/* d11 memory test didn't finish in time */
+#define WL_DIAGERR_MEMORY_BADPATTERN		12	/* d11 memory test result in bad pattern */
+
+/* band types */
+#define	WLC_BAND_AUTO		0	/* auto-select */
+#define	WLC_BAND_5G		1	/* 5 Ghz */
+#define	WLC_BAND_2G		2	/* 2.4 Ghz */
+#define	WLC_BAND_ALL		3	/* all bands */
+
+/* band range returned by band_range iovar */
+#define WL_CHAN_FREQ_RANGE_2G      0
+#define WL_CHAN_FREQ_RANGE_5GL     1
+#define WL_CHAN_FREQ_RANGE_5GM     2
+#define WL_CHAN_FREQ_RANGE_5GH     3
+
+#define WL_CHAN_FREQ_RANGE_5G_BAND0     1
+#define WL_CHAN_FREQ_RANGE_5G_BAND1     2
+#define WL_CHAN_FREQ_RANGE_5G_BAND2     3
+#define WL_CHAN_FREQ_RANGE_5G_BAND3     4
+
+#define WL_CHAN_FREQ_RANGE_5G_4BAND    	5
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+
+/* phy types (returned by WLC_GET_PHYTPE) */
+#define	WLC_PHY_TYPE_A		0
+#define	WLC_PHY_TYPE_B		1
+#define	WLC_PHY_TYPE_G		2
+#define	WLC_PHY_TYPE_N		4
+#define	WLC_PHY_TYPE_LP		5
+#define	WLC_PHY_TYPE_SSN	6
+#define	WLC_PHY_TYPE_HT		7
+#define	WLC_PHY_TYPE_LCN	8
+#define	WLC_PHY_TYPE_LCN40	10
+#define WLC_PHY_TYPE_AC		11
+#define	WLC_PHY_TYPE_NULL	0xf
+
+/* Values for PM */
+#define PM_OFF	0
+#define PM_MAX	1
+#define PM_FAST 2
+#define PM_FORCE_OFF 3 		/* use this bit to force PM off even bt is active */
+
+#ifndef LINUX_POSTMOGRIFY_REMOVAL
+/* MAC list modes */
+#define WLC_MACMODE_DISABLED	0	/* MAC list disabled */
+#define WLC_MACMODE_DENY	1	/* Deny specified (i.e. allow unspecified) */
+#define WLC_MACMODE_ALLOW	2	/* Allow specified (i.e. deny unspecified) */
+
+/*
+ * 54g modes (basic bits may still be overridden)
+ *
+ * GMODE_LEGACY_B			Rateset: 1b, 2b, 5.5, 11
+ *					Preamble: Long
+ *					Shortslot: Off
+ * GMODE_AUTO				Rateset: 1b, 2b, 5.5b, 11b, 18, 24, 36, 54
+ *					Extended Rateset: 6, 9, 12, 48
+ *					Preamble: Long
+ *					Shortslot: Auto
+ * GMODE_ONLY				Rateset: 1b, 2b, 5.5b, 11b, 18, 24b, 36, 54
+ *					Extended Rateset: 6b, 9, 12b, 48
+ *					Preamble: Short required
+ *					Shortslot: Auto
+ * GMODE_B_DEFERRED			Rateset: 1b, 2b, 5.5b, 11b, 18, 24, 36, 54
+ *					Extended Rateset: 6, 9, 12, 48
+ *					Preamble: Long
+ *					Shortslot: On
+ * GMODE_PERFORMANCE			Rateset: 1b, 2b, 5.5b, 6b, 9, 11b, 12b, 18, 24b, 36, 48, 54
+ *					Preamble: Short required
+ *					Shortslot: On and required
+ * GMODE_LRS				Rateset: 1b, 2b, 5.5b, 11b
+ *					Extended Rateset: 6, 9, 12, 18, 24, 36, 48, 54
+ *					Preamble: Long
+ *					Shortslot: Auto
+ */
+#define GMODE_LEGACY_B		0
+#define GMODE_AUTO		1
+#define GMODE_ONLY		2
+#define GMODE_B_DEFERRED	3
+#define GMODE_PERFORMANCE	4
+#define GMODE_LRS		5
+#define GMODE_MAX		6
+
+/* values for PLCPHdr_override */
+#define WLC_PLCP_AUTO	-1
+#define WLC_PLCP_SHORT	0
+#define WLC_PLCP_LONG	1
+
+/* values for g_protection_override and n_protection_override */
+#define WLC_PROTECTION_AUTO		-1
+#define WLC_PROTECTION_OFF		0
+#define WLC_PROTECTION_ON		1
+#define WLC_PROTECTION_MMHDR_ONLY	2
+#define WLC_PROTECTION_CTS_ONLY		3
+
+/* values for g_protection_control and n_protection_control */
+#define WLC_PROTECTION_CTL_OFF		0
+#define WLC_PROTECTION_CTL_LOCAL	1
+#define WLC_PROTECTION_CTL_OVERLAP	2
+
+/* values for n_protection */
+#define WLC_N_PROTECTION_OFF		0
+#define WLC_N_PROTECTION_OPTIONAL	1
+#define WLC_N_PROTECTION_20IN40		2
+#define WLC_N_PROTECTION_MIXEDMODE	3
+
+/* values for n_preamble_type */
+#define WLC_N_PREAMBLE_MIXEDMODE	0
+#define WLC_N_PREAMBLE_GF		1
+#define WLC_N_PREAMBLE_GF_BRCM          2
+
+/* values for band specific 40MHz capabilities (deprecated) */
+#define WLC_N_BW_20ALL			0
+#define WLC_N_BW_40ALL			1
+#define WLC_N_BW_20IN2G_40IN5G		2
+
+#define WLC_BW_20MHZ_BIT		(1<<0)
+#define WLC_BW_40MHZ_BIT		(1<<1)
+#define WLC_BW_80MHZ_BIT		(1<<2)
+
+/* Bandwidth capabilities */
+#define WLC_BW_CAP_20MHZ		(WLC_BW_20MHZ_BIT)
+#define WLC_BW_CAP_40MHZ		(WLC_BW_40MHZ_BIT|WLC_BW_20MHZ_BIT)
+#define WLC_BW_CAP_80MHZ		(WLC_BW_80MHZ_BIT|WLC_BW_40MHZ_BIT|WLC_BW_20MHZ_BIT)
+#define WLC_BW_CAP_UNRESTRICTED		0xFF
+
+#define WL_BW_CAP_20MHZ(bw_cap)	(((bw_cap) & WLC_BW_20MHZ_BIT) ? TRUE : FALSE)
+#define WL_BW_CAP_40MHZ(bw_cap)	(((bw_cap) & WLC_BW_40MHZ_BIT) ? TRUE : FALSE)
+#define WL_BW_CAP_80MHZ(bw_cap)	(((bw_cap) & WLC_BW_80MHZ_BIT) ? TRUE : FALSE)
+
+/* values to force tx/rx chain */
+#define WLC_N_TXRX_CHAIN0		0
+#define WLC_N_TXRX_CHAIN1		1
+
+/* bitflags for SGI support (sgi_rx iovar) */
+#define WLC_N_SGI_20			0x01
+#define WLC_N_SGI_40			0x02
+#define WLC_VHT_SGI_80			0x04
+
+/* when sgi_tx==WLC_SGI_ALL, bypass rate selection, enable sgi for all mcs */
+#define WLC_SGI_ALL				0x02
+
+#define DHD_SCAN_ACTIVE_TIME		40 /* ms : Embedded default Active setting from DHD */
+#define DHD_SCAN_UNASSOC_ACTIVE_TIME	80 /* ms : def. Unassoc Active setting from DHD */
+#define DHD_SCAN_PASSIVE_TIME		130 /* ms: Embedded default Passive setting from DHD */
+
+#define LISTEN_INTERVAL			10
+/* interference mitigation options */
+#define	INTERFERE_OVRRIDE_OFF	-1	/* interference override off */
+#define	INTERFERE_NONE	0	/* off */
+#define	NON_WLAN	1	/* foreign/non 802.11 interference, no auto detect */
+#define	WLAN_MANUAL	2	/* ACI: no auto detection */
+#define	WLAN_AUTO	3	/* ACI: auto detect */
+#define	WLAN_AUTO_W_NOISE	4	/* ACI: auto - detect and non 802.11 interference */
+#define AUTO_ACTIVE	(1 << 7) /* Auto is currently active */
+
+/* AP environment */
+#define AP_ENV_DETECT_NOT_USED		0 /* We aren't using AP environment detection */
+#define AP_ENV_DENSE			1 /* "Corporate" or other AP dense environment */
+#define AP_ENV_SPARSE			2 /* "Home" or other sparse environment */
+#define AP_ENV_INDETERMINATE		3 /* AP environment hasn't been identified */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct wl_aci_args {
 	int enter_aci_thresh; /* Trigger level to start detecting ACI */
@@ -1204,8 +2074,6 @@ typedef struct wl_samplecollect_args {
 	uint8 module_sel1;
 	uint8 module_sel2;
 	uint16 nsamps;
-	int bitStart;
-	uint32 gpioCapMask;
 } wl_samplecollect_args_t;
 
 #define	WL_SAMPLEDATA_T_VERSION		1	/* version of wl_samplecollect_args_t struct */
@@ -1220,6 +2088,7 @@ typedef struct wl_sampledata {
 	uint32 flag;	/* bit def */
 } wl_sampledata_t;
 
+<<<<<<< HEAD
 
 /* WL_OTA START */
 /* OTA Test Status */
@@ -1327,6 +2196,8 @@ typedef struct wl_ota_test_status {
 
 /* WL_OTA END */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* wl_radar_args_t */
 typedef struct {
 	int npulses;	/* required number of pulses at n * t_int */
@@ -1487,20 +2358,431 @@ typedef struct {
 #define WL_NUM_2x2_ELEMENTS		4
 #define WL_NUM_3x3_ELEMENTS		6
 
+<<<<<<< HEAD
+=======
+typedef struct txppr {
+	/* start of 20MHz tx power limits */
+	uint8 b20_1x1dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20_1x1ofdm[WL_NUM_RATES_OFDM];		/* Legacy OFDM transmission */
+	uint8 b20_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];		/* SISO MCS 0-7 */
+
+	uint8 b20_1x2dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b20_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b20_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b20_1x3dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b20_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b20_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b20_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b20_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b20_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b20_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b20_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b20_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b20_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b20_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b20_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	/* start of 40MHz tx power limits */
+	uint8 b40_dummy1x1dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40_1x1ofdm[WL_NUM_RATES_OFDM];		/* Legacy OFDM transmission */
+	uint8 b40_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];		/* SISO MCS 0-7 */
+
+	uint8 b40_dummy1x2dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b40_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b40_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b40_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b40_dummy1x3dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b40_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b40_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b40_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b40_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b40_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b40_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b40_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b40_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b40_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b40_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b40_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b40_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	/* start of 20in40MHz tx power limits */
+	uint8 b20in40_1x1dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b20in40_1x1ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM transmission */
+	uint8 b20in40_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];	/* SISO MCS 0-7 */
+
+	uint8 b20in40_1x2dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20in40_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b20in40_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b20in40_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20in40_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b20in40_1x3dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20in40_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* 20 in 40 MHz Legacy OFDM CDD */
+	uint8 b20in40_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b20in40_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20in40_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b20in40_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b20in40_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b20in40_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b20in40_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b20in40_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b20in40_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b20in40_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b20in40_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b20in40_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	/* start of 80MHz tx power limits */
+	uint8 b80_dummy1x1dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b80_1x1ofdm[WL_NUM_RATES_OFDM];			/* Legacy OFDM transmission */
+	uint8 b80_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];	/* SISO MCS 0-7 */
+
+	uint8 b80_dummy1x2dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b80_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b80_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b80_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b80_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b80_dummy1x3dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b80_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b80_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b80_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b80_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b80_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b80_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b80_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b80_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b80_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b80_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b80_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b80_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b80_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	/* start of 20in80MHz tx power limits */
+	uint8 b20in80_1x1dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b20in80_1x1ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM transmission */
+	uint8 b20in80_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];	/* SISO MCS 0-7 */
+
+	uint8 b20in80_1x2dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20in80_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b20in80_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b20in80_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20in80_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b20in80_1x3dsss[WL_NUM_RATES_CCK];		/* Legacy CCK/DSSS */
+	uint8 b20in80_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b20in80_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b20in80_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b20in80_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b20in80_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b20in80_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b20in80_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b20in80_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b20in80_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b20in80_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b20in80_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b20in80_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b20in80_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	/* start of 40in80MHz tx power limits */
+	uint8 b40in80_dummy1x1dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40in80_1x1ofdm[WL_NUM_RATES_OFDM];		/* Legacy OFDM transmission */
+	uint8 b40in80_1x1mcs0[WL_NUM_RATES_MCS_1STREAM];	/* SISO MCS 0-7 */
+
+	uint8 b40in80_dummy1x2dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40in80_1x2cdd_ofdm[WL_NUM_RATES_OFDM];	/* Legacy OFDM CDD transmission */
+	uint8 b40in80_1x2cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* CDD MCS 0-7 */
+	uint8 b40in80_2x2stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b40in80_2x2sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* MCS 8-15 */
+
+	uint8 b40in80_dummy1x3dsss[WL_NUM_RATES_CCK];	/* Legacy CCK/DSSS */
+	uint8 b40in80_1x3cdd_ofdm[WL_NUM_RATES_OFDM];	/* MHz Legacy OFDM CDD */
+	uint8 b40in80_1x3cdd_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* 1 Nsts to 3 Tx Chain */
+	uint8 b40in80_2x3stbc_mcs0[WL_NUM_RATES_MCS_1STREAM];	/* STBC MCS 0-7 */
+	uint8 b40in80_2x3sdm_mcs8[WL_NUM_RATES_MCS_1STREAM];	/* 2 Nsts to 3 Tx Chain */
+	uint8 b40in80_3x3sdm_mcs16[WL_NUM_RATES_MCS_1STREAM];	/* 3 Nsts to 3 Tx Chain */
+
+	uint8 b40in80_1x1vht[WL_NUM_RATES_EXTRA_VHT];		/* VHT8_9SS1 */
+	uint8 b40in80_1x2cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD1 */
+	uint8 b40in80_2x2stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC */
+	uint8 b40in80_2x2sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2 */
+	uint8 b40in80_1x3cdd_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_CDD2 */
+	uint8 b40in80_2x3stbc_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS1_STBC_SPEXP1 */
+	uint8 b40in80_2x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS2_SPEXP1 */
+	uint8 b40in80_3x3sdm_vht[WL_NUM_RATES_EXTRA_VHT];	/* VHT8_9SS3 */
+
+	uint8 mcs32; /* C_CHECK - THIS NEEDS TO BE REMOVED THROUGHOUT THE CODE */
+} txppr_t;
+
+/* 20MHz */
+#define WL_TX_POWER_CCK_FIRST					OFFSETOF(txppr_t, b20_1x1dsss)
+#define WL_TX_POWER_OFDM20_FIRST				OFFSETOF(txppr_t, b20_1x1ofdm)
+#define WL_TX_POWER_MCS20_SISO_FIRST			OFFSETOF(txppr_t, b20_1x1mcs0)
+#define WL_TX_POWER_20_S1x1_FIRST				OFFSETOF(txppr_t, b20_1x1mcs0)
+
+#define WL_TX_POWER_CCK_CDD_S1x2_FIRST			OFFSETOF(txppr_t, b20_1x2dsss)
+#define WL_TX_POWER_OFDM20_CDD_FIRST			OFFSETOF(txppr_t, b20_1x2cdd_ofdm)
+#define WL_TX_POWER_MCS20_CDD_FIRST				OFFSETOF(txppr_t, b20_1x2cdd_mcs0)
+#define WL_TX_POWER_20_S1x2_FIRST				OFFSETOF(txppr_t, b20_1x2cdd_mcs0)
+#define WL_TX_POWER_MCS20_STBC_FIRST			OFFSETOF(txppr_t, b20_2x2stbc_mcs0)
+#define WL_TX_POWER_MCS20_SDM_FIRST				OFFSETOF(txppr_t, b20_2x2sdm_mcs8)
+#define WL_TX_POWER_20_S2x2_FIRST				OFFSETOF(txppr_t, b20_2x2sdm_mcs8)
+
+#define WL_TX_POWER_CCK_CDD_S1x3_FIRST			OFFSETOF(txppr_t, b20_1x3dsss)
+#define WL_TX_POWER_OFDM20_CDD_S1x3_FIRST		OFFSETOF(txppr_t, b20_1x3cdd_ofdm)
+#define WL_TX_POWER_20_S1x3_FIRST				OFFSETOF(txppr_t, b20_1x3cdd_mcs0)
+#define WL_TX_POWER_20_STBC_S2x3_FIRST			OFFSETOF(txppr_t, b20_2x3stbc_mcs0)
+#define WL_TX_POWER_20_S2x3_FIRST				OFFSETOF(txppr_t, b20_2x3sdm_mcs8)
+#define WL_TX_POWER_20_S3x3_FIRST				OFFSETOF(txppr_t, b20_3x3sdm_mcs16)
+
+#define WL_TX_POWER_20_S1X1_VHT					OFFSETOF(txppr_t, b20_1x1vht)
+#define WL_TX_POWER_20_S1X2_CDD_VHT				OFFSETOF(txppr_t, b20_1x2cdd_vht)
+#define WL_TX_POWER_20_S2X2_STBC_VHT			OFFSETOF(txppr_t, b20_2x2stbc_vht)
+#define WL_TX_POWER_20_S2X2_VHT					OFFSETOF(txppr_t, b20_2x2sdm_vht)
+#define WL_TX_POWER_20_S1X3_CDD_VHT				OFFSETOF(txppr_t, b20_1x3cdd_vht)
+#define WL_TX_POWER_20_S2X3_STBC_VHT			OFFSETOF(txppr_t, b20_2x3stbc_vht)
+#define WL_TX_POWER_20_S2X3_VHT					OFFSETOF(txppr_t, b20_2x3sdm_vht)
+#define WL_TX_POWER_20_S3X3_VHT					OFFSETOF(txppr_t, b20_3x3sdm_vht)
+
+/* 40MHz */
+#define WL_TX_POWER_40_DUMMY_CCK_FIRST			OFFSETOF(txppr_t, b40_dummy1x1dsss)
+#define WL_TX_POWER_OFDM40_FIRST				OFFSETOF(txppr_t, b40_1x1ofdm)
+#define WL_TX_POWER_MCS40_SISO_FIRST			OFFSETOF(txppr_t, b40_1x1mcs0)
+#define WL_TX_POWER_40_S1x1_FIRST				OFFSETOF(txppr_t, b40_1x1mcs0)
+
+#define WL_TX_POWER_40_DUMMY_CCK_CDD_S1x2_FIRST	OFFSETOF(txppr_t, b40_dummy1x2dsss)
+#define WL_TX_POWER_OFDM40_CDD_FIRST			OFFSETOF(txppr_t, b40_1x2cdd_ofdm)
+#define WL_TX_POWER_MCS40_CDD_FIRST				OFFSETOF(txppr_t, b40_1x2cdd_mcs0)
+#define WL_TX_POWER_40_S1x2_FIRST				OFFSETOF(txppr_t, b40_1x2cdd_mcs0)
+#define WL_TX_POWER_MCS40_STBC_FIRST			OFFSETOF(txppr_t, b40_2x2stbc_mcs0)
+#define WL_TX_POWER_MCS40_SDM_FIRST				OFFSETOF(txppr_t, b40_2x2sdm_mcs8)
+#define WL_TX_POWER_40_S2x2_FIRST				OFFSETOF(txppr_t, b40_2x2sdm_mcs8)
+
+#define WL_TX_POWER_40_DUMMY_CCK_CDD_S1x3_FIRST	OFFSETOF(txppr_t, b40_dummy1x3dsss)
+#define WL_TX_POWER_OFDM40_CDD_S1x3_FIRST		OFFSETOF(txppr_t, b40_1x3cdd_ofdm)
+#define WL_TX_POWER_40_S1x3_FIRST				OFFSETOF(txppr_t, b40_1x3cdd_mcs0)
+#define WL_TX_POWER_40_STBC_S2x3_FIRST			OFFSETOF(txppr_t, b40_2x3stbc_mcs0)
+#define WL_TX_POWER_40_S2x3_FIRST				OFFSETOF(txppr_t, b40_2x3sdm_mcs8)
+#define WL_TX_POWER_40_S3x3_FIRST				OFFSETOF(txppr_t, b40_3x3sdm_mcs16)
+
+#define WL_TX_POWER_40_S1X1_VHT					OFFSETOF(txppr_t, b40_1x1vht)
+#define WL_TX_POWER_40_S1X2_CDD_VHT				OFFSETOF(txppr_t, b40_1x2cdd_vht)
+#define WL_TX_POWER_40_S2X2_STBC_VHT			OFFSETOF(txppr_t, b40_2x2stbc_vht)
+#define WL_TX_POWER_40_S2X2_VHT					OFFSETOF(txppr_t, b40_2x2sdm_vht)
+#define WL_TX_POWER_40_S1X3_CDD_VHT				OFFSETOF(txppr_t, b40_1x3cdd_vht)
+#define WL_TX_POWER_40_S2X3_STBC_VHT			OFFSETOF(txppr_t, b40_2x3stbc_vht)
+#define WL_TX_POWER_40_S2X3_VHT					OFFSETOF(txppr_t, b40_2x3sdm_vht)
+#define WL_TX_POWER_40_S3X3_VHT					OFFSETOF(txppr_t, b40_3x3sdm_vht)
+
+/* 20 in 40MHz */
+#define WL_TX_POWER_20UL_CCK_FIRST				OFFSETOF(txppr_t, b20in40_1x1dsss)
+#define WL_TX_POWER_20UL_OFDM_FIRST				OFFSETOF(txppr_t, b20in40_1x1ofdm)
+#define WL_TX_POWER_20UL_S1x1_FIRST				OFFSETOF(txppr_t, b20in40_1x1mcs0)
+
+#define WL_TX_POWER_CCK_20U_CDD_S1x2_FIRST	OFFSETOF(txppr_t, b20in40_1x2dsss)
+#define WL_TX_POWER_20UL_OFDM_CDD_FIRST		OFFSETOF(txppr_t, b20in40_1x2cdd_ofdm)
+#define WL_TX_POWER_20UL_S1x2_FIRST			OFFSETOF(txppr_t, b20in40_1x2cdd_mcs0)
+#define WL_TX_POWER_20UL_STBC_S2x2_FIRST	OFFSETOF(txppr_t, b20in40_2x2stbc_mcs0)
+#define WL_TX_POWER_20UL_S2x2_FIRST			OFFSETOF(txppr_t, b20in40_2x2sdm_mcs8)
+
+#define WL_TX_POWER_CCK_20U_CDD_S1x3_FIRST	OFFSETOF(txppr_t, b20in40_1x3dsss)
+#define WL_TX_POWER_20UL_OFDM_CDD_S1x3_FIRST OFFSETOF(txppr_t, b20in40_1x3cdd_ofdm)
+#define WL_TX_POWER_20UL_S1x3_FIRST			OFFSETOF(txppr_t, b20in40_1x3cdd_mcs0)
+#define WL_TX_POWER_20UL_STBC_S2x3_FIRST	OFFSETOF(txppr_t, b20in40_2x3stbc_mcs0)
+#define WL_TX_POWER_20UL_S2x3_FIRST			OFFSETOF(txppr_t, b20in40_2x3sdm_mcs8)
+#define WL_TX_POWER_20UL_S3x3_FIRST			OFFSETOF(txppr_t, b20in40_3x3sdm_mcs16)
+
+#define WL_TX_POWER_20UL_S1X1_VHT			OFFSETOF(txppr_t, b20in40_1x1vht)
+#define WL_TX_POWER_20UL_S1X2_CDD_VHT		OFFSETOF(txppr_t, b20in40_1x2cdd_vht)
+#define WL_TX_POWER_20UL_S2X2_STBC_VHT		OFFSETOF(txppr_t, b20in40_2x2stbc_vht)
+#define WL_TX_POWER_20UL_S2X2_VHT			OFFSETOF(txppr_t, b20in40_2x2sdm_vht)
+#define WL_TX_POWER_20UL_S1X3_CDD_VHT		OFFSETOF(txppr_t, b20in40_1x3cdd_vht)
+#define WL_TX_POWER_20UL_S2X3_STBC_VHT		OFFSETOF(txppr_t, b20in40_2x3stbc_vht)
+#define WL_TX_POWER_20UL_S2X3_VHT			OFFSETOF(txppr_t, b20in40_2x3sdm_vht)
+#define WL_TX_POWER_20UL_S3X3_VHT			OFFSETOF(txppr_t, b20in40_3x3sdm_vht)
+
+/* 80MHz */
+#define WL_TX_POWER_80_DUMMY_CCK_FIRST		OFFSETOF(txppr_t, b80_dummy1x1dsss)
+#define WL_TX_POWER_OFDM80_FIRST			OFFSETOF(txppr_t, b80_1x1ofdm)
+#define WL_TX_POWER_MCS80_SISO_FIRST		OFFSETOF(txppr_t, b80_1x1mcs0)
+#define WL_TX_POWER_80_S1x1_FIRST			OFFSETOF(txppr_t, b80_1x1mcs0)
+
+#define WL_TX_POWER_80_DUMMY_CCK_CDD_S1x2_FIRST	OFFSETOF(txppr_t, b80_dummy1x2dsss)
+#define WL_TX_POWER_OFDM80_CDD_FIRST			OFFSETOF(txppr_t, b80_1x2cdd_ofdm)
+#define WL_TX_POWER_MCS80_CDD_FIRST				OFFSETOF(txppr_t, b80_1x2cdd_mcs0)
+#define WL_TX_POWER_80_S1x2_FIRST				OFFSETOF(txppr_t, b80_1x2cdd_mcs0)
+#define WL_TX_POWER_MCS80_STBC_FIRST			OFFSETOF(txppr_t, b80_2x2stbc_mcs0)
+#define WL_TX_POWER_MCS80_SDM_FIRST				OFFSETOF(txppr_t, b80_2x2sdm_mcs8)
+#define WL_TX_POWER_80_S2x2_FIRST				OFFSETOF(txppr_t, b80_2x2sdm_mcs8)
+
+#define WL_TX_POWER_80_DUMMY_CCK_CDD_S1x3_FIRST	OFFSETOF(txppr_t, b80_dummy1x3dsss)
+#define WL_TX_POWER_OFDM80_CDD_S1x3_FIRST		OFFSETOF(txppr_t, b80_1x3cdd_ofdm)
+#define WL_TX_POWER_80_S1x3_FIRST				OFFSETOF(txppr_t, b80_1x3cdd_mcs0)
+#define WL_TX_POWER_80_STBC_S2x3_FIRST			OFFSETOF(txppr_t, b80_2x3stbc_mcs0)
+#define WL_TX_POWER_80_S2x3_FIRST				OFFSETOF(txppr_t, b80_2x3sdm_mcs8)
+#define WL_TX_POWER_80_S3x3_FIRST				OFFSETOF(txppr_t, b80_3x3sdm_mcs16)
+
+#define WL_TX_POWER_80_S1X1_VHT					OFFSETOF(txppr_t, b80_1x1vht)
+#define WL_TX_POWER_80_S1X2_CDD_VHT				OFFSETOF(txppr_t, b80_1x2cdd_vht)
+#define WL_TX_POWER_80_S2X2_STBC_VHT			OFFSETOF(txppr_t, b80_2x2stbc_vht)
+#define WL_TX_POWER_80_S2X2_VHT					OFFSETOF(txppr_t, b80_2x2sdm_vht)
+#define WL_TX_POWER_80_S1X3_CDD_VHT				OFFSETOF(txppr_t, b80_1x3cdd_vht)
+#define WL_TX_POWER_80_S2X3_STBC_VHT			OFFSETOF(txppr_t, b80_2x3stbc_vht)
+#define WL_TX_POWER_80_S2X3_VHT					OFFSETOF(txppr_t, b80_2x3sdm_vht)
+#define WL_TX_POWER_80_S3X3_VHT					OFFSETOF(txppr_t, b80_3x3sdm_vht)
+
+/* 20 in 80MHz */
+#define WL_TX_POWER_20UUL_CCK_FIRST				OFFSETOF(txppr_t, b20in80_1x1dsss)
+#define WL_TX_POWER_20UUL_OFDM_FIRST			OFFSETOF(txppr_t, b20in80_1x1ofdm)
+#define WL_TX_POWER_20UUL_S1x1_FIRST			OFFSETOF(txppr_t, b20in80_1x1mcs0)
+
+#define WL_TX_POWER_CCK_20UU_CDD_S1x2_FIRST		OFFSETOF(txppr_t, b20in80_1x2dsss)
+#define WL_TX_POWER_20UUL_OFDM_CDD_FIRST		OFFSETOF(txppr_t, b20in80_1x2cdd_ofdm)
+#define WL_TX_POWER_20UUL_S1x2_FIRST			OFFSETOF(txppr_t, b20in80_1x2cdd_mcs0)
+#define WL_TX_POWER_20UUL_STBC_S2x2_FIRST		OFFSETOF(txppr_t, b20in80_2x2stbc_mcs0)
+#define WL_TX_POWER_20UUL_S2x2_FIRST			OFFSETOF(txppr_t, b20in80_2x2sdm_mcs8)
+
+#define WL_TX_POWER_CCK_20UU_CDD_S1x3_FIRST		OFFSETOF(txppr_t, b20in80_1x3dsss)
+#define WL_TX_POWER_20UUL_OFDM_CDD_S1x3_FIRST	OFFSETOF(txppr_t, b20in80_1x3cdd_ofdm)
+#define WL_TX_POWER_20UUL_S1x3_FIRST			OFFSETOF(txppr_t, b20in80_1x3cdd_mcs0)
+#define WL_TX_POWER_20UUL_STBC_S2x3_FIRST		OFFSETOF(txppr_t, b20in80_2x3stbc_mcs0)
+#define WL_TX_POWER_20UUL_S2x3_FIRST			OFFSETOF(txppr_t, b20in80_2x3sdm_mcs8)
+#define WL_TX_POWER_20UUL_S3x3_FIRST			OFFSETOF(txppr_t, b20in80_3x3sdm_mcs16)
+
+#define WL_TX_POWER_20UUL_S1X1_VHT			OFFSETOF(txppr_t, b20in80_1x1vht)
+#define WL_TX_POWER_20UUL_S1X2_CDD_VHT		OFFSETOF(txppr_t, b20in80_1x2cdd_vht)
+#define WL_TX_POWER_20UUL_S2X2_STBC_VHT		OFFSETOF(txppr_t, b20in80_2x2stbc_vht)
+#define WL_TX_POWER_20UUL_S2X2_VHT			OFFSETOF(txppr_t, b20in80_2x2sdm_vht)
+#define WL_TX_POWER_20UUL_S1X3_CDD_VHT		OFFSETOF(txppr_t, b20in80_1x3cdd_vht)
+#define WL_TX_POWER_20UUL_S2X3_STBC_VHT		OFFSETOF(txppr_t, b20in80_2x3stbc_vht)
+#define WL_TX_POWER_20UUL_S2X3_VHT			OFFSETOF(txppr_t, b20in80_2x3sdm_vht)
+#define WL_TX_POWER_20UUL_S3X3_VHT			OFFSETOF(txppr_t, b20in80_3x3sdm_vht)
+
+/* 40 in 80MHz */
+#define WL_TX_POWER_40UUL_DUMMY_CCK_FIRST		OFFSETOF(txppr_t, b40in80_dummy1x1dsss)
+#define WL_TX_POWER_40UUL_OFDM_FIRST			OFFSETOF(txppr_t, b40in80_1x1ofdm)
+#define WL_TX_POWER_40UUL_S1x1_FIRST			OFFSETOF(txppr_t, b40in80_1x1mcs0)
+
+#define WL_TX_POWER_CCK_40UU_DUMMY_CDD_S1x2_FIRST OFFSETOF(txppr_t, b40in80_dummy1x2dsss)
+#define WL_TX_POWER_40UUL_OFDM_CDD_FIRST		OFFSETOF(txppr_t, b40in80_1x2cdd_ofdm)
+#define WL_TX_POWER_40UUL_S1x2_FIRST			OFFSETOF(txppr_t, b40in80_1x2cdd_mcs0)
+#define WL_TX_POWER_40UUL_STBC_S2x2_FIRST		OFFSETOF(txppr_t, b40in80_2x2stbc_mcs0)
+#define WL_TX_POWER_40UUL_S2x2_FIRST			OFFSETOF(txppr_t, b40in80_2x2sdm_mcs8)
+
+#define WL_TX_POWER_CCK_40UU_DUMMY_CDD_S1x3_FIRST OFFSETOF(txppr_t, b40in80_dummy1x3dsss)
+#define WL_TX_POWER_40UUL_OFDM_CDD_S1x3_FIRST	OFFSETOF(txppr_t, b40in80_1x3cdd_ofdm)
+#define WL_TX_POWER_40UUL_S1x3_FIRST			OFFSETOF(txppr_t, b40in80_1x3cdd_mcs0)
+#define WL_TX_POWER_40UUL_STBC_S2x3_FIRST		OFFSETOF(txppr_t, b40in80_2x3stbc_mcs0)
+#define WL_TX_POWER_40UUL_S2x3_FIRST			OFFSETOF(txppr_t, b40in80_2x3sdm_mcs8)
+#define WL_TX_POWER_40UUL_S3x3_FIRST			OFFSETOF(txppr_t, b40in80_3x3sdm_mcs16)
+
+#define WL_TX_POWER_40UUL_S1X1_VHT			OFFSETOF(txppr_t, b40in80_1x1vht)
+#define WL_TX_POWER_40UUL_S1X2_CDD_VHT		OFFSETOF(txppr_t, b40in80_1x2cdd_vht)
+#define WL_TX_POWER_40UUL_S2X2_STBC_VHT		OFFSETOF(txppr_t, b40in80_2x2stbc_vht)
+#define WL_TX_POWER_40UUL_S2X2_VHT			OFFSETOF(txppr_t, b40in80_2x2sdm_vht)
+#define WL_TX_POWER_40UUL_S1X3_CDD_VHT		OFFSETOF(txppr_t, b40in80_1x3cdd_vht)
+#define WL_TX_POWER_40UUL_S2X3_STBC_VHT		OFFSETOF(txppr_t, b40in80_2x3stbc_vht)
+#define WL_TX_POWER_40UUL_S2X3_VHT			OFFSETOF(txppr_t, b40in80_2x3sdm_vht)
+#define WL_TX_POWER_40UUL_S3X3_VHT			OFFSETOF(txppr_t, b40in80_3x3sdm_vht)
+
+#define WL_TX_POWER_MCS_32			OFFSETOF(txppr_t, mcs32) /* C_CHECK remove later */
+
+#define WL_TX_POWER_RATES			sizeof(struct txppr)
+
+/* sslpnphy specifics */
+#define WL_TX_POWER_MCS20_SISO_FIRST_SSN	WL_TX_POWER_MCS20_SISO_FIRST
+#define WL_TX_POWER_MCS40_SISO_FIRST_SSN	WL_TX_POWER_MCS40_SISO_FIRST
+
+/* tx_power_t.flags bits */
+#define WL_TX_POWER_F_ENABLED	1
+#define WL_TX_POWER_F_HW	2
+#define WL_TX_POWER_F_MIMO	4
+#define WL_TX_POWER_F_SISO	8
+#define WL_TX_POWER_F_HT	0x10
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 typedef struct {
 	uint16 ver;				/* version of this struct */
 	uint16 len;				/* length in bytes of this structure */
 	uint32 flags;
 	chanspec_t chanspec;			/* txpwr report for this channel */
 	chanspec_t local_chanspec;		/* channel on which we are associated */
+<<<<<<< HEAD
 	uint32     buflen;			/* ppr buffer length */
 	uint8      pprbuf[1];			/* Latest target power buffer */
+=======
+	uint8 ppr[WL_TX_POWER_RATES];		/* Latest target power */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } wl_txppr_t;
 
 #define WL_TXPPR_VERSION	1
 #define WL_TXPPR_LENGTH	(sizeof(wl_txppr_t))
-#define TX_POWER_T_VERSION	44
+#define TX_POWER_T_VERSION	43
 
+<<<<<<< HEAD
+=======
+/* Defines used with channel_bandwidth for curpower */
+#define WL_BW_20MHZ 		0
+#define WL_BW_40MHZ 		1
+#define WL_BW_80MHZ 		2
+
+/* tx_power_t.flags bits */
+#ifdef PPR_API
+#define WL_TX_POWER2_F_ENABLED	1
+#define WL_TX_POWER2_F_HW		2
+#define WL_TX_POWER2_F_MIMO		4
+#define WL_TX_POWER2_F_SISO		8
+#define WL_TX_POWER2_F_HT		0x10
+#else
+#define WL_TX_POWER_F_ENABLED	1
+#define WL_TX_POWER_F_HW		2
+#define WL_TX_POWER_F_MIMO		4
+#define WL_TX_POWER_F_SISO		8
+#define WL_TX_POWER_F_HT		0x10
+#endif
+typedef struct {
+	uint32 flags;
+	chanspec_t chanspec;			/* txpwr report for this channel */
+	chanspec_t local_chanspec;		/* channel on which we are associated */
+	uint8 local_max;			/* local max according to the AP */
+	uint8 local_constraint;			/* local constraint according to the AP */
+	int8  antgain[2];			/* Ant gain for each band - from SROM */
+	uint8 rf_cores;				/* count of RF Cores being reported */
+	uint8 est_Pout[4];			/* Latest tx power out estimate per RF chain */
+	uint8 est_Pout_act[4];		/* Latest tx power out estimate per RF chain
+	* without adjustment
+	*/
+	uint8 est_Pout_cck;			/* Latest CCK tx power out estimate */
+	uint8 tx_power_max[4];		/* Maximum target power among all rates */
+	uint tx_power_max_rate_ind[4];		/* Index of the rate with the max target power */
+	uint8 user_limit[WL_TX_POWER_RATES];	/* User limit */
+	int8 board_limit[WL_TX_POWER_RATES];	/* Max power board can support (SROM) */
+	int8 target[WL_TX_POWER_RATES];			/* Latest target power */
+	int8 clm_limits[WL_NUMRATES];		/* regulatory limits - 20, 40 or 80MHz */
+	int8 clm_limits_subchan1[WL_NUMRATES];	/* regulatory limits - 20in40 or 40in80 */
+	int8 clm_limits_subchan2[WL_NUMRATES];	/* regulatory limits - 20in80MHz */
+	int8 sar;					/* SAR limit for display by wl executable */
+	int8 channel_bandwidth;		/* 20, 40 or 80 MHz bandwidth? */
+	uint8 version;				/* Version of the data format wlu <--> driver */
+	uint8 display_core;			/* Displayed curpower core */
+#ifdef PPR_API
+} tx_power_new_t;
+#else
+} tx_power_t;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct tx_inst_power {
 	uint8 txpwr_est_Pout[2];			/* Latest estimate for 2.4 and 5 Ghz */
@@ -1511,6 +2793,158 @@ typedef struct tx_inst_power {
 typedef struct wl_txchain_pwr_offsets {
 	int8 offset[WL_NUM_TXCHAIN_MAX];	/* quarter dBm signed offset for each chain */
 } wl_txchain_pwr_offsets_t;
+<<<<<<< HEAD
+=======
+
+/* 802.11h measurement types */
+#define WLC_MEASURE_TPC			1
+#define WLC_MEASURE_CHANNEL_BASIC	2
+#define WLC_MEASURE_CHANNEL_CCA		3
+#define WLC_MEASURE_CHANNEL_RPI		4
+
+/* regulatory enforcement levels */
+#define SPECT_MNGMT_OFF			0		/* both 11h and 11d disabled */
+#define SPECT_MNGMT_LOOSE_11H		1		/* allow non-11h APs in scan lists */
+#define SPECT_MNGMT_STRICT_11H		2		/* prune out non-11h APs from scan list */
+#define SPECT_MNGMT_STRICT_11D		3		/* switch to 802.11D mode */
+/* SPECT_MNGMT_LOOSE_11H_D - same as SPECT_MNGMT_LOOSE with the exception that Country IE
+ * adoption is done regardless of capability spectrum_management
+ */
+#define SPECT_MNGMT_LOOSE_11H_D		4		/* operation defined above */
+
+#define WL_CHAN_VALID_HW	(1 << 0)	/* valid with current HW */
+#define WL_CHAN_VALID_SW	(1 << 1)	/* valid with current country setting */
+#define WL_CHAN_BAND_5G		(1 << 2)	/* 5GHz-band channel */
+#define WL_CHAN_RADAR		(1 << 3)	/* radar sensitive  channel */
+#define WL_CHAN_INACTIVE	(1 << 4)	/* temporarily inactive due to radar */
+#define WL_CHAN_PASSIVE		(1 << 5)	/* channel is in passive mode */
+#define WL_CHAN_RESTRICTED	(1 << 6)	/* restricted use channel */
+
+/* BTC mode used by "btc_mode" iovar */
+#define	WL_BTC_DISABLE		0	/* disable BT coexistence */
+#define WL_BTC_FULLTDM      1	/* full TDM COEX */
+#define WL_BTC_ENABLE       1	/* full TDM COEX to maintain backward compatiblity */
+#define WL_BTC_PREMPT      2    /* full TDM COEX with preemption */
+#define WL_BTC_LITE        3	/* light weight coex for large isolation platform */
+#define WL_BTC_PARALLEL		4   /* BT and WLAN run in parallel with separate antenna  */
+#define WL_BTC_HYBRID		5   /* hybrid coex, only ack is allowed to transmit in BT slot */
+#define WL_BTC_DEFAULT		8	/* set the default mode for the device */
+#define WL_INF_BTC_DISABLE      0
+#define WL_INF_BTC_ENABLE       1
+#define WL_INF_BTC_AUTO         3
+
+/* BTC wire used by "btc_wire" iovar */
+#define	WL_BTC_DEFWIRE		0	/* use default wire setting */
+#define WL_BTC_2WIRE		2	/* use 2-wire BTC */
+#define WL_BTC_3WIRE		3	/* use 3-wire BTC */
+#define WL_BTC_4WIRE		4	/* use 4-wire BTC */
+
+/* BTC flags: BTC configuration that can be set by host */
+#define WL_BTC_FLAG_PREMPT               (1 << 0)
+#define WL_BTC_FLAG_BT_DEF               (1 << 1)
+#define WL_BTC_FLAG_ACTIVE_PROT          (1 << 2)
+#define WL_BTC_FLAG_SIM_RSP              (1 << 3)
+#define WL_BTC_FLAG_PS_PROTECT           (1 << 4)
+#define WL_BTC_FLAG_SIM_TX_LP	         (1 << 5)
+#define WL_BTC_FLAG_ECI                  (1 << 6)
+#define WL_BTC_FLAG_LIGHT                (1 << 7)
+#define WL_BTC_FLAG_PARALLEL             (1 << 8)
+
+/* Message levels */
+#define WL_ERROR_VAL		0x00000001
+#define WL_TRACE_VAL		0x00000002
+#define WL_PRHDRS_VAL		0x00000004
+#define WL_PRPKT_VAL		0x00000008
+#define WL_INFORM_VAL		0x00000010
+#define WL_TMP_VAL		0x00000020
+#define WL_OID_VAL		0x00000040
+#define WL_RATE_VAL		0x00000080
+#define WL_ASSOC_VAL		0x00000100
+#define WL_PRUSR_VAL		0x00000200
+#define WL_PS_VAL		0x00000400
+#define WL_TXPWR_VAL		0x00000800	/* retired in TOT on 6/10/2009 */
+#define WL_PORT_VAL		0x00001000
+#define WL_DUAL_VAL		0x00002000
+#define WL_WSEC_VAL		0x00004000
+#define WL_WSEC_DUMP_VAL	0x00008000
+#define WL_LOG_VAL		0x00010000
+#define WL_NRSSI_VAL		0x00020000	/* retired in TOT on 6/10/2009 */
+#define WL_LOFT_VAL		0x00040000	/* retired in TOT on 6/10/2009 */
+#define WL_REGULATORY_VAL	0x00080000
+#define WL_PHYCAL_VAL		0x00100000	/* retired in TOT on 6/10/2009 */
+#define WL_RADAR_VAL		0x00200000	/* retired in TOT on 6/10/2009 */
+#define WL_MPC_VAL		0x00400000
+#define WL_APSTA_VAL		0x00800000
+#define WL_DFS_VAL		0x01000000
+#define WL_BA_VAL		0x02000000	/* retired in TOT on 6/14/2010 */
+#define WL_ACI_VAL		0x04000000
+#define WL_MBSS_VAL		0x04000000
+#define WL_CAC_VAL		0x08000000
+#define WL_AMSDU_VAL		0x10000000
+#define WL_AMPDU_VAL		0x20000000
+#define WL_FFPLD_VAL		0x40000000
+
+/* wl_msg_level is full. For new bits take the next one and AND with
+ * wl_msg_level2 in wl_dbg.h
+ */
+#define WL_DPT_VAL 		0x00000001
+#define WL_SCAN_VAL		0x00000002
+#define WL_WOWL_VAL		0x00000004
+#define WL_COEX_VAL		0x00000008
+#define WL_RTDC_VAL		0x00000010
+#define WL_PROTO_VAL		0x00000020
+#define WL_BTA_VAL		0x00000040
+#define WL_CHANINT_VAL		0x00000080
+#define WL_THERMAL_VAL		0x00000100	/* retired in TOT on 6/10/2009 */
+#define WL_P2P_VAL		0x00000200
+#define WL_ITFR_VAL		0x00000400
+#define WL_MCHAN_VAL		0x00000800
+#define WL_TDLS_VAL		0x00001000
+#define WL_MCNX_VAL		0x00002000
+#define WL_PROT_VAL		0x00004000
+#define WL_PSTA_VAL		0x00008000
+#define WL_TBTT_VAL		0x00010000
+#define WL_NIC_VAL		0x00020000
+#define WL_PWRSEL_VAL	0x00040000
+/* use top-bit for WL_TIME_STAMP_VAL because this is a modifier
+ * rather than a message-type of its own
+ */
+#define WL_TIMESTAMP_VAL        0x80000000
+
+/* max # of leds supported by GPIO (gpio pin# == led index#) */
+#define	WL_LED_NUMGPIO		32	/* gpio 0-31 */
+
+/* led per-pin behaviors */
+#define	WL_LED_OFF		0		/* always off */
+#define	WL_LED_ON		1		/* always on */
+#define	WL_LED_ACTIVITY		2		/* activity */
+#define	WL_LED_RADIO		3		/* radio enabled */
+#define	WL_LED_ARADIO		4		/* 5  Ghz radio enabled */
+#define	WL_LED_BRADIO		5		/* 2.4Ghz radio enabled */
+#define	WL_LED_BGMODE		6		/* on if gmode, off if bmode */
+#define	WL_LED_WI1		7
+#define	WL_LED_WI2		8
+#define	WL_LED_WI3		9
+#define	WL_LED_ASSOC		10		/* associated state indicator */
+#define	WL_LED_INACTIVE		11		/* null behavior (clears default behavior) */
+#define	WL_LED_ASSOCACT		12		/* on when associated; blink fast for activity */
+#define WL_LED_WI4		13
+#define WL_LED_WI5		14
+#define	WL_LED_BLINKSLOW	15		/* blink slow */
+#define	WL_LED_BLINKMED		16		/* blink med */
+#define	WL_LED_BLINKFAST	17		/* blink fast */
+#define	WL_LED_BLINKCUSTOM	18		/* blink custom */
+#define	WL_LED_BLINKPERIODIC	19		/* blink periodic (custom 1000ms / off 400ms) */
+#define WL_LED_ASSOC_WITH_SEC 	20		/* when connected with security */
+						/* keep on for 300 sec */
+#define WL_LED_START_OFF 	21		/* off upon boot, could be turned on later */
+#define	WL_LED_NUMBEHAVIOR	22
+
+/* led behavior numeric value format */
+#define	WL_LED_BEH_MASK		0x7f		/* behavior mask */
+#define	WL_LED_AL_MASK		0x80		/* activelow (polarity) bit */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* maximum channels returned by the get valid channels iovar */
 #define WL_NUMCHANNELS		64
 
@@ -1552,7 +2986,7 @@ typedef struct wl_txchain_pwr_offsets {
  *
  * 4. BAND RSSI - 2 octets
  * offset 0: band types
- * offset 1: +ve RSSI boost value in dB
+ * offset 1: +ve RSSI boost balue in dB
  */
 
 struct tsinfo_arg {
@@ -1807,6 +3241,7 @@ typedef struct {
 	uint32  pstatxbcmc;	/* count of bcmc frames transmitted on all psta */
 
 	uint32  cso_passthrough; /* hw cso required but passthrough */
+<<<<<<< HEAD
 	uint32	cso_normal;	/* hw cso hdr for normal process */
 	uint32	chained;	/* number of frames chained */
 	uint32	chainedsz1;	/* number of chain size 1 frames */
@@ -1817,6 +3252,8 @@ typedef struct {
 	uint32	pciereset;	/* Secondary Bus Reset issued by driver */
 	uint32	cfgrestore;	/* configspace restore by driver */
 	uint32	reinitreason[NREINITREASONCOUNT]; /* reinitreason counters; 0: Unknown reason */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } wl_cnt_t;
 
 typedef struct {
@@ -2280,6 +3717,18 @@ struct tslist {
 };
 
 #ifdef WLTDLS
+<<<<<<< HEAD
+=======
+/* different ops for manual end point */
+#define TDLS_MANUAL_EP_CREATE	1	/* create manual dpt endpoint */
+#define TDLS_MANUAL_EP_MODIFY	2	/* modify manual dpt endpoint */
+#define TDLS_MANUAL_EP_DELETE	3	/* delete manual dpt endpoint */
+#define TDLS_MANUAL_EP_PM		4	/*  put dpt endpoint in PM mode */
+#define TDLS_MANUAL_EP_WAKE		5	/* wake up dpt endpoint from PM */
+#define TDLS_MANUAL_EP_DISCOVERY	6	/* discover if endpoint is TDLS capable */
+#define TDLS_MANUAL_EP_CHSW		7	/* channel switch */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* structure for tdls iovars */
 typedef struct tdls_iovar {
 	struct ether_addr ea;		/* Station address */
@@ -2288,12 +3737,19 @@ typedef struct tdls_iovar {
 	uint32 pad;			/* future */
 } tdls_iovar_t;
 
+<<<<<<< HEAD
 #define TDLS_WFD_IE_SIZE		512
+=======
+/* modes */
+#define TDLS_WFD_IE_TX 0
+#define TDLS_WFD_IE_RX 1
+#define TDLS_WFD_IE_SIZE 255
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* structure for tdls wfd ie */
 typedef struct tdls_wfd_ie_iovar {
 	struct ether_addr ea;		/* Station address */
 	uint8 mode;
-	uint16 length;
+	uint8 length;
 	uint8 data[TDLS_WFD_IE_SIZE];
 } tdls_wfd_ie_iovar_t;
 #endif /* WLTDLS */
@@ -2346,6 +3802,35 @@ typedef	struct wme_max_bandwidth {
 #define WL_WOWL_KEEPALIVE_MAX_PACKET_SIZE  80
 #define WLC_WOWL_MAX_KEEPALIVE	2
 
+<<<<<<< HEAD
+=======
+/* define for flag */
+#define TSPEC_PENDING		0	/* TSPEC pending */
+#define TSPEC_ACCEPTED		1	/* TSPEC accepted */
+#define TSPEC_REJECTED		2	/* TSPEC rejected */
+#define TSPEC_UNKNOWN		3	/* TSPEC unknown */
+#define TSPEC_STATUS_MASK	7	/* TSPEC status mask */
+
+#ifdef BCMCCX
+/* "wlan_reason" iovar interface */
+#define WL_WLAN_ASSOC_REASON_NORMAL_NETWORK	0 /* normal WLAN network setup */
+#define WL_WLAN_ASSOC_REASON_ROAM_FROM_CELLULAR_NETWORK	1 /* roam from Cellular network */
+#define WL_WLAN_ASSOC_REASON_ROAM_FROM_LAN	2 /* roam from LAN */
+#define WL_WLAN_ASSOC_REASON_MAX		2 /* largest value allowed */
+#endif /* BCMCCX */
+
+/* Software feature flag defines used by wlfeatureflag */
+#ifdef WLAFTERBURNER
+#define WL_SWFL_ABBFL       0x0001 /* Allow Afterburner on systems w/o hardware BFL */
+#define WL_SWFL_ABENCORE    0x0002 /* Allow AB on non-4318E chips */
+#endif /* WLAFTERBURNER */
+#define WL_SWFL_NOHWRADIO	0x0004
+#define WL_SWFL_FLOWCONTROL     0x0008 /* Enable backpressure to OS stack */
+#define WL_SWFL_WLBSSSORT	0x0010 /* Per-port supports sorting of BSS */
+
+#define WL_LIFETIME_MAX 0xFFFF /* Max value in ms */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* Packet lifetime configuration per ac */
 typedef struct wl_lifetime {
 	uint32 ac;	        /* access class */
@@ -2391,11 +3876,19 @@ enum {
 /* report found/lost events for SSID and BSSID networks seperately */
 #define REPORT_SEPERATELY_BIT		11
 
+<<<<<<< HEAD
 #define SORT_CRITERIA_MASK	0x0001
 #define AUTO_NET_SWITCH_MASK	0x0002
 #define ENABLE_BKGRD_SCAN_MASK	0x0004
 #define IMMEDIATE_SCAN_MASK	0x0008
 #define AUTO_CONNECT_MASK	0x0010
+=======
+#define SORT_CRITERIA_MASK		0x0001
+#define AUTO_NET_SWITCH_MASK	0x0002
+#define ENABLE_BKGRD_SCAN_MASK	0x0004
+#define IMMEDIATE_SCAN_MASK		0x0008
+#define	AUTO_CONNECT_MASK		0x0010
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define ENABLE_BD_SCAN_MASK	0x0020
 #define ENABLE_ADAPTSCAN_MASK	0x00c0
@@ -2405,9 +3898,15 @@ enum {
 /* report found/lost events for SSID and BSSID networks seperately */
 #define REPORT_SEPERATELY_MASK	0x0800
 
+<<<<<<< HEAD
 #define PFN_VERSION			2
 #define PFN_SCANRESULT_VERSION		1
 #define MAX_PFN_LIST_COUNT		16
+=======
+#define PFN_VERSION				2
+#define PFN_SCANRESULT_VERSION	1
+#define MAX_PFN_LIST_COUNT	16
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define PFN_COMPLETE			1
 #define PFN_INCOMPLETE			0
@@ -2415,7 +3914,7 @@ enum {
 #define DEFAULT_BESTN			2
 #define DEFAULT_MSCAN			0
 #define DEFAULT_REPEAT			10
-#define DEFAULT_EXP			2
+#define DEFAULT_EXP				2
 
 #define PFN_PARTIAL_SCAN_BIT		0
 #define PFN_PARTIAL_SCAN_MASK		1
@@ -2462,6 +3961,7 @@ typedef struct wl_pfn_param {
 	int32 version;			/* PNO parameters version */
 	int32 scan_freq;		/* Scan frequency */
 	int32 lost_network_timeout;	/* Timeout in sec. to declare
+<<<<<<< HEAD
 								* discovered network as lost
 								*/
 	int16 flags;			/* Bit field to control features
@@ -2471,6 +3971,17 @@ typedef struct wl_pfn_param {
 	int16 rssi_margin;		/* Margin to avoid jitter for choosing a
 							* PFN based on RSSI sort criteria
 							*/
+=======
+					 * discovered network as lost
+					 */
+	int16 flags;			/* Bit field to control features
+					 * of PFN such as sort criteria auto
+					 * enable switch and background scan
+					 */
+	int16 rssi_margin;		/* Margin to avoid jitter for choosing a
+					 * PFN based on RSSI sort criteria
+					 */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	uint8 bestn; /* number of best networks in each scan */
 	uint8 mscan; /* number of scans recorded */
 	uint8 repeat; /* Minimum number of scan intervals
@@ -2481,24 +3992,34 @@ typedef struct wl_pfn_param {
 } wl_pfn_param_t;
 
 typedef struct wl_pfn_bssid {
+<<<<<<< HEAD
 	struct ether_addr  macaddr;
 	/* Bit4: suppress_lost, Bit3: suppress_found */
 	uint16             flags;
+=======
+	struct ether_addr 	macaddr;
+	/* Bit4: suppress_lost, Bit3: suppress_found */
+	uint16				flags;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } wl_pfn_bssid_t;
 #define WL_PFN_SUPPRESSFOUND_MASK	0x08
 #define WL_PFN_SUPPRESSLOST_MASK	0x10
-#define WL_PFN_RSSI_MASK		0xff00
-#define WL_PFN_RSSI_SHIFT		8
 
 typedef struct wl_pfn_cfg {
+<<<<<<< HEAD
 	uint32	reporttype;
 	int32	channel_num;
 	uint16	channel_list[WL_NUMCHANNELS];
 	uint32	flags;
+=======
+	uint32				reporttype;
+	int32				channel_num;
+	uint16				channel_list[WL_NUMCHANNELS];
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } wl_pfn_cfg_t;
-#define WL_PFN_REPORT_ALLNET    0
-#define WL_PFN_REPORT_SSIDNET   1
-#define WL_PFN_REPORT_BSSIDNET  2
+#define WL_PFN_REPORT_ALLNET 	0
+#define WL_PFN_REPORT_SSIDNET 	1
+#define WL_PFN_REPORT_BSSIDNET 	2
 
 #define WL_PFN_CFG_FLAGS_PROHIBITED	0x00000001	/* Accept and use prohibited channels */
 #define WL_PFN_CFG_FLAGS_RESERVED	0xfffffffe	/* Remaining reserved for future use */
@@ -2511,6 +4032,14 @@ typedef struct wl_pfn {
 	int32			wpa_auth;		/* WPA type */
 	int32			wsec;			/* wsec value */
 } wl_pfn_t;
+<<<<<<< HEAD
+=======
+#define WL_PFN_HIDDEN_BIT		2
+#define PNO_SCAN_MAX_FW		508*1000	/* max time scan time in msec */
+#define PNO_SCAN_MAX_FW_SEC	PNO_SCAN_MAX_FW/1000 /* max time scan time in SEC */
+#define PNO_SCAN_MIN_FW_SEC	10			/* min time scan time in SEC */
+#define WL_PFN_HIDDEN_MASK		0x4
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct wl_pfn_list {
 	uint32		version;
@@ -2620,6 +4149,22 @@ struct toe_ol_stats_t {
 	uint32 rx_icmp_errinj;
 };
 
+<<<<<<< HEAD
+=======
+/* ARP Offload feature flags for arp_ol iovar */
+#define ARP_OL_AGENT		0x00000001
+#define ARP_OL_SNOOP		0x00000002
+#define ARP_OL_HOST_AUTO_REPLY	0x00000004
+#define ARP_OL_PEER_AUTO_REPLY	0x00000008
+
+/* ARP Offload error injection */
+#define ARP_ERRTEST_REPLY_PEER	0x1
+#define ARP_ERRTEST_REPLY_HOST	0x2
+
+#define ARP_MULTIHOMING_MAX	8	/* Maximum local host IP addresses */
+#define ND_MULTIHOMING_MAX 8	/* Maximum local host IP addresses */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* Arp offload statistic counts */
 struct arp_ol_stats_t {
 	uint32  host_ip_entries;	/* Host IP table addresses (more than one if multihomed) */
@@ -3119,6 +4664,23 @@ typedef struct wl_seq_cmd_ioctl {
 	 ((cmd) == WLC_GET_AP)			|| \
 	 ((cmd) == WLC_GET_INSTANCE))
 
+<<<<<<< HEAD
+=======
+/*
+ * Packet engine interface
+ */
+
+#define WL_PKTENG_PER_TX_START			0x01
+#define WL_PKTENG_PER_TX_STOP			0x02
+#define WL_PKTENG_PER_RX_START			0x04
+#define WL_PKTENG_PER_RX_WITH_ACK_START 	0x05
+#define WL_PKTENG_PER_TX_WITH_ACK_START 	0x06
+#define WL_PKTENG_PER_RX_STOP			0x08
+#define WL_PKTENG_PER_MASK			0xff
+
+#define WL_PKTENG_SYNCHRONOUS			0x100	/* synchronous flag */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 typedef struct wl_pkteng {
 	uint32 flags;
 	uint32 delay;			/* Inter-packet delay */
@@ -3138,6 +4700,7 @@ typedef struct wl_pkteng_stats {
 } wl_pkteng_stats_t;
 
 
+<<<<<<< HEAD
 typedef enum {
 	wowl_pattern_type_bitmap = 0,
 	wowl_pattern_type_arp,
@@ -3152,6 +4715,38 @@ typedef struct wl_wowl_pattern {
 	uint32		    id;			/* id */
 	uint32		    reasonsize;		/* Size of the wakeup reason code */
 	wowl_pattern_type_t type;		/* Type of pattern */
+=======
+#define WL_WOWL_MAGIC       (1 << 0)    /* Wakeup on Magic packet */
+#define WL_WOWL_NET         (1 << 1)    /* Wakeup on Netpattern */
+#define WL_WOWL_DIS         (1 << 2)    /* Wakeup on loss-of-link due to Disassoc/Deauth */
+#define WL_WOWL_RETR        (1 << 3)    /* Wakeup on retrograde TSF */
+#define WL_WOWL_BCN         (1 << 4)    /* Wakeup on loss of beacon */
+#define WL_WOWL_TST         (1 << 5)    /* Wakeup after test */
+#define WL_WOWL_M1          (1 << 6)    /* Wakeup after PTK refresh */
+#define WL_WOWL_EAPID       (1 << 7)    /* Wakeup after receipt of EAP-Identity Req */
+#define WL_WOWL_PME_GPIO    (1 << 8)    /* Wakeind via PME(0) or GPIO(1) */
+#define WL_WOWL_NEEDTKIP1   (1 << 9)    /* need tkip phase 1 key to be updated by the driver */
+#define WL_WOWL_GTK_FAILURE (1 << 10)   /* enable wakeup if GTK fails */
+#define WL_WOWL_EXTMAGPAT   (1 << 11)   /* support extended magic packets */
+#define WL_WOWL_ARPOFFLOAD  (1 << 12)   /* support ARP/NS/keepalive offloading */
+#define WL_WOWL_WPA2        (1 << 13)   /* read protocol version for EAPOL frames */
+#define WL_WOWL_KEYROT      (1 << 14)   /* If the bit is set, use key rotaton */
+#define WL_WOWL_BCAST       (1 << 15)   /* If the bit is set, frm received was bcast frame */
+
+#define MAGIC_PKT_MINLEN 102    /* Magic pkt min length is 6 * 0xFF + 16 * ETHER_ADDR_LEN */
+
+#define WOWL_PATTEN_TYPE_ARP	(1 << 0)	/* ARP offload Pattern */
+#define WOWL_PATTEN_TYPE_NA		(1 << 1)	/* NA offload Pattern */
+
+typedef struct {
+	uint32 masksize;		/* Size of the mask in #of bytes */
+	uint32 offset;			/* Offset to start looking for the packet in # of bytes */
+	uint32 patternoffset;	/* Offset of start of pattern in the structure */
+	uint32 patternsize;		/* Size of the pattern itself in #of bytes */
+	uint32 id;				/* id */
+	uint32 reasonsize;		/* Size of the wakeup reason code */
+	uint32 flags;			/* Flags to tell the pattern type and other properties */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Mask follows the structure above */
 	/* Pattern follows the mask is at 'patternoffset' from the start */
 } wl_wowl_pattern_t;
@@ -3277,6 +4872,7 @@ typedef struct {
 	/* time difference since last pktq_stats */ \
 	uint32 time_delta;
 
+<<<<<<< HEAD
 typedef struct {
 	PKTQ_LOG_COUNTERS_V4
 } pktq_log_counters_v04_t;
@@ -3287,6 +4883,9 @@ typedef struct {
 	/* cumulative time to transmit */
 	uint32 airtime;
 } pktq_log_counters_v05_t;
+=======
+#define sacrified sacrificed
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct {
 	uint8                num_prec[WL_IOV_MAC_PARAM_LEN];
@@ -3296,6 +4895,7 @@ typedef struct {
 	char                 headings[1];
 } pktq_log_format_v04_t;
 
+<<<<<<< HEAD
 typedef struct {
 	uint8                num_prec[WL_IOV_MAC_PARAM_LEN];
 	pktq_log_counters_v05_t  counters[WL_IOV_MAC_PARAM_LEN][WL_IOV_PKTQ_LOG_PRECS];
@@ -3304,13 +4904,19 @@ typedef struct {
 	char                 headings[1];
 } pktq_log_format_v05_t;
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct {
 	uint32               version;
 	wl_iov_mac_params_t  params;
 	union {
+<<<<<<< HEAD
 		pktq_log_format_v04_t v04;
 		pktq_log_format_v05_t v05;
+=======
+		pktq_log_format_v01_t v01;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	} pktq_log;
 } wl_iov_pktq_log_t;
 
@@ -3479,6 +5085,19 @@ typedef struct keepalives_max_idle {
 					 * "add", "del" (+ NUL)
 					 */
 
+<<<<<<< HEAD
+=======
+/* 802.11 Mgmt Packet flags */
+#define VNDR_IE_BEACON_FLAG	0x1
+#define VNDR_IE_PRBRSP_FLAG	0x2
+#define VNDR_IE_ASSOCRSP_FLAG	0x4
+#define VNDR_IE_AUTHRSP_FLAG	0x8
+#define VNDR_IE_PRBREQ_FLAG	0x10
+#define VNDR_IE_ASSOCREQ_FLAG	0x20
+#define VNDR_IE_IWAPID_FLAG	0x40 /* vendor IE in IW advertisement protocol ID field */
+#define VNDR_IE_CUSTOM_FLAG	0x100 /* allow custom IE id */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define VNDR_IE_INFO_HDR_LEN	(sizeof(uint32))
 
 typedef BWL_PRE_PACKED_STRUCT struct {
@@ -3553,6 +5172,7 @@ typedef BWL_PRE_PACKED_STRUCT struct {
 } BWL_POST_PACKED_STRUCT txfailinfo_t;
 #endif /* WLMEDIA_TXFAILEVENT */
 
+<<<<<<< HEAD
 typedef BWL_PRE_PACKED_STRUCT struct {
 	uint32 flags;
 	chanspec_t chanspec;			/* txpwr report for this channel */
@@ -3651,6 +5271,9 @@ typedef BWL_PRE_PACKED_STRUCT struct {
 	uint32 bcn_timeout;     /* dur in seconds to receive 1 bcn */
 	uint32 max_tx_retry;     /* no of consecutive no acks to send txfail event */
 } BWL_POST_PACKED_STRUCT aibss_txfail_config_t;
+=======
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* no strict structure packing */
 #include <packed_section_end.h>
@@ -3690,6 +5313,7 @@ typedef BWL_PRE_PACKED_STRUCT struct {
 	};
 #endif /* BCMWAPI_WAI */
 
+<<<<<<< HEAD
 	/* chanim acs record */
 	typedef struct {
 		bool valid;
@@ -3720,6 +5344,68 @@ typedef BWL_PRE_PACKED_STRUCT struct {
 	} chanim_stats_t;
 
 #define WL_CHANIM_STATS_VERSION 2
+=======
+/* channel interference measurement (chanim) related defines */
+
+/* chanim mode */
+#define CHANIM_DISABLE	0	/* disabled */
+#define CHANIM_DETECT	1	/* detection only */
+#define CHANIM_EXT		2 	/* external state machine */
+#define CHANIM_ACT		3	/* full internal state machine, detect + act */
+#define CHANIM_MODE_MAX 4
+
+/* define for apcs reason code */
+#define APCS_INIT		0
+#define APCS_IOCTL 		1
+#define APCS_CHANIM 	2
+#define APCS_CSTIMER	3
+#define APCS_BTA		4
+
+/* number of ACS record entries */
+#define CHANIM_ACS_RECORD			10
+
+/* CHANIM */
+#define CCASTATS_TXDUR  0
+#define CCASTATS_INBSS  1
+#define CCASTATS_OBSS   2
+#define CCASTATS_NOCTG  3
+#define CCASTATS_NOPKT  4
+#define CCASTATS_DOZE   5
+#define CCASTATS_TXOP	6
+#define CCASTATS_GDTXDUR        7
+#define CCASTATS_BDTXDUR        8
+#define CCASTATS_MAX    9
+
+/* chanim acs record */
+typedef struct {
+	bool valid;
+	uint8 trigger;
+	chanspec_t selected_chspc;
+	int8 bgnoise;
+	uint32 glitch_cnt;
+	uint8 ccastats;
+	uint timestamp;
+} chanim_acs_record_t;
+
+typedef struct {
+	chanim_acs_record_t acs_record[CHANIM_ACS_RECORD];
+	uint8 count;
+	uint timestamp;
+} wl_acs_record_t;
+
+typedef struct chanim_stats {
+	uint32 glitchcnt;               /* normalized as per second count */
+	uint32 badplcp;                 /* normalized as per second count */
+	uint8 ccastats[CCASTATS_MAX]; 	/* normalized as 0-255 */
+	int8 bgnoise;					/* background noise level (in dBm) */
+	chanspec_t chanspec;
+	uint32 timestamp;
+} chanim_stats_t;
+
+#define WL_CHANIM_STATS_VERSION 1
+#define WL_CHANIM_COUNT_ALL	0xff
+#define WL_CHANIM_COUNT_ONE	0x1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct {
 	uint32 buflen;
@@ -3875,6 +5561,116 @@ typedef struct wl_p2p_sched {
 	uint8 option;	/* see schedule option */
 	wl_p2p_sched_desc_t desc[1];
 } wl_p2p_sched_t;
+<<<<<<< HEAD
+=======
+#define WL_P2P_SCHED_FIXED_LEN		3
+
+/* schedule type */
+#define WL_P2P_SCHED_TYPE_ABS		0	/* Scheduled Absence */
+#define WL_P2P_SCHED_TYPE_REQ_ABS	1	/* Requested Absence */
+
+/* schedule action during absence periods (for WL_P2P_SCHED_ABS type) */
+#define WL_P2P_SCHED_ACTION_NONE	0	/* no action */
+#define WL_P2P_SCHED_ACTION_DOZE	1	/* doze */
+/* schedule option - WL_P2P_SCHED_TYPE_REQ_ABS */
+#define WL_P2P_SCHED_ACTION_GOOFF	2	/* turn off GO beacon/prbrsp functions */
+/* schedule option - WL_P2P_SCHED_TYPE_XXX */
+#define WL_P2P_SCHED_ACTION_RESET	255	/* reset */
+
+/* schedule option - WL_P2P_SCHED_TYPE_ABS */
+#define WL_P2P_SCHED_OPTION_NORMAL	0	/* normal start/interval/duration/count */
+#define WL_P2P_SCHED_OPTION_BCNPCT	1	/* percentage of beacon interval */
+/* schedule option - WL_P2P_SCHED_TYPE_REQ_ABS */
+#define WL_P2P_SCHED_OPTION_TSFOFS	2	/* normal start/internal/duration/count with
+						 * start being an offset of the 'current' TSF
+						 */
+
+/* feature flags */
+#define WL_P2P_FEAT_GO_CSA	(1 << 0)	/* GO moves with the STA using CSA method */
+#define WL_P2P_FEAT_GO_NOLEGACY	(1 << 1)	/* GO does not probe respond to non-p2p probe
+						 * requests
+						 */
+#define WL_P2P_FEAT_RESTRICT_DEV_RESP (1 << 2)	/* Restrict p2p dev interface from responding */
+
+#ifdef WLNIC
+/* nic_cnx iovar */
+typedef struct wl_nic_cnx {
+	uint8 opcode;
+	struct ether_addr addr;
+	/* the following are valid for WL_NIC_CNX_CONN */
+	uint8 SSID_len;
+	uint8 SSID[32];
+	struct ether_addr abssid;
+	uint8 join_period;
+} wl_nic_cnx_t;
+
+/* opcode */
+#define WL_NIC_CNX_ADD	0	/* add NIC connection */
+#define WL_NIC_CNX_DEL	1	/* delete NIC connection */
+#define WL_NIC_CNX_IDX	2	/* query NIC connection index */
+#define WL_NIC_CNX_CONN	3	/* join/create network */
+#define WL_NIC_CNX_DIS	4	/* disconnect from network */
+
+/* nic_cfg iovar */
+typedef struct wl_nic_cfg {
+	uint8 version;
+	uint8 beacon_mode;
+	uint16 beacon_interval;
+	uint8 diluted_beacon_period;
+	uint8 repeat_EQC;
+	uint8 scan_length;
+	uint8 scan_interval;
+	uint8 scan_probability;
+	uint8 awake_window_length;
+	int8 TSF_correction;
+	uint8 ASID;
+	uint8 channel_usage_mode;
+} wl_nic_cfg_t;
+
+/* version */
+#define WL_NIC_CFG_VER	1
+
+/* beacon_mode */
+#define WL_NIC_BCN_NORM		0
+#define WL_NIC_BCN_DILUTED	1
+
+/* channel_usage_mode */
+#define WL_NIC_CHAN_STATIC	0
+#define WL_NIC_CHAN_CYCLE	1
+
+/* nic_cfg iovar */
+typedef struct wl_nic_frm {
+	uint8 type;
+	struct ether_addr da;
+	uint8 body[1];
+} wl_nic_frm_t;
+
+/* type */
+#define WL_NIC_FRM_MYNET	1
+#define WL_NIC_FRM_ACTION	2
+
+/* i/f query */
+typedef struct wl_nic_ifq {
+	uint bsscfgidx;
+	char ifname[BCM_MSG_IFNAME_MAX];
+} wl_nic_ifq_t;
+
+/* data mode */
+/* nic_dm iovar */
+typedef struct wl_nic_dm {
+	uint8 enab;
+	chanspec_t chspec;
+} wl_nic_dm_t;
+#endif /* WLNIC */
+
+/* RFAWARE def */
+#define BCM_ACTION_RFAWARE		0x77
+#define BCM_ACTION_RFAWARE_DCS  0x01
+
+/* DCS reason code define */
+#define BCM_DCS_IOVAR		0x1
+#define BCM_DCS_UNKNOWN		0xFF
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct wl_bcmdcs_data {
 	uint reason;
@@ -3938,13 +5734,6 @@ enum {
 	SPATIAL_MODE_MAX_IDX
 };
 
-#define WLC_TXCORE_MAX	4	/* max number of txcore supports */
-#define WLC_SUBBAND_MAX	4	/* max number of sub-band supports */
-typedef struct {
-	uint8	band2g[WLC_TXCORE_MAX];
-	uint8	band5g[WLC_SUBBAND_MAX][WLC_TXCORE_MAX];
-} sar_limit_t;
-
 /* IOVAR "mempool" parameter. Used to retrieve a list of memory pool statistics. */
 typedef struct wl_mempool_stats {
 	int	num;		/* Number of memory pools */
@@ -3957,13 +5746,26 @@ typedef struct {
 	uint32 ipaddr_gateway;
 } nwoe_ifconfig_t;
 
+<<<<<<< HEAD
+=======
+/*
+ * Traffic management structures/defines.
+ */
+
+/* Traffic management bandwidth parameters */
+#define TRF_MGMT_MAX_PRIORITIES                 3
+
+#define TRF_MGMT_FLAG_ADD_DSCP                  0x0001  /* Add DSCP to IP TOS field */
+#define TRF_MGMT_FLAG_DISABLE_SHAPING           0x0002  /* Only support traffic clasification */
+#define TRF_MGMT_FLAG_DISABLE_PRIORITY_TAGGING  0x0004  /* Don't override packet's priority */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* Traffic management priority classes */
 typedef enum trf_mgmt_priority_class {
-	trf_mgmt_priority_low           = 0,        /* Maps to 802.1p BK */
-	trf_mgmt_priority_medium        = 1,        /* Maps to 802.1p BE */
-	trf_mgmt_priority_high          = 2,        /* Maps to 802.1p VI */
-	trf_mgmt_priority_nochange	= 3,	    /* do not update the priority */
-	trf_mgmt_priority_invalid       = (trf_mgmt_priority_nochange + 1)
+	trf_mgmt_priority_low           = 0,            /* Maps to 802.1p BO */
+	trf_mgmt_priority_medium        = 1,            /* Maps to 802.1p BE */
+	trf_mgmt_priority_high          = 2,            /* Maps to 802.1p VI */
+	trf_mgmt_priority_invalid       = (trf_mgmt_priority_high + 1)
 } trf_mgmt_priority_class_t;
 
 /* Traffic management configuration parameters */
@@ -4046,6 +5848,7 @@ typedef struct powersel_params {
 	uint8		pwr_sel_exp_time; /* Time lapse for expiry of database */
 } powersel_params_t;
 
+<<<<<<< HEAD
 typedef struct lpc_params {
 	/* LPC Params exposed via IOVAR */
 	uint8		rate_stab_thresh; /* Thresh for rate stability based on nupd */
@@ -4658,4 +6461,7 @@ typedef struct wl_bssload_static {
 } wl_bssload_static_t;
 
 
+=======
+#endif /* LINUX_POSTMOGRIFY_REMOVAL */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* _wlioctl_h_ */

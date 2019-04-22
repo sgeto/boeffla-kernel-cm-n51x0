@@ -22,7 +22,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: sbhnddma.h 424099 2013-09-16 07:44:34Z $
+=======
+ * $Id: sbhnddma.h 309193 2012-01-19 00:03:57Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_sbhnddma_h_
@@ -252,10 +256,11 @@ typedef volatile struct {
  */
 #define D64RINGALIGN_BITS	13
 #define	D64MAXRINGSZ		(1 << D64RINGALIGN_BITS)
-#define	D64RINGBOUNDARY		(1 << D64RINGALIGN_BITS)
+#define	D64RINGALIGN		(1 << D64RINGALIGN_BITS)
 
 #define	D64MAXDD	(D64MAXRINGSZ / sizeof (dma64dd_t))
 
+<<<<<<< HEAD
 /* for cores with large descriptor ring support, descriptor ring size can be up to 4096 */
 #define	D64MAXDD_LARGE		((1 << 16) / sizeof (dma64dd_t))
 
@@ -285,6 +290,14 @@ typedef volatile struct {
 #define	D64_XC_LE		0x00000004	/* loopback enable */
 #define	D64_XC_FL		0x00000010	/* flush request */
 #define D64_XC_MR_MASK		0x000001C0	/* Multiple outstanding reads */
+=======
+
+#define	D64_XC_XE		0x00000001	
+#define	D64_XC_SE		0x00000002	
+#define	D64_XC_LE		0x00000004	
+#define	D64_XC_FL		0x00000010	
+#define D64_XC_MR_MASK		0x000000C0	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define D64_XC_MR_SHIFT		6
 #define	D64_XC_PD		0x00000800	/* parity check disable */
 #define	D64_XC_AE		0x00030000	/* address extension bits */
@@ -299,6 +312,7 @@ typedef volatile struct {
 /* transmit descriptor table pointer */
 #define	D64_XP_LD_MASK		0x00001fff	/* last valid descriptor */
 
+<<<<<<< HEAD
 /* transmit channel status */
 #define	D64_XS0_CD_MASK		(di->d64_xs0_cd_mask)	/* current descriptor pointer */
 #define	D64_XS0_XS_MASK		0xf0000000     	/* transmit state */
@@ -311,6 +325,22 @@ typedef volatile struct {
 
 #define	D64_XS1_AD_MASK		(di->d64_xs1_ad_mask)	/* active descriptor */
 #define	D64_XS1_XE_MASK		0xf0000000     	/* transmit errors */
+=======
+#define	D64_XP_LD_MASK		0x00001fff	
+
+
+#define	D64_XS0_CD_MASK		0x00001fff	
+#define	D64_XS0_XS_MASK		0xf0000000     	
+#define	D64_XS0_XS_SHIFT		28
+#define	D64_XS0_XS_DISABLED	0x00000000	
+#define	D64_XS0_XS_ACTIVE	0x10000000	
+#define	D64_XS0_XS_IDLE		0x20000000	
+#define	D64_XS0_XS_STOPPED	0x30000000	
+#define	D64_XS0_XS_SUSP		0x40000000	
+
+#define	D64_XS1_AD_MASK		0x00001fff	
+#define	D64_XS1_XE_MASK		0xf0000000     	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	D64_XS1_XE_SHIFT		28
 #define	D64_XS1_XE_NOERR	0x00000000	/* no error */
 #define	D64_XS1_XE_DPE		0x10000000	/* descriptor protocol error */
@@ -350,9 +380,17 @@ typedef volatile struct {
 /* receive descriptor table pointer */
 #define	D64_RP_LD_MASK		0x00001fff	/* last valid descriptor */
 
+<<<<<<< HEAD
 /* receive channel status */
 #define	D64_RS0_CD_MASK		(di->d64_rs0_cd_mask)	/* current descriptor pointer */
 #define	D64_RS0_RS_MASK		0xf0000000     	/* receive state */
+=======
+#define	D64_RP_LD_MASK		0x00001fff	
+
+
+#define	D64_RS0_CD_MASK		0x00001fff	
+#define	D64_RS0_RS_MASK		0xf0000000     	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	D64_RS0_RS_SHIFT		28
 #define	D64_RS0_RS_DISABLED	0x00000000	/* disabled */
 #define	D64_RS0_RS_ACTIVE	0x10000000	/* active */

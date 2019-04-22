@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh_sdmmc.c 457662 2014-02-24 15:07:28Z $
+=======
+ * $Id: bcmsdh_sdmmc.c 347640 2012-07-27 11:53:21Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 #include <typedefs.h>
 
@@ -77,11 +81,14 @@ uint sd_clock = 1;		/* Default to SD Clock turned ON */
 uint sd_hiok = FALSE;	/* Don't use hi-speed mode by default */
 uint sd_msglevel = 0x01;
 uint sd_use_dma = TRUE;
+<<<<<<< HEAD
 
 #ifndef CUSTOM_RXCHAIN
 #define CUSTOM_RXCHAIN 0
 #endif
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 DHD_PM_RESUME_WAIT_INIT(sdioh_request_byte_wait);
 DHD_PM_RESUME_WAIT_INIT(sdioh_request_word_wait);
 DHD_PM_RESUME_WAIT_INIT(sdioh_request_packet_wait);
@@ -159,10 +166,33 @@ sdioh_attach(osl_t *osh, struct sdio_func *func)
 	sd->sd_blockmode = TRUE;
 	sd->use_client_ints = TRUE;
 	sd->client_block_size[0] = 64;
+<<<<<<< HEAD
 	sd->use_rxchain = CUSTOM_RXCHAIN;
 	if (sd->func[1] == NULL || sd->func[2] == NULL) {
 		sd_err(("%s: func 1 or 2 is null \n", __FUNCTION__));
 		goto fail;
+=======
+	sd->use_rxchain = FALSE;
+
+	gInstance->sd = sd;
+
+	/* Claim host controller */
+	if (gInstance->func[1]) {
+		sdio_claim_host(gInstance->func[1]);
+
+		sd->client_block_size[1] = 64;
+		err_ret = sdio_set_block_size(gInstance->func[1], 64);
+		if (err_ret) {
+			sd_err(("bcmsdh_sdmmc: Failed to set F1 blocksize\n"));
+		}
+
+		/* Release host controller F1 */
+		sdio_release_host(gInstance->func[1]);
+	} else {
+		sd_err(("%s:gInstance->func[1] is null\n", __FUNCTION__));
+		MFREE(sd->osh, sd, sizeof(sdioh_info_t));
+		return NULL;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 	sdio_set_drvdata(sd->func[1], sd);
 
@@ -233,10 +263,28 @@ sdioh_enable_func_intr(sdioh_info_t *sd)
 	uint8 reg;
 	int err;
 
+<<<<<<< HEAD
 	if (sd->func[0] == NULL) {
 		sd_err(("%s: function 0 pointer is NULL\n", __FUNCTION__));
 		return SDIOH_API_RC_FAIL;
 	}
+=======
+	if (gInstance->func[0]) {
+		sdio_claim_host(gInstance->func[0]);
+
+		reg = sdio_readb(gInstance->func[0], SDIOD_CCCR_INTEN, &err);
+		if (err) {
+			sd_err(("%s: error for read SDIO_CCCR_IENx : 0x%x\n", __FUNCTION__, err));
+			sdio_release_host(gInstance->func[0]);
+			return SDIOH_API_RC_FAIL;
+		}
+
+		/* Enable F1 and F2 interrupts, set master enable */
+		reg |= (INTR_CTL_FUNC1_EN | INTR_CTL_FUNC2_EN | INTR_CTL_MASTER_EN);
+
+		sdio_writeb(gInstance->func[0], reg, SDIOD_CCCR_INTEN, &err);
+		sdio_release_host(gInstance->func[0]);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	sdio_claim_host(sd->func[0]);
 	reg = sdio_readb(sd->func[0], SDIOD_CCCR_INTEN, &err);
@@ -522,12 +570,18 @@ sdioh_iovar_op(sdioh_info_t *si, const char *name,
 		/* Now set it */
 		si->client_block_size[func] = blksize;
 
+<<<<<<< HEAD
 #if defined(CUSTOMER_HW4) && defined(USE_DYNAMIC_F2_BLKSIZE)
 		if (si->func[func] == NULL) {
+=======
+#if defined(CUSTOMER_HW4) && defined(DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS)
+		if (gInstance == NULL || gInstance->func[func] == NULL) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			sd_err(("%s: SDIO Device not present\n", __FUNCTION__));
 			bcmerror = BCME_NORESOURCE;
 			break;
 		}
+<<<<<<< HEAD
 		sdio_claim_host(si->func[func]);
 		bcmerror = sdio_set_block_size(si->func[func], blksize);
 		if (bcmerror)
@@ -535,6 +589,16 @@ sdioh_iovar_op(sdioh_info_t *si, const char *name,
 				__FUNCTION__, func, blksize, bcmerror));
 		sdio_release_host(si->func[func]);
 #endif /* CUSTOMER_HW4 && USE_DYNAMIC_F2_BLKSIZE */
+=======
+		sdio_claim_host(gInstance->func[func]);
+		bcmerror = sdio_set_block_size(gInstance->func[func], blksize);
+		if (bcmerror) {
+			sd_err(("%s: Failed to set F%d blocksize to %d\n", __FUNCTION__, func,
+				blksize));
+		}
+		sdio_release_host(gInstance->func[func]);
+#endif /* CUSTOMER_HW4 && DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		break;
 	}
 
@@ -789,11 +853,10 @@ sdioh_cis_read(sdioh_info_t *sd, uint func, uint8 *cisd, uint32 length)
 extern SDIOH_API_RC
 sdioh_request_byte(sdioh_info_t *sd, uint rw, uint func, uint regaddr, uint8 *byte)
 {
-	int err_ret = 0;
+	int err_ret;
 #if defined(MMC_SDIO_ABORT)
 	int sdio_abort_retry = MMC_SDIO_ABORT_RETRY_LIMIT;
 #endif
-
 	sd_info(("%s: rw=%d, func=%d, addr=0x%05x\n", __FUNCTION__, rw, func, regaddr));
 
 	DHD_PM_RESUME_WAIT(sdioh_request_byte_wait);
@@ -831,11 +894,19 @@ sdioh_request_byte(sdioh_info_t *sd, uint rw, uint func, uint regaddr, uint8 *by
 					if (sd->func[func]) {
 						sdio_claim_host(sd->func[func]);
 						/*
+<<<<<<< HEAD
 						 * this sdio_f0_writeb() can be replaced with
 						 * another api depending upon MMC driver change.
 						 * As of this time, this is temporaray one
 						 */
 						sdio_writeb(sd->func[func],
+=======
+						* this sdio_f0_writeb() can be replaced with
+						* another api depending upon MMC driver change.
+						* As of this time, this is temporaray one
+						*/
+						sdio_writeb(gInstance->func[func],
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 							*byte, regaddr, &err_ret);
 						sdio_release_host(sd->func[func]);
 					}
@@ -877,11 +948,16 @@ sdioh_request_byte(sdioh_info_t *sd, uint rw, uint func, uint regaddr, uint8 *by
 	}
 
 	if (err_ret) {
+<<<<<<< HEAD
 		if ((regaddr == 0x1001F) && ((err_ret == -ETIMEDOUT) || (err_ret == -EILSEQ))) {
 		} else {
 			sd_err(("bcmsdh_sdmmc: Failed to %s byte F%d:@0x%05x=%02x, Err: %d\n",
 				rw ? "Write" : "Read", func, regaddr, *byte, err_ret));
 		}
+=======
+		sd_err(("bcmsdh_sdmmc: Failed to %s byte F%d:@0x%05x=%02x, Err: %d\n",
+		                        rw ? "Write" : "Read", func, regaddr, *byte, err_ret));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	return ((err_ret == 0) ? SDIOH_API_RC_SUCCESS : SDIOH_API_RC_FAIL);
@@ -937,11 +1013,19 @@ sdioh_request_word(sdioh_info_t *sd, uint cmd_type, uint rw, uint func, uint add
 			if (sd->func[0]) {
 				sdio_claim_host(sd->func[0]);
 				/*
+<<<<<<< HEAD
 				 * this sdio_f0_writeb() can be replaced with another api
 				 * depending upon MMC driver change.
 				 * As of this time, this is temporaray one
 				 */
 				sdio_writeb(sd->func[0],
+=======
+				* this sdio_f0_writeb() can be replaced with another api
+				* depending upon MMC driver change.
+				* As of this time, this is temporaray one
+				*/
+				sdio_writeb(gInstance->func[0],
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 					func, SDIOD_CCCR_IOABORT, &err_ret);
 				sdio_release_host(sd->func[0]);
 			}
@@ -951,8 +1035,8 @@ sdioh_request_word(sdioh_info_t *sd, uint cmd_type, uint rw, uint func, uint add
 		if (err_ret)
 #endif /* MMC_SDIO_ABORT */
 		{
-			sd_err(("bcmsdh_sdmmc: Failed to %s word, Err: 0x%08x",
-				rw ? "Write" : "Read", err_ret));
+		sd_err(("bcmsdh_sdmmc: Failed to %s word, Err: 0x%08x\n",
+		                        rw ? "Write" : "Read", err_ret));
 		}
 	}
 
@@ -965,6 +1049,7 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 {
 	bool fifo = (fix_inc == SDIOH_DATA_FIX);
 	int err_ret = 0;
+<<<<<<< HEAD
 	void *pnext;
 	uint ttl_len, pkt_offset;
 	uint blk_num;
@@ -977,15 +1062,39 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 	uint32 sg_count;
 	struct sdio_func *sdio_func = sd->func[func];
 	struct mmc_host *host = sdio_func->card->host;
+=======
+	void *pnext, *pprev;
+	uint ttl_len, dma_len, lft_len, xfred_len, pkt_len;
+	uint blk_num;
+	struct mmc_request mmc_req;
+	struct mmc_command mmc_cmd;
+	struct mmc_data mmc_dat;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	sd_trace(("%s: Enter\n", __FUNCTION__));
 	ASSERT(pkt);
 	DHD_PM_RESUME_WAIT(sdioh_request_packet_wait);
 	DHD_PM_RESUME_RETURN_ERROR(SDIOH_API_RC_FAIL);
 
+<<<<<<< HEAD
 	blk_size = sd->client_block_size[func];
 	max_blk_count = min(host->max_blk_count, (uint)MAX_IO_RW_EXTENDED_BLK);
 	max_req_size = min(max_blk_count * blk_size, host->max_req_size);
+=======
+	ttl_len = xfred_len = 0;
+	/* at least 4 bytes alignment of skb buff is guaranteed */
+	for (pnext = pkt; pnext; pnext = PKTNEXT(sd->osh, pnext))
+		ttl_len += PKTLEN(sd->osh, pnext);
+
+	if (!sd->use_rxchain || ttl_len <= sd->client_block_size[func]) {
+		blk_num = 0;
+		dma_len = 0;
+	} else {
+		blk_num = ttl_len / sd->client_block_size[func];
+		dma_len = blk_num * sd->client_block_size[func];
+	}
+	lft_len = ttl_len - dma_len;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	pkt_offset = 0;
 	pnext = pkt;
@@ -996,6 +1105,7 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 		memset(&mmc_req, 0, sizeof(struct mmc_request));
 		memset(&mmc_cmd, 0, sizeof(struct mmc_command));
 		memset(&mmc_dat, 0, sizeof(struct mmc_data));
+<<<<<<< HEAD
 		sg_init_table(sd->sg_list, ARRAYSIZE(sd->sg_list));
 
 		/* Set up scatter-gather DMA descriptors. this loop is to find out the max
@@ -1010,6 +1120,14 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 			uint8 *pdata = (uint8*)PKTDATA(sd->osh, pnext);
 
 			ASSERT(pdata != NULL);
+=======
+
+		/* Set up DMA descriptors */
+		pprev = pkt;
+		for (pnext = pkt;
+		     pnext && dma_len;
+		     pnext = PKTNEXT(sd->osh, pnext)) {
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			pkt_len = PKTLEN(sd->osh, pnext);
 			sd_trace(("%s[%d] data=%p, len=%d\n", __FUNCTION__, write, pdata, pkt_len));
 			/* sg_count is unlikely larger than the array size, and this is
@@ -1048,8 +1166,13 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 		}
 		blk_num = ttl_len / blk_size;
 		mmc_dat.sg = sd->sg_list;
+<<<<<<< HEAD
 		mmc_dat.sg_len = sg_count;
 		mmc_dat.blksz = blk_size;
+=======
+		mmc_dat.sg_len = SGCount;
+		mmc_dat.blksz = sd->client_block_size[func];
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		mmc_dat.blocks = blk_num;
 		mmc_dat.flags = write ? MMC_DATA_WRITE : MMC_DATA_READ;
 		mmc_cmd.opcode = 53; /* SD_IO_RW_EXTENDED */
@@ -1073,6 +1196,7 @@ sdioh_request_packet_chain(sdioh_info_t *sd, uint fix_inc, uint write, uint func
 		err_ret = mmc_cmd.error? mmc_cmd.error : mmc_dat.error;
 		if (0 != err_ret) {
 			sd_err(("%s:CMD53 %s failed with code %d\n",
+<<<<<<< HEAD
 				__FUNCTION__, write ? "write" : "read", err_ret));
 			return SDIOH_API_RC_FAIL;
 		}
@@ -1120,6 +1244,88 @@ sdioh_buffer_tofrom_bus(sdioh_info_t *sd, uint fix_inc, uint write, uint func,
 	else
 		sd_trace(("%s: %s xfr'd %p, addr=0x%05x, len=%d\n", __FUNCTION__,
 			(write) ? "TX" : "RX", buf, addr, len));
+=======
+			       __FUNCTION__,
+			       write ? "write" : "read",
+			       err_ret));
+			sd_err(("%s:Disabling rxchain and fire it with PIO\n",
+			       __FUNCTION__));
+			sd->use_rxchain = FALSE;
+			pkt = pprev;
+			lft_len = ttl_len;
+		} else if (!fifo) {
+			addr = addr + ttl_len - lft_len - dma_len;
+		}
+	}
+
+	/* PIO mode */
+	if (0 != lft_len) {
+		/* Claim host controller */
+		sdio_claim_host(gInstance->func[func]);
+		for (pnext = pkt; pnext; pnext = PKTNEXT(sd->osh, pnext)) {
+			uint8 *buf = (uint8*)PKTDATA(sd->osh, pnext) +
+				xfred_len;
+			pkt_len = PKTLEN(sd->osh, pnext);
+			if (0 != xfred_len) {
+				pkt_len -= xfred_len;
+				xfred_len = 0;
+			}
+
+			/* Align Patch
+			 *  read or small packet(ex:BDC header) skip 32 byte align
+			 *  otherwise, padding DHD_SDALIGN for performance
+			 */
+			if (write == 0 || pkt_len < 32)
+				pkt_len = (pkt_len + 3) & 0xFFFFFFFC;
+			else if (pkt_len % DHD_SDALIGN)
+				pkt_len += DHD_SDALIGN - (pkt_len % DHD_SDALIGN);
+
+#if defined(CUSTOMER_HW4) && defined(DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS)
+			if (write && pkt_len > 64 && (pkt_len % 64) == 32)
+				pkt_len += 32;
+#endif /* CUSTOMER_HW4 && DYNAMIC_F2_BLKSIZE_OF_PROPTXSTATUS */
+#ifdef CONFIG_MMC_MSM7X00A
+			if ((pkt_len % 64) == 32) {
+				sd_trace(("%s: Rounding up TX packet +=32\n", __FUNCTION__));
+				pkt_len += 32;
+			}
+#endif /* CONFIG_MMC_MSM7X00A */
+
+			if ((write) && (!fifo))
+				err_ret = sdio_memcpy_toio(
+						gInstance->func[func],
+						addr, buf, pkt_len);
+			else if (write)
+				err_ret = sdio_memcpy_toio(
+						gInstance->func[func],
+						addr, buf, pkt_len);
+			else if (fifo)
+				err_ret = sdio_readsb(
+						gInstance->func[func],
+						buf, addr, pkt_len);
+			else
+				err_ret = sdio_memcpy_fromio(
+						gInstance->func[func],
+						buf, addr, pkt_len);
+
+			if (err_ret)
+				sd_err(("%s: %s FAILED %p[%d], addr=0x%05x, pkt_len=%d, ERR=%d\n",
+				       __FUNCTION__,
+				       (write) ? "TX" : "RX",
+				       pnext, SGCount, addr, pkt_len, err_ret));
+			else
+				sd_trace(("%s: %s xfr'd %p[%d], addr=0x%05x, len=%d\n",
+					__FUNCTION__,
+					(write) ? "TX" : "RX",
+					pnext, SGCount, addr, pkt_len));
+
+			if (!fifo)
+				addr += pkt_len;
+			SGCount ++;
+		}
+		sdio_release_host(gInstance->func[func]);
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	sd_trace(("%s: Exit\n", __FUNCTION__));
 	return ((err_ret == 0) ? SDIOH_API_RC_SUCCESS : SDIOH_API_RC_FAIL);
@@ -1162,7 +1368,36 @@ sdioh_request_buffer(sdioh_info_t *sd, uint pio_dma, uint fix_inc, uint write, u
 		buf_len = PKTLEN(sd->osh, pkt);
 	}
 
+<<<<<<< HEAD
 	ASSERT(buffer);
+=======
+		/* For a read, copy the packet data back to the buffer. */
+		if (!write) {
+			bcopy(PKTDATA(sd->osh, mypkt), buffer, buflen_u);
+		}
+#ifdef CONFIG_DHD_USE_STATIC_BUF
+		PKTFREE_STATIC(sd->osh, mypkt, write ? TRUE : FALSE);
+#else
+		PKTFREE(sd->osh, mypkt, write ? TRUE : FALSE);
+#endif /* CONFIG_DHD_USE_STATIC_BUF */
+	} else if (((uint32)(PKTDATA(sd->osh, pkt)) & DMA_ALIGN_MASK) != 0) {
+		/* Case 2: We have a packet, but it is unaligned. */
+
+		/* In this case, we cannot have a chain. */
+		ASSERT(PKTNEXT(sd->osh, pkt) == NULL);
+
+		sd_data(("%s: Creating aligned %s Packet, len=%d\n",
+		         __FUNCTION__, write ? "TX" : "RX", PKTLEN(sd->osh, pkt)));
+#ifdef CONFIG_DHD_USE_STATIC_BUF
+		if (!(mypkt = PKTGET_STATIC(sd->osh, PKTLEN(sd->osh, pkt), write ? TRUE : FALSE))) {
+#else
+		if (!(mypkt = PKTGET(sd->osh, PKTLEN(sd->osh, pkt), write ? TRUE : FALSE))) {
+#endif /* CONFIG_DHD_USE_STATIC_BUF */
+			sd_err(("%s: PKTGET failed: len %d\n",
+			           __FUNCTION__, PKTLEN(sd->osh, pkt)));
+			return SDIOH_API_RC_FAIL;
+		}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	/* buffer and length are aligned, use it directly so we can avoid memory copy */
 	if (((ulong)buffer & DMA_ALIGN_MASK) == 0 && (buf_len & DMA_ALIGN_MASK) == 0)
@@ -1324,10 +1559,7 @@ sdioh_start(sdioh_info_t *sd, int stage)
 {
 	int ret;
 
-	if (!sd) {
-		sd_err(("%s Failed, sd is NULL\n", __FUNCTION__));
-		return (0);
-	}
+	if (!sd) return (0);
 
 	/* Need to do this stages as we can't enable the interrupt till
 		downloading of the firmware is complete, other wise polling

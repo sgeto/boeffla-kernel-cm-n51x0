@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: linux_osl.c 451649 2014-01-27 17:23:38Z $
+=======
+ * $Id: linux_osl.c 355147 2012-09-05 15:03:49Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #define LINUX_PORT
@@ -37,6 +41,10 @@
 #include <linux/delay.h>
 #include <pcicfg.h>
 
+#ifdef BCMASSERT_LOG
+#include <bcm_assert_log.h>
+#endif
+
 
 
 #include <linux/fs.h>
@@ -48,7 +56,11 @@
 #define DUMPBUFSZ 1024
 
 #ifdef CONFIG_DHD_USE_STATIC_BUF
+<<<<<<< HEAD
 #define DHD_SKB_HDRSIZE		336
+=======
+#define DHD_SKB_HDRSIZE 		336
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define DHD_SKB_1PAGE_BUFSIZE	((PAGE_SIZE*1)-DHD_SKB_HDRSIZE)
 #define DHD_SKB_2PAGE_BUFSIZE	((PAGE_SIZE*2)-DHD_SKB_HDRSIZE)
 #define DHD_SKB_4PAGE_BUFSIZE	((PAGE_SIZE*4)-DHD_SKB_HDRSIZE)
@@ -72,7 +84,11 @@ static bcm_static_buf_t *bcm_static_buf = 0;
 #else
 #define STATIC_PKT_4PAGE_NUM	0
 #define DHD_SKB_MAX_BUFSIZE DHD_SKB_2PAGE_BUFSIZE
+<<<<<<< HEAD
 #endif /* ENHANCED_STATIC_BUF */
+=======
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct bcm_static_pkt {
 	struct sk_buff *skb_4k[STATIC_PKT_MAX_NUM];
@@ -115,6 +131,10 @@ struct osl_info {
 #endif /* CTFPOOL */
 	uint magic;
 	void *pdev;
+<<<<<<< HEAD
+=======
+	atomic_t malloced;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	uint failed;
 	uint bustype;
 	osl_cmn_t *cmn; /* Common OSL related data shred between two OSH's */
@@ -122,6 +142,7 @@ struct osl_info {
 	void *bus_handle;
 };
 
+<<<<<<< HEAD
 #define OSL_PKTTAG_CLEAR(p) \
 do { \
 	struct sk_buff *s = (struct sk_buff *)(p); \
@@ -133,6 +154,8 @@ do { \
 } while (0)
 
 /* PCMCIA attribute space access macros */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Global ASSERT type flag */
 uint32 g_assert_type = FALSE;
@@ -225,11 +248,22 @@ osl_attach(void *pdev, uint bustype, bool pkttag)
 	void **osl_cmn = NULL;
 #endif /* SHARED_OSL_CMN */
 	osl_t *osh;
+<<<<<<< HEAD
 	gfp_t flags;
 
 	flags = CAN_SLEEP() ? GFP_KERNEL: GFP_ATOMIC;
 	if (!(osh = kmalloc(sizeof(osl_t), flags)))
 		return osh;
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	gfp_t flags;
+
+	flags = (in_atomic() || in_interrupt()) ? GFP_ATOMIC : GFP_KERNEL;
+	osh = kmalloc(sizeof(osl_t), flags);
+#else
+	osh = kmalloc(sizeof(osl_t), GFP_ATOMIC);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	ASSERT(osh);
 
@@ -307,6 +341,7 @@ int osl_static_mem_init(osl_t *osh, void *adapter)
 			bcm_static_buf->buf_ptr = (unsigned char *)bcm_static_buf + STATIC_BUF_SIZE;
 		}
 
+<<<<<<< HEAD
 		if (!bcm_static_skb && adapter) {
 			int i;
 			void *skb_buff_ptr = 0;
@@ -320,6 +355,18 @@ int osl_static_mem_init(osl_t *osh, void *adapter)
 				kfree(osh);
 				return -ENOMEM;
 			}
+=======
+	if (!bcm_static_skb) {
+		int i;
+		void *skb_buff_ptr = 0;
+		bcm_static_skb = (bcm_static_pkt_t *)((char *)bcm_static_buf + 2048);
+		skb_buff_ptr = dhd_os_prealloc(osh, 4, 0);
+
+		bcopy(skb_buff_ptr, bcm_static_skb, sizeof(struct sk_buff *)*
+			(STATIC_PKT_MAX_NUM * 2 + STATIC_PKT_4PAGE_NUM));
+		for (i = 0; i < (STATIC_PKT_MAX_NUM * 2 + STATIC_PKT_4PAGE_NUM); i++)
+			bcm_static_skb->pkt_use[i] = 0;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 			bcopy(skb_buff_ptr, bcm_static_skb, sizeof(struct sk_buff *) *
 				(STATIC_PKT_MAX_NUM * 2 + STATIC_PKT_4PAGE_NUM));
@@ -359,6 +406,7 @@ osl_detach(osl_t *osh)
 
 int osl_static_mem_deinit(osl_t *osh, void *adapter)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_DHD_USE_STATIC_BUF
 	if (bcm_static_buf) {
 		bcm_static_buf = 0;
@@ -377,6 +425,14 @@ static struct sk_buff *osl_alloc_skb(osl_t *osh, unsigned int len)
 	gfp_t flags = (in_atomic() || irqs_disabled()) ? GFP_ATOMIC : GFP_KERNEL;
 #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_ZONE_DMA)
 	flags |= GFP_ATOMIC;
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)
+	gfp_t flags = (in_atomic() || in_interrupt()) ? GFP_ATOMIC : GFP_KERNEL;
+
+	return __dev_alloc_skb(len, flags);
+#else
+	return dev_alloc_skb(len);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 	skb = __dev_alloc_skb(len, flags);
 #else
@@ -465,10 +521,21 @@ osl_ctfpool_replenish(osl_t *osh, uint thresh)
 int32
 osl_ctfpool_init(osl_t *osh, uint numobj, uint size)
 {
+<<<<<<< HEAD
 	gfp_t flags;
 
 	flags = CAN_SLEEP() ? GFP_KERNEL: GFP_ATOMIC;
 	osh->ctfpool = kzalloc(sizeof(ctfpool_t), flags);
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	gfp_t flags;
+
+	flags = (in_atomic() || in_interrupt()) ? GFP_ATOMIC : GFP_KERNEL;
+	osh->ctfpool = kmalloc(sizeof(ctfpool_t), flags);
+#else
+	osh->ctfpool = kmalloc(sizeof(ctfpool_t), GFP_ATOMIC);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	ASSERT(osh->ctfpool);
 
 	osh->ctfpool->max_obj = numobj;
@@ -596,10 +663,13 @@ osl_pktfastget(osl_t *osh, uint len)
 #endif
 	atomic_set(&skb->users, 1);
 
+<<<<<<< HEAD
 	PKTSETCLINK(skb, NULL);
 	PKTCCLRATTR(skb);
 	PKTFAST(osh, skb) &= ~(CTFBUF | SKIPCT | CHAINED);
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return skb;
 }
 #endif /* CTFPOOL */
@@ -611,16 +681,29 @@ osl_pktfastget(osl_t *osh, uint len)
 struct sk_buff * BCMFASTPATH
 osl_pkt_tonative(osl_t *osh, void *pkt)
 {
+#ifndef WL_UMK
 	struct sk_buff *nskb;
+	unsigned long flags;
+#endif
 
 	if (osh->pub.pkttag)
-		OSL_PKTTAG_CLEAR(pkt);
+		bzero((void*)((struct sk_buff *)pkt)->cb, OSL_PKTTAG_SZ);
 
+<<<<<<< HEAD
 	/* Decrement the packet counter */
 	for (nskb = (struct sk_buff *)pkt; nskb; nskb = nskb->next) {
 		atomic_sub(PKTISCHAINED(nskb) ? PKTCCNT(nskb) : 1, &osh->cmn->pktalloced);
 
+=======
+#ifndef WL_UMK
+	
+	for (nskb = (struct sk_buff *)pkt; nskb; nskb = nskb->next) {
+		spin_lock_irqsave(&osh->pktalloc_lock, flags);
+		osh->pub.pktalloced--;
+		spin_unlock_irqrestore(&osh->pktalloc_lock, flags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
+#endif 
 	return (struct sk_buff *)pkt;
 }
 
@@ -631,16 +714,29 @@ osl_pkt_tonative(osl_t *osh, void *pkt)
 void * BCMFASTPATH
 osl_pkt_frmnative(osl_t *osh, void *pkt)
 {
+#ifndef WL_UMK
 	struct sk_buff *nskb;
+	unsigned long flags;
+#endif
 
 	if (osh->pub.pkttag)
-		OSL_PKTTAG_CLEAR(pkt);
+		bzero((void*)((struct sk_buff *)pkt)->cb, OSL_PKTTAG_SZ);
 
+<<<<<<< HEAD
 	/* Increment the packet counter */
 	for (nskb = (struct sk_buff *)pkt; nskb; nskb = nskb->next) {
 		atomic_add(PKTISCHAINED(nskb) ? PKTCCNT(nskb) : 1, &osh->cmn->pktalloced);
 
+=======
+#ifndef WL_UMK
+	
+	for (nskb = (struct sk_buff *)pkt; nskb; nskb = nskb->next) {
+		spin_lock_irqsave(&osh->pktalloc_lock, flags);
+		osh->pub.pktalloced++;
+		spin_unlock_irqrestore(&osh->pktalloc_lock, flags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
+#endif 
 	return (void *)pkt;
 }
 
@@ -649,6 +745,7 @@ void * BCMFASTPATH
 osl_pktget(osl_t *osh, uint len)
 {
 	struct sk_buff *skb;
+	unsigned long flags;
 
 #ifdef CTFPOOL
 	/* Allocate from local pool */
@@ -661,7 +758,14 @@ osl_pktget(osl_t *osh, uint len)
 		skb->len  += len;
 		skb->priority = 0;
 
+<<<<<<< HEAD
 		atomic_inc(&osh->cmn->pktalloced);
+=======
+
+		spin_lock_irqsave(&osh->pktalloc_lock, flags);
+		osh->pub.pktalloced++;
+		spin_unlock_irqrestore(&osh->pktalloc_lock, flags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	return ((void*) skb);
@@ -684,17 +788,10 @@ osl_pktfastfree(osl_t *osh, struct sk_buff *skb)
 
 	/* We only need to init the fields that we change */
 	skb->dev = NULL;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
 	skb->dst = NULL;
-#endif
-	OSL_PKTTAG_CLEAR(skb);
+	memset(skb->cb, 0, sizeof(skb->cb));
 	skb->ip_summed = 0;
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
-	skb_orphan(skb);
-#else
 	skb->destructor = NULL;
-#endif
 
 	ctfpool = (ctfpool_t *)CTFPOOLPTR(osh, skb);
 	ASSERT(ctfpool != NULL);
@@ -717,8 +814,12 @@ void BCMFASTPATH
 osl_pktfree(osl_t *osh, void *p, bool send)
 {
 	struct sk_buff *skb, *nskb;
+<<<<<<< HEAD
 	if (osh == NULL)
 		return;
+=======
+	unsigned long flags;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	skb = (struct sk_buff*) p;
 
@@ -755,10 +856,16 @@ osl_pktfree(osl_t *osh, void *p, bool send)
 				 */
 				dev_kfree_skb(skb);
 		}
+<<<<<<< HEAD
 #ifdef CTFPOOL
 next_skb:
 #endif
 		atomic_dec(&osh->cmn->pktalloced);
+=======
+		spin_lock_irqsave(&osh->pktalloc_lock, flags);
+		osh->pub.pktalloced--;
+		spin_unlock_irqrestore(&osh->pktalloc_lock, flags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		skb = nskb;
 	}
 }
@@ -770,8 +877,10 @@ osl_pktget_static(osl_t *osh, uint len)
 	int i = 0;
 	struct sk_buff *skb;
 
+
 	if (len > DHD_SKB_MAX_BUFSIZE) {
-		printk("%s: attempt to allocate huge packet (0x%x)\n", __FUNCTION__, len);
+		printk("osl_pktget_static: Do we really need this big skb??"
+			" len=%d\n", len);
 		return osl_pktget(osh, len);
 	}
 
@@ -796,6 +905,7 @@ osl_pktget_static(osl_t *osh, uint len)
 	}
 
 	if (len <= DHD_SKB_2PAGE_BUFSIZE) {
+
 		for (i = 0; i < STATIC_PKT_MAX_NUM; i++) {
 			if (bcm_static_skb->pkt_use[i + STATIC_PKT_MAX_NUM]
 				== 0)
@@ -827,7 +937,7 @@ osl_pktget_static(osl_t *osh, uint len)
 #endif
 
 	up(&bcm_static_skb->osl_pkt_sem);
-	printk("%s: all static pkt in use!\n", __FUNCTION__);
+	printk("osl_pktget_static: all static pkt in use!\n");
 	return osl_pktget(osh, len);
 }
 
@@ -858,13 +968,15 @@ osl_pktfree_static(osl_t *osh, void *p, bool send)
 	}
 #ifdef ENHANCED_STATIC_BUF
 	if (p == bcm_static_skb->skb_16k) {
-		bcm_static_skb->pkt_use[STATIC_PKT_MAX_NUM * 2] = 0;
+		bcm_static_skb->pkt_use[STATIC_PKT_MAX_NUM*2] = 0;
 		up(&bcm_static_skb->osl_pkt_sem);
 		return;
 	}
 #endif
 	up(&bcm_static_skb->osl_pkt_sem);
+
 	osl_pktfree(osh, p, send);
+	return;
 }
 #endif /* CONFIG_DHD_USE_STATIC_BUF */
 
@@ -924,11 +1036,13 @@ osl_pci_slot(osl_t *osh)
 {
 	ASSERT(osh && (osh->magic == OS_HANDLE_MAGIC) && osh->pdev);
 
+<<<<<<< HEAD
 #if 0 > KERNEL_VERSION(2, 6, 35)
 	return PCI_SLOT(((struct pci_dev *)osh->pdev)->devfn) + 1;
 #else
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return PCI_SLOT(((struct pci_dev *)osh->pdev)->devfn);
-#endif
 }
 
 /* return the pci device pointed by osh->pdev */
@@ -961,7 +1075,13 @@ void *
 osl_malloc(osl_t *osh, uint size)
 {
 	void *addr;
+<<<<<<< HEAD
 	gfp_t flags;
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	gfp_t flags;
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	/* only ASSERT if osh is defined */
 	if (osh)
@@ -1000,8 +1120,17 @@ osl_malloc(osl_t *osh, uint size)
 original:
 #endif /* CONFIG_DHD_USE_STATIC_BUF */
 
+<<<<<<< HEAD
 	flags = CAN_SLEEP() ? GFP_KERNEL: GFP_ATOMIC;
 	if ((addr = kmalloc(size, flags)) == NULL) {
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	flags = (in_atomic() || in_interrupt()) ? GFP_ATOMIC : GFP_KERNEL;
+	if ((addr = kmalloc(size, flags)) == NULL) {
+#else
+	if ((addr = kmalloc(size, GFP_ATOMIC)) == NULL) {
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		if (osh)
 			osh->failed++;
 		return (NULL);
@@ -1119,15 +1248,23 @@ osl_dma_free_consistent(osl_t *osh, void *va, uint size, dmaaddr_t pa)
 	pci_free_consistent(osh->pdev, size, va, (dma_addr_t)pa);
 }
 
+<<<<<<< HEAD
 dmaaddr_t BCMFASTPATH
 osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p, hnddma_seg_map_t *dmah)
+=======
+uint BCMFASTPATH
+osl_dma_map(osl_t *osh, void *va, uint size, int direction)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 {
 	int dir;
 
 	ASSERT((osh && (osh->magic == OS_HANDLE_MAGIC)));
 	dir = (direction == DMA_TX)? PCI_DMA_TODEVICE: PCI_DMA_FROMDEVICE;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return (pci_map_single(osh->pdev, va, size, dir));
 }
 
@@ -1160,8 +1297,14 @@ osl_assert(const char *exp, const char *file, int line)
 #ifdef BCMASSERT_LOG
 	snprintf(tempbuf, 64, "\"%s\": file \"%s\", line %d\n",
 		exp, basename, line);
+<<<<<<< HEAD
 	printk("%s", tempbuf);
 #endif /* BCMASSERT_LOG */
+=======
+
+	bcm_assert_log(tempbuf);
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 }
@@ -1199,18 +1342,28 @@ void *
 osl_pktdup(osl_t *osh, void *skb)
 {
 	void * p;
-
-	ASSERT(!PKTISCHAINED(skb));
+	unsigned long irqflags;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	gfp_t flags;
+#endif
 
 	/* clear the CTFBUF flag if set and map the rest of the buffer
 	 * before cloning.
 	 */
 	PKTCTFMAP(osh, skb);
 
+<<<<<<< HEAD
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
 	if ((p = pskb_copy((struct sk_buff *)skb, GFP_ATOMIC)) == NULL)
 #else
 	if ((p = skb_clone((struct sk_buff *)skb, GFP_ATOMIC)) == NULL)
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+	flags = (in_atomic() || in_interrupt()) ? GFP_ATOMIC : GFP_KERNEL;
+	if ((p = skb_clone((struct sk_buff *)skb, flags)) == NULL)
+#else
+	if ((p = skb_clone((struct sk_buff*)skb, GFP_ATOMIC)) == NULL)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 		return NULL;
 
@@ -1232,6 +1385,7 @@ osl_pktdup(osl_t *osh, void *skb)
 	}
 #endif /* CTFPOOL */
 
+<<<<<<< HEAD
 	/* Clear PKTC  context */
 	PKTSETCLINK(p, NULL);
 	PKTCCLRFLAGS(p);
@@ -1239,11 +1393,21 @@ osl_pktdup(osl_t *osh, void *skb)
 	PKTCSETLEN(p, PKTLEN(osh, skb));
 
 	/* skb_clone copies skb->cb.. we don't want that */
+=======
+	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if (osh->pub.pkttag)
-		OSL_PKTTAG_CLEAR(p);
+		bzero((void*)((struct sk_buff *)p)->cb, OSL_PKTTAG_SZ);
 
+<<<<<<< HEAD
 	/* Increment the packet counter */
 	atomic_inc(&osh->cmn->pktalloced);
+=======
+	
+	spin_lock_irqsave(&osh->pktalloc_lock, irqflags);
+	osh->pub.pktalloced++;
+	spin_unlock_irqrestore(&osh->pktalloc_lock, irqflags);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	return (p);
 }
 
@@ -1257,6 +1421,7 @@ osl_pktdup(osl_t *osh, void *skb)
  * BINOSL selects the slightly slower function-call-based binary compatible osl.
  */
 
+<<<<<<< HEAD
 uint
 osl_pktalloced(osl_t *osh)
 {
@@ -1267,6 +1432,9 @@ osl_pktalloced(osl_t *osh)
 }
 
 /* Linux Kernel: File Operations: start */
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 void *
 osl_os_open_image(char *filename)
 {
@@ -1307,6 +1475,7 @@ osl_os_close_image(void *image)
 	if (image)
 		filp_close((struct file *)image, NULL);
 }
+<<<<<<< HEAD
 
 int
 osl_os_image_size(void *image)
@@ -1325,3 +1494,5 @@ osl_os_image_size(void *image)
 }
 
 /* Linux Kernel: File Operations: end */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

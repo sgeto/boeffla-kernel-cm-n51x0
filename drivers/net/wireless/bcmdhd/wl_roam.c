@@ -28,36 +28,36 @@
 #include <osl.h>
 #include <bcmwifi_channels.h>
 #include <wlioctl.h>
+<<<<<<< HEAD
 #include <bcmutils.h>
 #ifdef WL_CFG80211
 #include <wl_cfg80211.h>
 #endif
+=======
+
+#if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #include <wldev_common.h>
 
-#define MAX_ROAM_CACHE		100
-#define MAX_CHANNEL_LIST	20
-#define MAX_SSID_BUFSIZE	36
+#define WL_ERROR(x) printk x
+#endif
 
-#define ROAMSCAN_MODE_NORMAL	0
-#define ROAMSCAN_MODE_WES		1
+#define WL_DBG(x)
+
+#define MAX_ROAM_CACHE 100
 
 typedef struct {
 	chanspec_t chanspec;
 	int ssid_len;
-	char ssid[MAX_SSID_BUFSIZE];
+	char ssid[36];
 } roam_channel_cache;
-
-typedef struct {
-	int n;
-	chanspec_t channels[MAX_CHANNEL_LIST];
-} channel_list_t;
 
 static int n_roam_cache = 0;
 static int roam_band = WLC_BAND_AUTO;
 static roam_channel_cache roam_cache[MAX_ROAM_CACHE];
 static uint band2G, band5G, band_bw;
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
-static int roamscan_mode = ROAMSCAN_MODE_NORMAL;
+static int roamscan_mode = 0;
 #endif
 
 void init_roam(int ioctl_ver)
@@ -102,7 +102,7 @@ int set_roamscan_mode(struct net_device *dev, int mode)
 
 	error = wldev_iovar_setint(dev, "roamscan_mode", mode);
 	if (error) {
-		WL_ERR(("Failed to set roamscan mode to %d, error = %d\n", mode, error));
+		WL_ERROR(("Failed to set roamscan mode to %d, error = %d\n", mode, error));
 	}
 
 	return error;
@@ -112,11 +112,11 @@ int get_roamscan_channel_list(struct net_device *dev, unsigned char channels[])
 {
 	int n = 0;
 
-	if (roamscan_mode == ROAMSCAN_MODE_WES) {
+	if (roamscan_mode) {
 		for (n = 0; n < n_roam_cache; n++) {
 			channels[n] = roam_cache[n].chanspec & WL_CHANSPEC_CHAN_MASK;
 
-			WL_DBG(("channel[%d] - [%02d] \n", n, channels[n]));
+			WL_DBG(("%s: channel[%d] - [%02d] \n", __FUNCTION__, n, channels[n]));
 		}
 	}
 
@@ -128,40 +128,57 @@ int set_roamscan_channel_list(struct net_device *dev,
 {
 	int i;
 	int error;
+<<<<<<< HEAD
 	channel_list_t channel_list;
 	char iobuf[WLC_IOCTL_SMLEN];
 	roamscan_mode = ROAMSCAN_MODE_WES;
+=======
+	struct {
+		int n;
+		chanspec_t channels[20];
+	} channel_list;
+	char iobuf[200];
+	uint band, band2G, band5G, bw;
+	roamscan_mode = 1;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-	if (n > MAX_CHANNEL_LIST)
-		n = MAX_CHANNEL_LIST;
+	if (n > 20)
+		n = 20;
 
 	for (i = 0; i < n; i++) {
 		chanspec_t chanspec;
 
+<<<<<<< HEAD
 		if (channels[i] <= CH_MAX_2G_CHANNEL) {
 			chanspec = band2G | band_bw | channels[i];
+=======
+		if (channels[i] <= 14) {
+			chanspec = band2G | bw | channels[i];
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		} else {
 			chanspec = band5G | band_bw | channels[i];
 		}
 		roam_cache[i].chanspec = chanspec;
 		channel_list.channels[i] = chanspec;
 
-		WL_DBG(("channel[%d] - [%02d] \n", i, channels[i]));
+		WL_DBG(("%s: channel[%d] - [%02d] \n", __FUNCTION__, i, channels[i]));
 	}
 
 	n_roam_cache = n;
 	channel_list.n = n;
 
+<<<<<<< HEAD
 	/* need to set ROAMSCAN_MODE_NORMAL to update roamscan_channels,
 	 * otherwise, it won't be updated
 	 */
 	wldev_iovar_setint(dev, "roamscan_mode", ROAMSCAN_MODE_NORMAL);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	error = wldev_iovar_setbuf(dev, "roamscan_channels", &channel_list,
 		sizeof(channel_list), iobuf, sizeof(iobuf), NULL);
 	if (error) {
-		WL_DBG(("Failed to set roamscan channels, error = %d\n", error));
+		WL_ERROR(("Failed to set roamscan channels, error = %d\n", error));
 	}
-	wldev_iovar_setint(dev, "roamscan_mode", ROAMSCAN_MODE_WES);
 
 	return error;
 }
@@ -175,7 +192,7 @@ void set_roam_band(int band)
 void reset_roam_cache(void)
 {
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
-	if (roamscan_mode == ROAMSCAN_MODE_WES)
+	if (roamscan_mode)
 		return;
 #endif
 
@@ -188,11 +205,11 @@ void add_roam_cache(wl_bss_info_t *bi)
 	uint8 channel;
 
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
-	if (roamscan_mode == ROAMSCAN_MODE_WES)
+	if (roamscan_mode)
 		return;
 #endif
 
-	if (n_roam_cache >= MAX_ROAM_CACHE)
+	if (n_roam_cache == MAX_ROAM_CACHE)
 		return;
 
 	for (i = 0; i < n_roam_cache; i++) {
@@ -206,10 +223,14 @@ void add_roam_cache(wl_bss_info_t *bi)
 
 	roam_cache[n_roam_cache].ssid_len = bi->SSID_len;
 	channel = (bi->ctl_ch == 0) ? CHSPEC_CHANNEL(bi->chanspec) : bi->ctl_ch;
-	WL_DBG(("CHSPEC 0x%X %d, CTL %d\n",
-		bi->chanspec, CHSPEC_CHANNEL(bi->chanspec), bi->ctl_ch));
 	roam_cache[n_roam_cache].chanspec =
+<<<<<<< HEAD
 		(channel <= CH_MAX_2G_CHANNEL ? band2G : band5G) | band_bw | channel;
+=======
+		WL_CHANSPEC_BW_20 |
+		(channel <= 14 ? WL_CHANSPEC_BAND_2G : WL_CHANSPEC_BAND_5G) |
+		channel;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	memcpy(roam_cache[n_roam_cache].ssid, bi->SSID, bi->SSID_len);
 
 	n_roam_cache++;
@@ -236,11 +257,22 @@ int get_roam_channel_list(int target_chan,
 	channels[0] = (target_chan & WL_CHANSPEC_CHAN_MASK) |
 		(target_chan <= CH_MAX_2G_CHANNEL ? band2G : band5G) | band_bw;
 
+<<<<<<< HEAD
 	WL_DBG((" %s: %03d 0x%04X\n", __FUNCTION__, target_chan, channels[0]));
+=======
+	if (target_chan <= 14)
+		band = band2G;
+	else
+		band = band5G;
+	*channels = (target_chan & WL_CHANSPEC_CHAN_MASK) | band | bw;
+	WL_DBG((" %s: %02d 0x%04X\n", __FUNCTION__, target_chan, *channels));
+	++channels;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #if defined(CUSTOMER_HW4) && defined(WES_SUPPORT)
-	if (roamscan_mode == ROAMSCAN_MODE_WES) {
+	if (roamscan_mode) {
 		for (i = 0; i < n_roam_cache; i++) {
+<<<<<<< HEAD
 			chanspec_t ch = roam_cache[i].chanspec;
 			bool is_2G = ioctl_ver == 1 ? LCHSPEC_IS2G(ch) : CHSPEC_IS2G(ch);
 			bool is_5G = ioctl_ver == 1 ? LCHSPEC_IS5G(ch) : CHSPEC_IS5G(ch);
@@ -252,6 +284,18 @@ int get_roam_channel_list(int target_chan,
 			if (band_match && !is_duplicated_channel(channels, n, ch)) {
 				WL_DBG((" %s: %03d(0x%X)\n", __FUNCTION__, CHSPEC_CHANNEL(ch), ch));
 				channels[n++] = ch;
+=======
+			if ((roam_cache[i].chanspec & WL_CHANSPEC_CHAN_MASK) != target_chan) {
+				*channels = roam_cache[i].chanspec & WL_CHANSPEC_CHAN_MASK;
+				WL_DBG((" %s: %02d\n", __FUNCTION__, *channels));
+				if (*channels <= 14)
+					*channels |= band2G | bw;
+				else
+					*channels |= band5G | bw;
+
+				channels++;
+				n++;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			}
 		}
 
@@ -272,9 +316,22 @@ int get_roam_channel_list(int target_chan,
 			band_match && !is_duplicated_channel(channels, n, ch) &&
 			(memcmp(roam_cache[i].ssid, ssid->SSID, ssid->SSID_len) == 0)) {
 			/* match found, add it */
+<<<<<<< HEAD
 			WL_DBG((" %s: %03d(0x%04X)\n", __FUNCTION__,
 				CHSPEC_CHANNEL(ch), ch));
 			channels[n++] = ch;
+=======
+			*channels = ch & WL_CHANSPEC_CHAN_MASK;
+			if (*channels <= 14)
+				*channels |= band2G | bw;
+			else
+				*channels |= band5G | bw;
+
+			WL_DBG((" %s: %02d 0x%04X\n", __FUNCTION__,
+				ch & WL_CHANSPEC_CHAN_MASK, *channels));
+
+			channels++; n++;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 	}
 
@@ -294,6 +351,7 @@ void print_roam_cache(void)
 			roam_cache[i].ssid_len, roam_cache[i].ssid));
 	}
 }
+<<<<<<< HEAD
 
 static void add_roamcache_channel(channel_list_t *channels, chanspec_t ch)
 {
@@ -422,3 +480,5 @@ void wl_update_roamscan_cache_by_band(struct net_device *dev, int band)
 		WL_ERR(("Failed to update roamscan channels, error = %d\n", error));
 	}
 }
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

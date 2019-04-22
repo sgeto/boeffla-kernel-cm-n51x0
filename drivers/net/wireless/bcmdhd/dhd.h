@@ -24,7 +24,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd.h 457596 2014-02-24 02:24:14Z $
+=======
+ * $Id: dhd.h 356711 2012-09-13 15:58:32Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 /****************
@@ -59,6 +63,15 @@ int get_scheduler_policy(struct task_struct *p);
 #include <wlioctl.h>
 #include <wlfc_proto.h>
 
+<<<<<<< HEAD
+=======
+#include <dhd_sec_feature.h>
+
+#if defined(CUSTOMER_HW4_RELEASE)
+/* Customer requirement */
+#undef CONFIG_WIRELESS_EXT
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #if defined(KEEP_ALIVE)
 /* Default KEEP_ALIVE Period is 55 sec to prevent AP from sending Keep Alive probe frame */
@@ -69,7 +82,6 @@ int get_scheduler_policy(struct task_struct *p);
 struct dhd_bus;
 struct dhd_prot;
 struct dhd_info;
-struct dhd_ioctl;
 
 /* The level of bus communication with the dongle */
 enum dhd_bus_state {
@@ -81,13 +93,14 @@ enum dhd_bus_state {
 
 enum dhd_op_flags {
 /* Firmware requested operation mode */
-	DHD_FLAG_STA_MODE				= (1 << (0)), /* STA only */
-	DHD_FLAG_HOSTAP_MODE				= (1 << (1)), /* SOFTAP only */
-	DHD_FLAG_P2P_MODE				= (1 << (2)), /* P2P Only */
+	DHD_FLAG_STA_MODE				= BIT(0), /* STA only */
+	DHD_FLAG_HOSTAP_MODE				= BIT(1), /* SOFTAP only */
+	DHD_FLAG_P2P_MODE				= BIT(2), /* P2P Only */
 	/* STA + P2P */
 	DHD_FLAG_CONCURR_SINGLE_CHAN_MODE = (DHD_FLAG_STA_MODE | DHD_FLAG_P2P_MODE),
-	DHD_FLAG_CONCURR_MULTI_CHAN_MODE		= (1 << (4)), /* STA + P2P */
+	DHD_FLAG_CONCURR_MULTI_CHAN_MODE		= BIT(4), /* STA + P2P */
 	/* Current P2P mode for P2P connection */
+<<<<<<< HEAD
 	DHD_FLAG_P2P_GC_MODE				= (1 << (5)),
 	DHD_FLAG_P2P_GO_MODE				= (1 << (6)),
 	DHD_FLAG_MBSS_MODE				= (1 << (7)), /* MBSS in future */
@@ -102,16 +115,29 @@ enum dhd_op_flags {
 #ifndef MAX_CNTL_RX_TIMEOUT
 #define MAX_CNTL_RX_TIMEOUT 1
 #endif /* MAX_CNTL_RX_TIMEOUT */
+=======
+	DHD_FLAG_P2P_GC_MODE				= BIT(5),
+	DHD_FLAG_P2P_GO_MODE				= BIT(6),
+	DHD_FLAG_MBSS_MODE				= BIT(7) /* MBSS in future */
+};
+
+#define MANUFACTRING_FW 	"WLTEST"
+
+/* max sequential rxcntl timeouts to set HANG event */
+#ifndef MAX_CNTL_TIMEOUT
+#define MAX_CNTL_TIMEOUT  2
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define DHD_SCAN_ASSOC_ACTIVE_TIME	40 /* ms: Embedded default Active setting from DHD */
-#define DHD_SCAN_UNASSOC_ACTIVE_TIME 80 /* ms: Embedded def. Unassoc Active setting from DHD */
+#define DHD_SCAN_UNASSOC_ACTIVE_TIME	80 /* ms: Embedded def. Unassoc Active setting from DHD */
 #define DHD_SCAN_PASSIVE_TIME		130 /* ms: Embedded default Passive setting from DHD */
 
 #ifndef POWERUP_MAX_RETRY
 #define POWERUP_MAX_RETRY	3 /* how many times we retry to power up the chip */
 #endif
 #ifndef POWERUP_WAIT_MS
-#define POWERUP_WAIT_MS		2000 /* ms: time out in waiting wifi to come up */
+#define POWERUP_WAIT_MS		(2000) /* ms: time out in waiting wifi to come up */
 #endif
 
 enum dhd_bus_wake_state {
@@ -134,14 +160,15 @@ enum dhd_prealloc_index {
 	DHD_PREALLOC_PROT = 0,
 	DHD_PREALLOC_RXBUF,
 	DHD_PREALLOC_DATABUF,
-	DHD_PREALLOC_OSL_BUF,
 #if defined(STATIC_WL_PRIV_STRUCT)
+	DHD_PREALLOC_OSL_BUF,
 	DHD_PREALLOC_WIPHY_ESCAN0 = 5,
-#if defined(CUSTOMER_HW4) && defined(DUAL_ESCAN_RESULT_BUFFER)
-	DHD_PREALLOC_WIPHY_ESCAN1,
-#endif /* CUSTOMER_HW4 && DUAL_ESCAN_RESULT_BUFFER */
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
+	DHD_PREALLOC_WIPHY_ESCAN1
+#endif
+#else
+	DHD_PREALLOC_OSL_BUF
 #endif /* STATIC_WL_PRIV_STRUCT */
-	DHD_PREALLOC_DHD_INFO = 7
 };
 
 /* Packet alignment for most efficient SDIO (can change based on platform) */
@@ -160,6 +187,7 @@ typedef struct reorder_info {
 	uint8 pend_pkts;
 } reorder_info_t;
 
+<<<<<<< HEAD
 #ifdef DHDTCPACK_SUPPRESS
 /* Max number of TCP streams that have own src/dst IP addrs and TCP ports */
 #define MAXTCPSTREAMS 4	/* Keep this to be power of 2 */
@@ -171,6 +199,8 @@ typedef struct tcp_ack_info {
 void dhd_onoff_tcpack_sup(void *pub, bool on);
 #endif /* DHDTCPACK_SUPPRESS */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* Common structure for module and instance linkage */
 typedef struct dhd_pub {
 	/* Linkage ponters */
@@ -235,10 +265,8 @@ typedef struct dhd_pub {
 	int pno_enable;			/* pno status : "1" is pno enable */
 	int pno_suspend;		/* pno suspend status : "1" is pno suspended */
 #endif /* PNO_SUPPORT */
-	/* DTIM skip value, default 0(or 1) means wake each DTIM
-	 * 3 means skip 2 DTIMs and wake up 3rd DTIM(9th beacon when AP DTIM is 3)
-	 */
-	int suspend_bcn_li_dtim;         /* bcn_li_dtim value in suspend mode */
+	int dtim_skip;         /* dtim skip , default 0 means wake each dtim */
+
 #ifdef PKT_FILTER_SUPPORT
 	int early_suspended;	/* Early suspend status */
 	int dhcp_in_progress;	/* DHCP period */
@@ -258,7 +286,11 @@ typedef struct dhd_pub {
  */
 /* #define WL_ENABLE_P2P_IF		1 */
 
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+=======
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25)) && 1
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	struct mutex 	wl_start_stop_lock; /* lock/unlock for Android start/stop */
 	struct mutex 	wl_softap_lock;		 /* lock/unlock for any SoftAP/STA settings */
 #endif 
@@ -307,6 +339,7 @@ typedef struct dhd_pub {
 #ifdef WLMEDIA_HTSF
 	uint8 htsfdlystat_sz; /* Size of delay stats, max 255B */
 #endif
+<<<<<<< HEAD
 #ifdef WLTDLS
 	bool tdls_enable;
 #endif
@@ -326,6 +359,11 @@ typedef struct dhd_pub {
 #endif
 #if defined(BCMSUP_4WAY_HANDSHAKE) && defined(WLAN_AKM_SUITE_FT_8021X)
 	bool fw_4way_handshake;		/* Whether firmware will to do the 4way handshake. */
+=======
+	struct reorder_info *reorder_bufs[WLHOST_REORDERDATA_MAXFLOWS];
+#if defined(CUSTOMER_HW4) && defined(PNO_SUPPORT) && defined(CONFIG_HAS_WAKELOCK)
+	struct wake_lock	pno_wakelock;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 #if defined(CUSTOMER_HW4)
 	bool dhd_bug_on;
@@ -416,9 +454,12 @@ extern int dhd_os_wake_unlock(dhd_pub_t *pub);
 extern int dhd_os_wake_lock_timeout(dhd_pub_t *pub);
 extern int dhd_os_wake_lock_rx_timeout_enable(dhd_pub_t *pub, int val);
 extern int dhd_os_wake_lock_ctrl_timeout_enable(dhd_pub_t *pub, int val);
+<<<<<<< HEAD
 extern int dhd_os_wake_lock_ctrl_timeout_cancel(dhd_pub_t *pub);
 extern int dhd_os_wd_wake_lock(dhd_pub_t *pub);
 extern int dhd_os_wd_wake_unlock(dhd_pub_t *pub);
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 inline static void MUTEX_LOCK_SOFTAP_SET_INIT(dhd_pub_t * dhdp)
 {
@@ -460,6 +501,7 @@ inline static void MUTEX_UNLOCK_SOFTAP_SET(dhd_pub_t * dhdp)
 			__FUNCTION__, __LINE__); \
 		dhd_os_wake_lock_timeout(pub); \
 	} while (0)
+<<<<<<< HEAD
 #define DHD_OS_WAKE_LOCK_RX_TIMEOUT_ENABLE(pub, val) \
 	do { \
 		printf("call wake_lock_rx_timeout_enable[%d]: %s %d\n", \
@@ -478,11 +520,11 @@ inline static void MUTEX_UNLOCK_SOFTAP_SET(dhd_pub_t * dhdp)
 			val, __FUNCTION__, __LINE__); \
 		dhd_os_wake_lock_ctrl_timeout_cancel(pub); \
 	} while (0)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #else
-#define DHD_OS_WAKE_LOCK(pub)			dhd_os_wake_lock(pub)
-#define DHD_OS_WAKE_UNLOCK(pub)		dhd_os_wake_unlock(pub)
-#define DHD_OS_WD_WAKE_LOCK(pub)		dhd_os_wd_wake_lock(pub)
-#define DHD_OS_WD_WAKE_UNLOCK(pub)		dhd_os_wd_wake_unlock(pub)
+#define DHD_OS_WAKE_LOCK(pub) 			dhd_os_wake_lock(pub)
+#define DHD_OS_WAKE_UNLOCK(pub) 		dhd_os_wake_unlock(pub)
 #define DHD_OS_WAKE_LOCK_TIMEOUT(pub)		dhd_os_wake_lock_timeout(pub)
 #define DHD_OS_WAKE_LOCK_RX_TIMEOUT_ENABLE(pub, val) \
 	dhd_os_wake_lock_rx_timeout_enable(pub, val)
@@ -494,18 +536,31 @@ inline static void MUTEX_UNLOCK_SOFTAP_SET(dhd_pub_t * dhdp)
 #define DHD_PACKET_TIMEOUT_MS	500
 #define DHD_EVENT_TIMEOUT_MS	1500
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 /* interface operations (register, remove) should be atomic, use this lock to prevent race
  * condition among wifi on/off and interface operation functions
  */
 void dhd_net_if_lock(struct net_device *dev);
 void dhd_net_if_unlock(struct net_device *dev);
 
+<<<<<<< HEAD
 #if defined(MULTIPLE_SUPPLICANT)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
 extern struct mutex _dhd_sdio_mutex_lock_;
 #endif
 #endif /* MULTIPLE_SUPPLICANT */
+=======
+typedef struct dhd_if_event {
+	uint8 ifidx;
+	uint8 action;
+	uint8 flags;
+	uint8 bssidx;
+	uint8 is_AP;
+} dhd_if_event_t;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef enum dhd_attach_states
 {
@@ -587,6 +642,7 @@ extern void dhd_os_sdunlock_txq(dhd_pub_t * pub);
 extern void dhd_os_sdlock_rxq(dhd_pub_t * pub);
 extern void dhd_os_sdunlock_rxq(dhd_pub_t * pub);
 extern void dhd_os_sdlock_sndup_rxq(dhd_pub_t * pub);
+<<<<<<< HEAD
 #ifdef DHDTCPACK_SUPPRESS
 extern void dhd_os_tcpacklock(dhd_pub_t *pub);
 extern void dhd_os_tcpackunlock(dhd_pub_t *pub);
@@ -596,12 +652,17 @@ extern int dhd_customer_oob_irq_map(void *adapter, unsigned long *irq_flags_ptr)
 extern int dhd_customer_gpio_wlan_ctrl(void *adapter, int onoff);
 extern int dhd_custom_get_mac_address(void *adapter, unsigned char *buf);
 extern void get_customized_country_code(void *adapter, char *country_iso_code, wl_country_t *cspec);
+=======
+extern void dhd_customer_gpio_wlan_ctrl(int onoff);
+extern int dhd_custom_get_mac_address(unsigned char *buf);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern void dhd_os_sdunlock_sndup_rxq(dhd_pub_t * pub);
 extern void dhd_os_sdlock_eventq(dhd_pub_t * pub);
 extern void dhd_os_sdunlock_eventq(dhd_pub_t * pub);
 extern bool dhd_os_check_hang(dhd_pub_t *dhdp, int ifidx, int ret);
 extern int dhd_os_send_hang_message(dhd_pub_t *dhdp);
 extern void dhd_set_version_info(dhd_pub_t *pub, char *fw);
+<<<<<<< HEAD
 extern bool dhd_os_check_if_up(dhd_pub_t *pub);
 extern int dhd_os_check_wakelock(dhd_pub_t *pub);
 
@@ -612,6 +673,8 @@ extern void dhd_set_cpucore(dhd_pub_t *dhd, int set);
 #if defined(KEEP_ALIVE)
 extern int dhd_keep_alive_onoff(dhd_pub_t *dhd);
 #endif /* KEEP_ALIVE */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 #ifdef PKT_FILTER_SUPPORT
@@ -619,15 +682,20 @@ extern int dhd_keep_alive_onoff(dhd_pub_t *dhd);
 #define DHD_BROADCAST_FILTER_NUM	1
 #define DHD_MULTICAST4_FILTER_NUM	2
 #define DHD_MULTICAST6_FILTER_NUM	3
+<<<<<<< HEAD
 #define DHD_MDNS_FILTER_NUM		4
 #define DHD_ARP_FILTER_NUM		5
 extern int 	dhd_os_enable_packet_filter(dhd_pub_t *dhdp, int val);
+=======
+#define DHD_MDNS_FILTER_NUM			4
+extern void dhd_set_packet_filter(dhd_pub_t *dhd);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern void dhd_enable_packet_filter(int value, dhd_pub_t *dhd);
 extern int net_os_enable_packet_filter(struct net_device *dev, int val);
 extern int net_os_rxfilter_add_remove(struct net_device *dev, int val, int num);
 #endif /* PKT_FILTER_SUPPORT */
 
-extern int dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd);
+extern int dhd_get_dtim_skip(dhd_pub_t *dhd);
 extern bool dhd_support_sta_mode(dhd_pub_t *dhd);
 
 #ifdef DHD_DEBUG
@@ -699,6 +767,10 @@ extern uint dhd_bus_chippkg_id(dhd_pub_t *dhdp);
 extern int dhd_keep_alive_onoff(dhd_pub_t *dhd);
 #endif /* KEEP_ALIVE */
 
+#ifdef ARP_OFFLOAD_SUPPORT
+extern void dhd_arp_offload_set(dhd_pub_t * dhd, int arp_mode);
+extern void dhd_arp_offload_enable(dhd_pub_t * dhd, int arp_enable);
+#endif /* ARP_OFFLOAD_SUPPORT */
 extern bool dhd_is_concurrent_mode(dhd_pub_t *dhd);
 extern int dhd_iovar(dhd_pub_t *pub, int ifidx, char *name, char *cmd_buf, uint cmd_len, int set);
 typedef enum cust_gpio_modes {
@@ -766,19 +838,15 @@ extern uint dhd_sdiod_drive_strength;
 /* Override to force tx queueing all the time */
 extern uint dhd_force_tx_queueing;
 /* Default KEEP_ALIVE Period is 55 sec to prevent AP from sending Keep Alive probe frame */
-#define DEFAULT_KEEP_ALIVE_VALUE 	55000 /* msec */
-#ifndef CUSTOM_KEEP_ALIVE_SETTING
-#define CUSTOM_KEEP_ALIVE_SETTING 	DEFAULT_KEEP_ALIVE_VALUE
-#endif /* DEFAULT_KEEP_ALIVE_VALUE */
-
+#define KEEP_ALIVE_PERIOD 28000
 #define NULL_PKT_STR	"null_pkt"
 
 /* hooks for custom glom setting option via Makefile */
-#define DEFAULT_GLOM_VALUE 	-1
+#define DEFAULT_GLOM_VALUE	-1
 #ifndef CUSTOM_GLOM_SETTING
-#define CUSTOM_GLOM_SETTING 	DEFAULT_GLOM_VALUE
+#define CUSTOM_GLOM_SETTING	DEFAULT_GLOM_VALUE
 #endif
-#define WL_AUTO_ROAM_TRIGGER -75
+
 /* hooks for custom Roaming Trigger  setting via Makefile */
 #define DEFAULT_ROAM_TRIGGER_VALUE -75 /* dBm default roam trigger all band */
 #define DEFAULT_ROAM_TRIGGER_SETTING 	-1
@@ -793,6 +861,7 @@ extern uint dhd_force_tx_queueing;
 #define CUSTOM_ROAM_DELTA_SETTING 	DEFAULT_ROAM_DELTA_VALUE
 #endif
 
+<<<<<<< HEAD
 /* hooks for custom PNO Event wake lock to guarantee enough time
 	for the Platform to detect Event before system suspended
 */
@@ -828,6 +897,15 @@ extern uint dhd_force_tx_queueing;
 #ifndef WIFI_TURNON_DELAY
 #define WIFI_TURNON_DELAY		DEFAULT_WIFI_TURNON_DELAY
 #endif /* WIFI_TURNON_DELAY */
+=======
+
+/* hooks for custom dhd_dpc_prio setting option via Makefile */
+#define DEFAULT_DHP_DPC_PRIO  1
+#ifndef CUSTOM_DPC_PRIO_SETTING
+#define CUSTOM_DPC_PRIO_SETTING		DEFAULT_DHP_DPC_PRIO
+#endif
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef WLTDLS
 #ifndef CUSTOM_TDLS_IDLE_MODE_SETTING
@@ -861,6 +939,8 @@ extern uint dhd_pktgen_len;
 #define MOD_PARAM_PATHLEN	2048
 #define MOD_PARAM_INFOLEN	512
 
+#define MOD_PARAM_INFOLEN	512
+
 #ifdef SOFTAP
 extern char fw_path2[MOD_PARAM_PATHLEN];
 #endif
@@ -872,7 +952,7 @@ extern uint dhd_download_fw_on_driverload;
 /* Flags to indicate if we distingish power off policy when
  * user set the memu "Keep Wi-Fi on during sleep" to "Never"
  */
-extern int trigger_deep_sleep;
+extern int sleep_never;
 int dhd_deepsleep(struct net_device *dev, int flag);
 #endif /* WL_CFG80211 && SUPPORT_DEEP_SLEEP */
 
@@ -880,6 +960,8 @@ int dhd_deepsleep(struct net_device *dev, int flag);
 #define DHD_MAX_IFS	16
 #define DHD_DEL_IF	-0xe
 #define DHD_BAD_IF	-0xf
+#define WL_AUTO_ROAM_TRIGGER -75
+
 
 extern void dhd_wait_for_event(dhd_pub_t *dhd, bool *lockvar);
 extern void dhd_wait_event_wakeup(dhd_pub_t*dhd);
@@ -892,15 +974,13 @@ extern void dhd_wait_event_wakeup(dhd_pub_t*dhd);
 #define FW_SUPPORTED(dhd, capa) ((strstr(dhd->fw_capabilities, #capa) != NULL))
 #ifdef ARP_OFFLOAD_SUPPORT
 #define MAX_IPV4_ENTRIES	8
-void dhd_arp_offload_set(dhd_pub_t * dhd, int arp_mode);
-void dhd_arp_offload_enable(dhd_pub_t * dhd, int arp_enable);
-
 /* dhd_commn arp offload wrapers */
-void dhd_aoe_hostip_clr(dhd_pub_t *dhd, int idx);
-void dhd_aoe_arp_clr(dhd_pub_t *dhd, int idx);
-int dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen, int idx);
-void dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr, int idx);
+void dhd_aoe_hostip_clr(dhd_pub_t *dhd);
+void dhd_aoe_arp_clr(dhd_pub_t *dhd);
+int dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen);
+void dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr);
 #endif /* ARP_OFFLOAD_SUPPORT */
+<<<<<<< HEAD
 #ifdef WLTDLS
 int dhd_tdls_enable(struct net_device *dev, bool tdls_on, bool auto_on, struct ether_addr *mac);
 #endif
@@ -956,4 +1036,14 @@ enum {
 extern int sec_get_param(dhd_pub_t *dhd, int mode);
 #endif /* CUSTOMER_HW4 && USE_WFA_CERT_CONF */
 
+=======
+
+#if defined(CUSTOMER_HW4) && defined(RDWR_KORICS_MACADDR)
+extern int
+dhd_write_rdwr_korics_macaddr(struct dhd_info *dhd, struct ether_addr *mac);
+#endif
+#if defined(SUPPORT_MULTIPLE_REVISION)
+extern int concate_revision(struct dhd_bus *bus, char *path, int path_len);
+#endif /* SUPPORT_MULTIPLE_REVISION */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* _dhd_h_ */

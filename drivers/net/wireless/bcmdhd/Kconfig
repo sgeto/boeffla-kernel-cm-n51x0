@@ -1,17 +1,32 @@
+config BCMDHD
+    tristate "Broadcom 43xx wireless cards support"
+    depends on MMC
+    default m
+    ---help---
+      This module adds support for wireless adapters based on
+      Broadcom 4329/30 chipset.
+
+      This driver uses the kernel's wireless extensions subsystem.
+
+      If you choose to build a module, it'll be called dhd. Say M if
+      unsure.
+
 config BCM4330
-	tristate "Broadcom 4330 wireless cards support"
-	depends on WLAN
+	bool "Broadcom 4330 wireless cards support"
+	depends on BCMDHD
 	---help---
 	  This module adds support for wireless adapters based on
 	  Broadcom 4330 chipset.
 
 config BCM4334
-	tristate "Broadcom 4334 wireless cards support"
-	depends on WLAN
+	bool "Broadcom 4334 wireless cards support"
+	depends on BCMDHD
+    default y
 	---help---
 	  This module adds support for wireless adapters based on
 	  Broadcom 4334 chipset.
 
+<<<<<<< HEAD
 config BCM4335
 	tristate "Broadcom 4335 wireless cards support"
 	depends on WLAN
@@ -33,29 +48,24 @@ config BCM4354
 	  This module adds support for wireless adapters based on
 	  Broadcom 4354 chipset.
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 config BCM43241
-	tristate "Broadcom 43241 wireless cards support"
-	depends on WLAN
+	bool "Broadcom 43241 wireless cards support"
+	depends on BCMDHD
 	---help---
 	  This module adds support for wireless adapters based on
 	  Broadcom 43241 chipset.
 
-config BROADCOM_WIFI
-	bool "Broadcom WiFi Driver"
-	depends on (BCM4330 || BCM4334 || BCM43241)
-	default y
-	---help---
-		This is a configuration for broadcom WLAN driver.
-
 config BCMDHD_FW_PATH
-	depends on WLAN
+	depends on BCMDHD
 	string "Firmware path"
 	default "/system/etc/firmware/fw_bcmdhd.bin"
 	---help---
 	  Path to the firmware file.
 
 config BCMDHD_NVRAM_PATH
-	depends on WLAN
+	depends on BCMDHD
 	string "NVRAM path"
 	default "/system/etc/wifi/bcmdhd.cal"
 	---help---
@@ -85,6 +95,7 @@ config DHD_USE_SCHED_SCAN
 
 config BROADCOM_WIFI_RESERVED_MEM
 	bool "BROADCOM Reserved memory for wifi device"
+<<<<<<< HEAD
 	depends on (BCM4330 || BCM4334 || BCM4335 || BCM4339 || BCM4354 || BCM43241)
 	---help---
 	  This is a configuration for broadcom WLAN driver.
@@ -105,6 +116,15 @@ config BCM4335BT
 config WLAN_REGION_CODE
 	int "---Region codes for Broadcom WiFi Driver"
 	depends on (BCM4330 || BCM4334 || BCM4335 || BCM4339 || BCM4354 || BCM43241)
+=======
+	depends on (BCM4330 || BCM4334 || BCM43241)
+	---help---
+	  This is a configuration for broadcom WLAN driver.
+
+config WLAN_REGION_CODE
+	int "---Region codes for Broadcom WiFi Driver"
+	depends on (BCM4330 || BCM4334 || BCM43241)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	default 100
 	---help---
 		This is a region code for Broadcom Wi-Fi featured functions.
@@ -115,6 +135,7 @@ config WLAN_REGION_CODE
 		- 202 : KOR KTT
 		- 203 : KOR LGT
 		- 300 : CHN OPEN
+<<<<<<< HEAD
 
 config WIFI_2GHZ_VHT_NO_SUPPORT
 	bool "NOT Use VHT mode in 2GHz band"
@@ -129,3 +150,5 @@ config WLAIBSS
 	default y
 	---help---
 	  This is a configuration for Oxygen Network.
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh_sdmmc_linux.c 434724 2013-11-07 05:38:43Z $
+=======
+ * $Id: bcmsdh_sdmmc_linux.c 355594 2012-09-07 10:22:02Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <typedefs.h>
@@ -165,6 +169,7 @@ static int bcmsdh_sdmmc_probe(struct sdio_func *func,
                               const struct sdio_device_id *id)
 {
 	int ret = 0;
+<<<<<<< HEAD
 
 	if (func == NULL)
 		return -EINVAL;
@@ -178,15 +183,68 @@ static int bcmsdh_sdmmc_probe(struct sdio_func *func,
 	/* 4318 doesn't have function 2 */
 	if ((func->num == 2) || (func->num == 1 && func->device == 0x4))
 		ret = sdioh_probe(func);
+=======
+	static struct sdio_func sdio_func_0;
+
+	if (func) {
+		sd_trace(("bcmsdh_sdmmc: %s Enter\n", __FUNCTION__));
+		sd_trace(("sdio_bcmsdh: func->class=%x\n", func->class));
+		sd_trace(("sdio_vendor: 0x%04x\n", func->vendor));
+		sd_trace(("sdio_device: 0x%04x\n", func->device));
+		sd_trace(("Function#: 0x%04x\n", func->num));
+
+		if (func->num == 1) {
+			sdio_func_0.num = 0;
+			sdio_func_0.card = func->card;
+			gInstance->func[0] = &sdio_func_0;
+			if(func->device == 0x4) { /* 4318 */
+				gInstance->func[2] = NULL;
+				sd_trace(("NIC found, calling bcmsdh_probe...\n"));
+				ret = bcmsdh_probe(&func->dev);
+			}
+		}
+
+		gInstance->func[func->num] = func;
+
+		if (func->num == 2) {
+	#ifdef WL_CFG80211
+			wl_cfg80211_set_parent_dev(&func->dev);
+	#endif
+			sd_trace(("F2 found, calling bcmsdh_probe...\n"));
+			ret = bcmsdh_probe(&func->dev);
+		}
+	} else {
+		ret = -ENODEV;
+	}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return ret;
 }
 
 static void bcmsdh_sdmmc_remove(struct sdio_func *func)
 {
+<<<<<<< HEAD
 	if (func == NULL) {
 		sd_err(("%s is called with NULL SDIO function pointer\n", __FUNCTION__));
 		return;
+=======
+	if (func) {
+		sd_trace(("bcmsdh_sdmmc: %s Enter\n", __FUNCTION__));
+		sd_info(("sdio_bcmsdh: func->class=%x\n", func->class));
+		sd_info(("sdio_vendor: 0x%04x\n", func->vendor));
+		sd_info(("sdio_device: 0x%04x\n", func->device));
+		sd_info(("Function#: 0x%04x\n", func->num));
+
+		if (func->num == 2) {
+			sd_trace(("F2 found, calling bcmsdh_remove...\n"));
+			bcmsdh_remove(&func->dev);
+		} else if (func->num == 1) {
+			sdio_claim_host(func);
+			sdio_disable_func(func);
+			sdio_release_host(func);
+			gInstance->func[1] = NULL;
+		}
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	}
 
 	sd_trace(("bcmsdh_sdmmc: %s Enter\n", __FUNCTION__));
@@ -228,10 +286,19 @@ static int bcmsdh_sdmmc_suspend(struct device *pdev)
 	if (func->num != 2)
 		return 0;
 
+<<<<<<< HEAD
 	sdioh = sdio_get_drvdata(func);
 	err = bcmsdh_suspend(sdioh->bcmsdh);
 	if (err)
 		return err;
+=======
+	sd_trace_hw4(("%s Enter\n", __FUNCTION__));
+
+	if (dhd_os_check_wakelock(bcmsdh_get_drvdata()))
+		return -EBUSY;
+
+	sdio_flags = sdio_get_host_pm_caps(func);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	sdio_flags = sdio_get_host_pm_caps(func);
 	if (!(sdio_flags & MMC_PM_KEEP_POWER)) {
@@ -245,10 +312,22 @@ static int bcmsdh_sdmmc_suspend(struct device *pdev)
 		sd_err(("%s: error while trying to keep power\n", __FUNCTION__));
 		return err;
 	}
+<<<<<<< HEAD
 #if defined(OOB_INTR_ONLY) && !defined(CUSTOMER_HW4)
 	bcmsdh_oob_intr_set(sdioh->bcmsdh, FALSE);
 #endif /* OOB_INTR_ONLY && !CUSTOMER_HW4 */
+=======
+
+#if !defined(CUSTOMER_HW4)
+#if defined(OOB_INTR_ONLY)
+	bcmsdh_oob_intr_set(0);
+#endif	/* defined(OOB_INTR_ONLY) */
+#endif  /* !defined(CUSTOMER_HW4) */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	dhd_mmc_suspend = TRUE;
+#if defined(CUSTOMER_HW4) && defined(CONFIG_ARCH_TEGRA)
+	irq_set_irq_wake(390, 1);
+#endif
 	smp_mb();
 
 	return 0;
@@ -256,6 +335,7 @@ static int bcmsdh_sdmmc_suspend(struct device *pdev)
 
 static int bcmsdh_sdmmc_resume(struct device *pdev)
 {
+<<<<<<< HEAD
 	sdioh_info_t *sdioh;
 	struct sdio_func *func = dev_to_sdio_func(pdev);
 
@@ -269,6 +349,26 @@ static int bcmsdh_sdmmc_resume(struct device *pdev)
 	bcmsdh_resume(sdioh->bcmsdh);
 #endif /* OOB_INTR_ONLY && !CUSTOMER_HW4 */
 
+=======
+#if !defined(CUSTOMER_HW4)
+#if defined(OOB_INTR_ONLY)
+	struct sdio_func *func = dev_to_sdio_func(pdev);
+#endif /* defined(OOB_INTR_ONLY) */
+#endif /* defined(CUSTOMER_HW4) */
+	sd_trace_hw4(("%s Enter\n", __FUNCTION__));
+
+	dhd_mmc_suspend = FALSE;
+#if !defined(CUSTOMER_HW4)
+#if defined(OOB_INTR_ONLY)
+	if ((func->num == 2) && dhd_os_check_if_up(bcmsdh_get_drvdata()))
+		bcmsdh_oob_intr_set(1);
+#endif /* (OOB_INTR_ONLY) */
+#endif /* !(CUSTOMER_HW4) */
+#if defined(CUSTOMER_HW4) && defined(CONFIG_ARCH_TEGRA)
+	if (func->num == 2)
+		irq_set_irq_wake(390, 0);
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	smp_mb();
 	return 0;
 }
@@ -375,7 +475,24 @@ MODULE_AUTHOR(AUTHOR);
 */
 int bcmsdh_register_client_driver(void)
 {
+<<<<<<< HEAD
 	return sdio_register_driver(&bcmsdh_sdmmc_driver);
+=======
+	int error = 0;
+	sd_trace(("bcmsdh_sdmmc: %s Enter\n", __FUNCTION__));
+
+	gInstance = kzalloc(sizeof(BCMSDH_SDMMC_INSTANCE), GFP_KERNEL);
+	if (!gInstance)
+		return -ENOMEM;
+
+	error = sdio_register_driver(&bcmsdh_sdmmc_driver);
+	if (error && gInstance) {
+		kfree(gInstance);
+		gInstance = 0;
+	}
+
+	return error;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 /*
@@ -384,4 +501,10 @@ int bcmsdh_register_client_driver(void)
 void bcmsdh_unregister_client_driver(void)
 {
 	sdio_unregister_driver(&bcmsdh_sdmmc_driver);
+<<<<<<< HEAD
+=======
+
+	if (gInstance)
+		kfree(gInstance);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }

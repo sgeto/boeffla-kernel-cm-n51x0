@@ -1,9 +1,8 @@
-# bcmdhd
 #####################
 # SDIO Basic feature
 #####################
 
-DHDCFLAGS += -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER             \
+DHDCFLAGS = -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER             \
         -DBCMDONGLEHOST -DUNRELEASEDCHIP -DBCMDMA32 -DBCMFILEIMAGE            \
         -DDHDTHREAD -DBDC -DOOB_INTR_ONLY                                     \
         -DDHD_BCMEVENTS -DSHOW_EVENTS -DBCMDBG                                \
@@ -23,11 +22,15 @@ DHDCFLAGS += -DCUSTOMER_HW4
 DHDCFLAGS += -DWL_CFG80211
 
 # Debug
+=======
+DHDCFLAGS += -DBLOCK_IPV6_PACKET
+DHDCFLAGS += -DSUPPORT_DEEP_SLEEP
 DHDCFLAGS += -DSIMPLE_MAC_PRINT
 DHDCFLAGS += -DDEBUGFS_CFG80211
 # Print out kernel panic point of file and line info when assertion happened
 DHDCFLAGS += -DBCMASSERT_LOG
 
+<<<<<<< HEAD
 # Print 8021X
 DHDCFLAGS += -DDHD_8021X_DUMP
 
@@ -37,6 +40,8 @@ DHDCFLAGS += -DPROP_TXSTATUS
 
 # Wi-Fi Direct
 DHDCFLAGS += -DWL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 # For p2p connection issue
 DHDCFLAGS += -DWL_SCB_TIMEOUT=10
 # For TDLS tear down inactive time 10 sec
@@ -82,6 +87,14 @@ DHDCFLAGS += -DWIFI_TURNOFF_DELAY=100
 DHDCFLAGS += -DESCAN_RESULT_PATCH
 DHDCFLAGS += -DDUAL_ESCAN_RESULT_BUFFER
 
+<<<<<<< HEAD
+=======
+DHDCFLAGS += -DROAM_ENABLE -DROAM_CHANNEL_CACHE -DROAM_API
+DHDCFLAGS += -DDISABLE_FW_ROAM_SUSPEND
+DHDCFLAGS += -DCUSTOM_ROAM_TRIGGER_SETTING=-65
+DHDCFLAGS += -DCUSTOM_ROAM_DELTA_SETTING=15
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 # For Static Buffer
 ifeq ($(CONFIG_BROADCOM_WIFI_RESERVED_MEM),y)
   DHDCFLAGS += -DCONFIG_DHD_USE_STATIC_BUF
@@ -98,6 +111,7 @@ DHDCFLAGS += -DIOCTL_RESP_TIMEOUT=5000
 # DPC priority
 DHDCFLAGS += -DCUSTOM_DPC_PRIO_SETTING=98
 
+<<<<<<< HEAD
 # Priority mismatch fix with kernel stack
 DHDCFLAGS += -DPKTPRIO_OVERRIDE
 
@@ -122,6 +136,13 @@ DHDCFLAGS += -DDHDENABLE_TAILPAD
 ##############################
 # Android Platform Definition
 ##############################
+=======
+# WiFi turn off delay
+DHDCFLAGS += -DWIFI_TURNOFF_DELAY=100
+
+# WiFi Kernel thread type
+DHDCFLAGS += -DUSE_KTHREAD_API
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 ##########
 # KitKat
@@ -240,6 +261,7 @@ endif
   DHDCFLAGS += -DCUSTOM_PSPRETEND_THR=30
 endif
 
+<<<<<<< HEAD
 ifneq ($(CONFIG_BCM4335),)
   DHDCFLAGS += -DBCM4335_CHIP -DHW_OOB -DSUPPORT_MULTIPLE_REVISION
   DHDCFLAGS += -DUSE_CID_CHECK
@@ -313,12 +335,30 @@ ifeq ($(CONFIG_BCM4334),y)
   DHDCFLAGS += -DUSE_LATE_INITCALL_SYNC
   DRIVER_TYPE = y
 endif
+=======
+ifneq ($(CONFIG_BCM4334),)
+  DHDCFLAGS += -DBCM4334_CHIP -DHW_OOB -DSUPPORT_MULTIPLE_REVISION
+  DHDCFLAGS += -DUSE_CID_CHECK -DCONFIG_CONTROL_PM
+  DHDCFLAGS += -DPROP_TXSTATUS
+  DHDCFLAGS += -DVSDB -DHT40_GO
+  DHDCFLAGS += -DWL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST -DSDIO_CRC_ERROR_FIX
+  DHDCFLAGS += -DCUSTOM_SDIO_F2_BLKSIZE=128
+  DHDCFLAGS += -DDHD_USE_IDLECOUNT
+  DHDCFLAGS += -DSUPPORT_AMPDU_MPDU_CMD
+  DHDCFLAGS += -DVSDB_DYNAMIC_F2_BLKSIZE -DSDIO_F2_BLKSIZE=512 -DVSDB_F2_BLKSIZE=64
+  DHDCFLAGS += -DCUSTOM_GLOM_SETTING=5 -DENABLE_BCN_LI_BCN_WAKEUP
+# DHDCFLAGS += -DUSE_WEP_AUTH_SHARED_OPEN
+  DHDCFLAGS += -DROAM_AP_ENV_DETECTION
+  DHDCFLAGS += -DWES_SUPPORT
+  DHDCFLAGS += -DPASS_ARP_PACKET
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 endif
 
 ifneq ($(CONFIG_BCM4330),)
   DHDCFLAGS += -DBCM4330_CHIP -DSUPPORT_MULTIPLE_REVISION
   DHDCFLAGS += -DMCAST_LIST_ACCUMULATION
   DHDCFLAGS += -DCUSTOM_GLOM_SETTING=0
+<<<<<<< HEAD
   DHDCFLAGS += -DWL_CFG80211_GON_COLLISION
 ifeq ($(CONFIG_BCM4330),y)
   DHDCFLAGS += -DENABLE_INSMOD_NO_FW_LOAD
@@ -331,10 +371,14 @@ endif
   DHDCFLAGS :=$(filter-out -DPROP_TXSTATUS,$(DHDCFLAGS))
   DHDCFLAGS :=$(filter-out -DROAM_AP_ENV_DETECTION,$(DHDCFLAGS))
   DHDCFLAGS :=$(filter-out -DDHD_USE_IDLECOUNT,$(DHDCFLAGS))
+=======
+  DHDCFLAGS += -DPASS_ARP_PACKET
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 endif
 
 ifneq ($(CONFIG_BCM43241),)
   DHDCFLAGS += -DBCM43241_CHIP -DHW_OOB
+<<<<<<< HEAD
   DHDCFLAGS += -DMIMO_ANT_SETTING
   DHDCFLAGS += -DCUSTOM_GLOM_SETTING=1 -DCUSTOM_SDIO_F2_BLKSIZE=128
   DHDCFLAGS += -DUSE_SDIOFIFO_IOVAR
@@ -347,27 +391,52 @@ ifeq ($(CONFIG_BCM43241),y)
   DHDCFLAGS += -DUSE_LATE_INITCALL_SYNC
   DRIVER_TYPE = y
 endif
+=======
+  DHDCFLAGS += -DMCAST_LIST_ACCUMULATION
+  DHDCFLAGS += -DMIMO_ANT_SETTING -DCONFIG_CONTROL_PM
+  DHDCFLAGS += -DAMPDU_HOSTREORDER -DDHD_USE_IDLECOUNT
+  DHDCFLAGS += -DCUSTOM_GLOM_SETTING=1
+  DHDCFLAGS += -DPROP_TXSTATUS
+  DHDCFLAGS += -DVSDB -DHT40_GO
+  DHDCFLAGS += -DWL_CFG80211_VSDB_PRIORITIZE_SCAN_REQUEST
+  DHDCFLAGS += -DSUPPORT_AMPDU_MPDU_CMD
+  DHDCFLAGS += -DROAM_AP_ENV_DETECTION
+  ifeq ($(CONFIG_BCM43241),m)
+    DHDCFLAGS += -fno-pic
+  endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 endif
-
 
 #############################
 # Platform dependent feature
 #############################
 
 ifeq ($(CONFIG_SPI_SC8810),y)
+<<<<<<< HEAD
   DHDCFLAGS += -DREAD_MACADDR -DBCMSPI -DBCMSPI_ANDROID -DSPI_PIO_32BIT_RW -DSPI_PIO_RW_BIGENDIAN
   DHDCFLAGS += -UCUSTOM_DPC_PRIO_SETTING
+=======
+DHDCFLAGS += -DREAD_MACADDR -DBCMSPI -DBCMSPI_ANDROID -DSPI_PIO_32BIT_RW -DSPI_PIO_RW_BIGENDIAN -DDISABLE_11N
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-  #Remove defines for SDMMC
-  DHDCFLAGS :=$(filter-out -DOOB_INTR_ONLY,$(DHDCFLAGS))
-  DHDCFLAGS :=$(filter-out -DBCMLXSDMMC,$(DHDCFLAGS))
+#Remove defines for SDMMC
+DHDCFLAGS :=$(filter-out -DOOB_INTR_ONLY,$(DHDCFLAGS))
+DHDCFLAGS :=$(filter-out -DBCMLXSDMMC,$(DHDCFLAGS))
 
-  #Remove defines for JB
-  DHDCFLAGS :=$(filter-out -DWL_ENABLE_P2P_IF,$(DHDCFLAGS))
-  DHDCFLAGS :=$(filter-out -DMULTIPLE_SUPPLICANT,$(DHDCFLAGS))
-  DHDCFLAGS :=$(filter-out -DWL_CFG80211_STA_EVENT,$(DHDCFLAGS))
+#Remove defines for JB
+DHDCFLAGS :=$(filter-out -DWL_ENABLE_P2P_IF,$(DHDCFLAGS))
+DHDCFLAGS :=$(filter-out -DMULTIPLE_SUPPLICANT,$(DHDCFLAGS))
+DHDCFLAGS :=$(filter-out -DWL_CFG80211_STA_EVENT,$(DHDCFLAGS))
 endif
 
+<<<<<<< HEAD
+=======
+#For INITIAL 2G scan features
+ifneq ($(CONFIG_TARGET_LOCALE_KOR),y)
+  DHDCFLAGS += -DUSE_INITIAL_2G_SCAN
+endif
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 # For SLP feature
 ifeq ($(CONFIG_SLP),y)
   DHDCFLAGS += -DUSE_INITIAL_2G_SCAN
@@ -382,6 +451,7 @@ ifeq ($(GGSM_WIFI_5GHz_CHANNELS),true)
   DHDCFLAGS += -DCUSTOMER_SET_COUNTRY
 endif
 
+<<<<<<< HEAD
 ifeq ($(CONFIG_OF),y)
 ifneq ($(CONFIG_MACH_UNIVERSAL5430),)
 obj-$(CONFIG_MACH_UNIVERSAL5430) += dhd_custom_exynos.o
@@ -391,11 +461,37 @@ ifneq ($(CONFIG_MACH_UNIVERSAL5422),)
 obj-$(CONFIG_MACH_UNIVERSAL5422) += dhd_custom_exynos.o
 DHDCFLAGS += -DDHD_OF_SUPPORT
 endif
-endif
-
+=======
 ##############################################################
 # dhd_sec_feature.h
-DHDCFLAGS += -include "dhd_sec_feature.h"
+
+REGION_CODE := 100
+
+ifeq ($(CONFIG_TARGET_LOCALE_KOR),y)
+REGION_CODE=200
+endif
+
+ifeq ($(CONFIG_MACH_U1_KOR_KT), y)
+REGION_CODE=202
+endif
+
+ifeq ($(CONFIG_TARGET_LOCALE_CHN),y)
+REGION_CODE=300
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+endif
+
+ifeq ($(SEC_MODEL_NAME),U1)
+ifeq ($(X_BUILD_LOCALE),EUR_ORG)
+REGION_CODE=101
+endif
+endif
+
+ifdef CONFIG_WLAN_REGION_CODE
+REGION_CODE=$(CONFIG_WLAN_REGION_CODE)
+endif
+
+DHDCFLAGS += -DWLAN_REGION_CODE=$(REGION_CODE)
+
 ##############################################################
 
 #########
@@ -423,6 +519,7 @@ DHDOFILES :=$(filter-out bcmsdh_sdmmc.o,$(DHDOFILES))
 DHDOFILES :=$(filter-out bcmsdh_sdmmc_linux.o,$(DHDOFILES))
 endif
 
+<<<<<<< HEAD
 dhd-y := $(DHDOFILES)
 obj-$(DRIVER_TYPE)   += dhd.o
 
@@ -433,7 +530,8 @@ all:
 clean:
 	rm -rf *.o *.ko *.mod.c *~ .*.cmd *.o.cmd .*.o.cmd \
 	Module.symvers modules.order .tmp_versions modules.builtin
+=======
+obj-$(CONFIG_BCMDHD) += dhd.o
+dhd-objs += $(DHDOFILES)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-install:
-	@$(MAKE) --no-print-directory -C $(KDIR) \
-		SUBDIRS=$(CURDIR) modules_install

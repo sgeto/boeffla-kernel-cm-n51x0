@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: linux_osl.h 432719 2013-10-29 12:04:59Z $
+=======
+ * $Id: linux_osl.h 352246 2012-08-22 05:42:04Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _linux_osl_h_
@@ -104,9 +108,16 @@ extern struct pci_dev *osl_pci_device(osl_t *osh);
 /* Pkttag flag should be part of public information */
 typedef struct {
 	bool pkttag;
+<<<<<<< HEAD
 	bool mmbus;		/* Bus supports memory-mapped register accesses */
 	pktfree_cb_fn_t tx_fn;  /* Callback function for PKTFREE */
 	void *tx_ctx;		/* Context to the callback function */
+=======
+	uint pktalloced; 	
+	bool mmbus;		
+	pktfree_cb_fn_t tx_fn;  
+	void *tx_ctx;		
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	void	*unused[3];
 } osl_pubinfo_t;
 
@@ -158,8 +169,12 @@ extern void osl_dma_free_consistent(osl_t *osh, void *va, uint size, dmaaddr_t p
 /* map/unmap shared (dma-able) memory */
 #define	DMA_UNMAP(osh, pa, size, direction, p, dmah) \
 	osl_dma_unmap((osh), (pa), (size), (direction))
+<<<<<<< HEAD
 extern dmaaddr_t osl_dma_map(osl_t *osh, void *va, uint size, int direction, void *p,
 	hnddma_seg_map_t *txp_dmah);
+=======
+extern uint osl_dma_map(osl_t *osh, void *va, uint size, int direction);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern void osl_dma_unmap(osl_t *osh, uint pa, uint size, int direction);
 
 /* API for DMA addressing capability */
@@ -189,6 +204,7 @@ extern int osl_error(int bcmerror);
 
 #define OSH_NULL   NULL
 
+<<<<<<< HEAD
 /*
  * BINOSL selects the slightly slower function-call-based binary compatible osl.
  * Macros expand to calls to functions defined in linux_osl.c .
@@ -201,6 +217,14 @@ extern int osl_error(int bcmerror);
 #else
 #define OSL_SYSUPTIME()		((uint32)jiffies * (1000 / HZ))
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 4, 29) */
+=======
+
+#include <linuxver.h>           
+#include <linux/kernel.h>       
+#include <linux/string.h>       
+
+#define OSL_SYSUPTIME()		((uint32)jiffies_to_msecs(jiffies))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	printf(fmt, args...)	printk(fmt , ## args)
 #include <linux/kernel.h>	/* for vsn/printf's */
 #include <linux/string.h>	/* for mem*, str* */
@@ -250,10 +274,17 @@ extern int osl_error(int bcmerror);
 #define OSL_UNCACHED(va)	((void *)va)
 #define OSL_CACHED(va)		((void *)va)
 
+<<<<<<< HEAD
 #define OSL_PREF_RANGE_LD(va, sz) BCM_REFERENCE(va)
 #define OSL_PREF_RANGE_ST(va, sz) BCM_REFERENCE(va)
 
 /* get processor cycle count */
+=======
+#define OSL_PREF_RANGE_LD(va, sz)
+#define OSL_PREF_RANGE_ST(va, sz)
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #if defined(__i386__)
 #define	OSL_GETCYCLES(x)	rdtscl((x))
 #else
@@ -297,6 +328,7 @@ extern int osl_error(int bcmerror);
 #define	PKTDATA(osh, skb)		({BCM_REFERENCE(osh); (((struct sk_buff*)(skb))->data);})
 #define	PKTLEN(osh, skb)		({BCM_REFERENCE(osh); (((struct sk_buff*)(skb))->len);})
 #define PKTHEADROOM(osh, skb)		(PKTDATA(osh, skb)-(((struct sk_buff*)(skb))->head))
+<<<<<<< HEAD
 #define PKTEXPHEADROOM(osh, skb, b)	\
 	({ \
 	 BCM_REFERENCE(osh); \
@@ -343,6 +375,19 @@ extern int osl_error(int bcmerror);
 #define PKTSETID(skb, id)       ({BCM_REFERENCE(skb); BCM_REFERENCE(id);})
 #define PKTSHRINK(osh, m)		({BCM_REFERENCE(osh); m;})
 
+=======
+#define PKTTAILROOM(osh, skb) ((((struct sk_buff*)(skb))->end)-(((struct sk_buff*)(skb))->tail))
+#define	PKTNEXT(osh, skb)		(((struct sk_buff*)(skb))->next)
+#define	PKTSETNEXT(osh, skb, x)		(((struct sk_buff*)(skb))->next = (struct sk_buff*)(x))
+#define	PKTSETLEN(osh, skb, len)	__skb_trim((struct sk_buff*)(skb), (len))
+#define	PKTPUSH(osh, skb, bytes)	skb_push((struct sk_buff*)(skb), (bytes))
+#define	PKTPULL(osh, skb, bytes)	skb_pull((struct sk_buff*)(skb), (bytes))
+#define	PKTTAG(skb)			((void*)(((struct sk_buff*)(skb))->cb))
+#define PKTALLOCED(osh)			((osl_pubinfo_t *)(osh))->pktalloced
+#define PKTSETPOOL(osh, skb, x, y)	do {} while (0)
+#define PKTPOOL(osh, skb)		FALSE
+#define PKTSHRINK(osh, m)		(m)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef CTFPOOL
 #define	CTFPOOL_REFILL_THRESH	3
@@ -357,6 +402,7 @@ typedef struct ctfpool {
 	uint 		fast_frees;
 	uint 		slow_allocs;
 } ctfpool_t;
+<<<<<<< HEAD
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
 #define	FASTBUF	(1 << 0)
@@ -377,6 +423,9 @@ typedef struct ctfpool {
 	 })
 #define	PKTFAST(osh, skb)	(((struct sk_buff*)(skb))->pktc_flags)
 #elif LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22)
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	FASTBUF	(1 << 16)
 #define	PKTSETFAST(osh, skb)	\
 	({ \
@@ -414,13 +463,8 @@ typedef struct ctfpool {
 #define	PKTFAST(osh, skb)	(((struct sk_buff*)(skb))->__unused)
 #endif /* 2.6.22 */
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
-#define	CTFPOOLPTR(osh, skb)	(((struct sk_buff*)(skb))->ctfpool)
-#define	CTFPOOLHEAD(osh, skb)	(((ctfpool_t *)((struct sk_buff*)(skb))->ctfpool)->head)
-#else
 #define	CTFPOOLPTR(osh, skb)	(((struct sk_buff*)(skb))->sk)
 #define	CTFPOOLHEAD(osh, skb)	(((ctfpool_t *)((struct sk_buff*)(skb))->sk)->head)
-#endif
 
 extern void *osl_ctfpool_add(osl_t *osh);
 extern void osl_ctfpool_replenish(osl_t *osh, uint thresh);
@@ -438,6 +482,7 @@ extern void osl_ctfpool_stats(osl_t *osh, void *b);
 #define	PKTISCTF(osh, skb)	({BCM_REFERENCE(osh); BCM_REFERENCE(skb); FALSE;})
 
 #ifdef HNDCTF
+<<<<<<< HEAD
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)
 #define	SKIPCT	(1 << 2)
@@ -566,6 +611,24 @@ typedef struct ctf_mark {
 #define PKTSETFAFREED(skb)	BCM_REFERENCE(skb)
 #define	PKTCLRFAFREED(skb)	BCM_REFERENCE(skb)
 #endif /* BCMFA */
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22)
+#define	SKIPCT	(1 << 18)
+#define	PKTSETSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->mac_len |= SKIPCT)
+#define	PKTCLRSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->mac_len &= (~SKIPCT))
+#define	PKTSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->mac_len & SKIPCT)
+#else 
+#define	SKIPCT	(1 << 2)
+#define	PKTSETSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->__unused |= SKIPCT)
+#define	PKTCLRSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->__unused &= (~SKIPCT))
+#define	PKTSKIPCT(osh, skb)	(((struct sk_buff*)(skb))->__unused & SKIPCT)
+#endif 
+#else 
+#define	PKTSETSKIPCT(osh, skb)
+#define	PKTCLRSKIPCT(osh, skb)
+#define	PKTSKIPCT(osh, skb)
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 extern void osl_pktfree(osl_t *osh, void *skb, bool send);
 extern void *osl_pktget_static(osl_t *osh, uint len);
@@ -588,6 +651,7 @@ extern struct sk_buff *osl_pkt_tonative(osl_t *osh, void *pkt);
 /* PKTSETSUMNEEDED and PKTSUMGOOD are not possible because skb->ip_summed is overloaded */
 #define PKTSHARED(skb)                  (((struct sk_buff*)(skb))->cloned)
 
+<<<<<<< HEAD
 #ifdef CONFIG_NF_CONNTRACK_MARK
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 #define PKTMARK(p)                     (((struct sk_buff *)(p))->mark)
@@ -604,8 +668,10 @@ extern struct sk_buff *osl_pkt_tonative(osl_t *osh, void *pkt);
 #define PKTALLOCED(osh)		osl_pktalloced(osh)
 extern uint osl_pktalloced(osl_t *osh);
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	DMA_MAP(osh, va, size, direction, p, dmah) \
-	osl_dma_map((osh), (va), (size), (direction), (p), (dmah))
+	osl_dma_map((osh), (va), (size), (direction))
 
 #ifdef PKTC
 /* Use 8 bytes of skb tstamp field to store below info */
@@ -616,36 +682,28 @@ struct chain_node {
 
 #define CHAIN_NODE(skb)		((struct chain_node*)(((struct sk_buff*)skb)->pktc_cb))
 
-#define	PKTCSETATTR(s, f, p, b)	({CHAIN_NODE(s)->flags = (f); CHAIN_NODE(s)->pkts = (p); \
-	                         CHAIN_NODE(s)->bytes = (b);})
-#define	PKTCCLRATTR(s)		({CHAIN_NODE(s)->flags = CHAIN_NODE(s)->pkts = \
-	                         CHAIN_NODE(s)->bytes = 0;})
-#define	PKTCGETATTR(s)		(CHAIN_NODE(s)->flags << 29 | CHAIN_NODE(s)->pkts << 20 | \
-	                         CHAIN_NODE(s)->bytes)
 #define	PKTCCNT(skb)		(CHAIN_NODE(skb)->pkts)
 #define	PKTCLEN(skb)		(CHAIN_NODE(skb)->bytes)
 #define	PKTCGETFLAGS(skb)	(CHAIN_NODE(skb)->flags)
 #define	PKTCSETFLAGS(skb, f)	(CHAIN_NODE(skb)->flags = (f))
 #define	PKTCCLRFLAGS(skb)	(CHAIN_NODE(skb)->flags = 0)
 #define	PKTCFLAGS(skb)		(CHAIN_NODE(skb)->flags)
-#define	PKTCSETCNT(skb, c)	(CHAIN_NODE(skb)->pkts = (c))
-#define	PKTCINCRCNT(skb)	(CHAIN_NODE(skb)->pkts++)
-#define	PKTCADDCNT(skb, c)	(CHAIN_NODE(skb)->pkts += (c))
-#define	PKTCSETLEN(skb, l)	(CHAIN_NODE(skb)->bytes = (l))
-#define	PKTCADDLEN(skb, l)	(CHAIN_NODE(skb)->bytes += (l))
+#define	PKTCSETCNT(skb, c)	(CHAIN_NODE(skb)->pkts = (c) & ((1 << 9) - 1))
+#define	PKTCSETLEN(skb, l)	(CHAIN_NODE(skb)->bytes = (l) & ((1 << 20) - 1))
 #define	PKTCSETFLAG(skb, fb)	(CHAIN_NODE(skb)->flags |= (fb))
 #define	PKTCCLRFLAG(skb, fb)	(CHAIN_NODE(skb)->flags &= ~(fb))
 #define	PKTCLINK(skb)		(CHAIN_NODE(skb)->link)
 #define	PKTSETCLINK(skb, x)	(CHAIN_NODE(skb)->link = (struct sk_buff*)(x))
+#define	PKTISCHAINED(skb)	(PKTCLINK(skb) != NULL)
 #define FOREACH_CHAINED_PKT(skb, nskb) \
 	for (; (skb) != NULL; (skb) = (nskb)) \
-		if ((nskb) = (PKTISCHAINED(skb) ? PKTCLINK(skb) : NULL), \
-		    PKTSETCLINK((skb), NULL), 1)
+		if ((nskb) = PKTCLINK(skb), PKTSETCLINK((skb), NULL), 1)
 #define	PKTCFREE(osh, skb, send) \
 do { \
 	void *nskb; \
 	ASSERT((skb) != NULL); \
 	FOREACH_CHAINED_PKT((skb), nskb) { \
+<<<<<<< HEAD
 		PKTCLRCHAINED((osh), (skb)); \
 		PKTCCLRFLAGS((skb)); \
 		PKTFREE((osh), (skb), (send)); \
@@ -661,6 +719,14 @@ do { \
 	} \
 } while (0)
 #endif /* PKTC */
+=======
+		PKTFREE((osh), (skb), (send)); \
+	} \
+} while (0)
+#endif 
+
+#else 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #else /* ! BCMDRIVER */
 

@@ -21,10 +21,17 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: ethernet.h 403353 2013-05-20 14:05:33Z $
  */
 
 #ifndef _NET_ETHERNET_H_	/* use native BSD ethernet.h when available */
+=======
+ * $Id: ethernet.h 309193 2012-01-19 00:03:57Z $
+ */
+
+#ifndef _NET_ETHERNET_H_	      
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define _NET_ETHERNET_H_
 
 #ifndef _TYPEDEFS_H_
@@ -75,6 +82,7 @@
  */
 #define	ETHER_MAX_DATA		1500
 
+<<<<<<< HEAD
 /* ether types */
 #define ETHER_TYPE_MIN		0x0600		/* Anything less than MIN is a length */
 #define	ETHER_TYPE_IP		0x0800		/* IP */
@@ -91,6 +99,21 @@
 #define	ETHER_TYPE_802_1X_PREAUTH 0x88c7	/* 802.1x preauthentication */
 #define ETHER_TYPE_WAI		0x88b4		/* WAI */
 #define ETHER_TYPE_89_0D	0x890d		/* 89-0d frame for TDLS */
+=======
+
+#define ETHER_TYPE_MIN		0x0600		
+#define	ETHER_TYPE_IP		0x0800		
+#define ETHER_TYPE_ARP		0x0806		
+#define ETHER_TYPE_8021Q	0x8100		
+#define	ETHER_TYPE_IPV6		0x86dd		
+#define	ETHER_TYPE_BRCM		0x886c		
+#define	ETHER_TYPE_802_1X	0x888e		
+#define	ETHER_TYPE_802_1X_PREAUTH 0x88c7	
+#define ETHER_TYPE_WAI		0x88b4		
+#define ETHER_TYPE_89_0D	0x890d		
+
+#define ETHER_TYPE_IPV6		0x86dd		
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define ETHER_TYPE_PPP_SES	0x8864		/* PPPoE Session */
 
@@ -119,10 +142,15 @@
 		((uint8 *)ea)[5] = ((mgrp_ip) >>  0) & 0xff;	\
 }
 
+<<<<<<< HEAD
 #ifndef __INCif_etherh /* Quick and ugly hack for VxWorks */
 /*
  * Structure of a 10Mb/s Ethernet header.
  */
+=======
+#ifndef __INCif_etherh       
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct ether_header {
 	uint8	ether_dhost[ETHER_ADDR_LEN];
 	uint8	ether_shost[ETHER_ADDR_LEN];
@@ -156,6 +184,7 @@ BWL_PRE_PACKED_STRUCT struct	ether_addr {
 #define ETHER_ISMULTI(ea) (((const uint8 *)(ea))[0] & 1)
 
 
+<<<<<<< HEAD
 /* compare two ethernet addresses - assumes the pointers can be referenced as shorts */
 #define eacmp(a, b)	((((const uint16 *)(a))[0] ^ ((const uint16 *)(b))[0]) | \
 	                 (((const uint16 *)(a))[1] ^ ((const uint16 *)(b))[1]) | \
@@ -172,6 +201,18 @@ do { \
 } while (0)
 
 #define	ether_copy(s, d) eacopy(s, d)
+=======
+
+#define	ether_cmp(a, b)	(!(((short*)(a))[0] == ((short*)(b))[0]) | \
+			 !(((short*)(a))[1] == ((short*)(b))[1]) | \
+			 !(((short*)(a))[2] == ((short*)(b))[2]))
+
+
+#define	ether_copy(s, d) { \
+		((short*)(d))[0] = ((const short*)(s))[0]; \
+		((short*)(d))[1] = ((const short*)(s))[1]; \
+		((short*)(d))[2] = ((const short*)(s))[2]; }
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Copy an ethernet address in reverse order */
 #define	ether_rcopy(s, d) \
@@ -185,7 +226,6 @@ do { \
 
 static const struct ether_addr ether_bcast = {{255, 255, 255, 255, 255, 255}};
 static const struct ether_addr ether_null = {{0, 0, 0, 0, 0, 0}};
-static const struct ether_addr ether_ipv6_mcast = {{0x33, 0x33, 0x00, 0x00, 0x00, 0x01}};
 
 #define ETHER_ISBCAST(ea)	((((const uint8 *)(ea))[0] &		\
 	                          ((const uint8 *)(ea))[1] &		\
@@ -200,11 +240,6 @@ static const struct ether_addr ether_ipv6_mcast = {{0x33, 0x33, 0x00, 0x00, 0x00
 				  ((const uint8 *)(ea))[4] |		\
 				  ((const uint8 *)(ea))[5]) == 0)
 
-#define ETHER_ISNULLDEST(da)	((((const uint16 *)(da))[0] |           \
-				  ((const uint16 *)(da))[1] |           \
-				  ((const uint16 *)(da))[2]) == 0)
-#define ETHER_ISNULLSRC(sa)	ETHER_ISNULLDEST(sa)
-
 #define ETHER_MOVE_HDR(d, s) \
 do { \
 	struct ether_header t; \
@@ -212,9 +247,13 @@ do { \
 	*(struct ether_header *)(d) = t; \
 } while (0)
 
+<<<<<<< HEAD
 #define  ETHER_ISUCAST(ea) ((((uint8 *)(ea))[0] & 0x01) == 0)
 
 /* This marks the end of a packed structure section. */
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #include <packed_section_end.h>
 
 #endif /* _NET_ETHERNET_H_ */

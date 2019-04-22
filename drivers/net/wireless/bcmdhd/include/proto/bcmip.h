@@ -21,7 +21,11 @@
  *
  * Fundamental constants relating to IP Protocol
  *
+<<<<<<< HEAD
  * $Id: bcmip.h 407335 2013-06-12 16:32:12Z $
+=======
+ * $Id: bcmip.h 290206 2011-10-17 19:13:51Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _bcmip_h_
@@ -45,6 +49,7 @@
 #define IP_VER(ip_body) \
 	((((uint8 *)(ip_body))[IP_VER_OFFSET] & IP_VER_MASK) >> IP_VER_SHIFT)
 
+<<<<<<< HEAD
 #define IP_PROT_ICMP		0x1	/* ICMP protocol */
 #define IP_PROT_IGMP		0x2	/* IGMP protocol */
 #define IP_PROT_TCP		0x6	/* TCP protocol */
@@ -68,6 +73,30 @@
 #define IPV4_VER_SHIFT		4	/* IPV4 version shift */
 
 #define IPV4_HLEN_MASK		0x0f	/* IPV4 header length mask */
+=======
+#define IP_PROT_ICMP		0x1	
+#define IP_PROT_IGMP		0x2	
+#define IP_PROT_TCP		0x6	
+#define IP_PROT_UDP		0x11	
+#define IP_PROT_ICMP6		0x3a	
+
+
+#define IPV4_VER_HL_OFFSET	0	
+#define IPV4_TOS_OFFSET		1	
+#define IPV4_PKTLEN_OFFSET	2	
+#define IPV4_PKTFLAG_OFFSET	6	
+#define IPV4_PROT_OFFSET	9	
+#define IPV4_CHKSUM_OFFSET	10	
+#define IPV4_SRC_IP_OFFSET	12	
+#define IPV4_DEST_IP_OFFSET	16	
+#define IPV4_OPTIONS_OFFSET	20	
+
+
+#define IPV4_VER_MASK		0xf0	
+#define IPV4_VER_SHIFT		4	
+
+#define IPV4_HLEN_MASK		0x0f	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define IPV4_HLEN(ipv4_body)	(4 * (((uint8 *)(ipv4_body))[IPV4_VER_HL_OFFSET] & IPV4_HLEN_MASK))
 
 #define IPV4_ADDR_LEN		4	/* IPV4 address length */
@@ -207,6 +236,7 @@ ipv6_exthdr_len(uint8 *h, uint8 *proto)
 	return len;
 }
 
+<<<<<<< HEAD
 #define IPV4_ISMULTI(a) (((a) & 0xf0000000) == 0xe0000000)
 
 #define IPV4_MCAST_TO_ETHER_MCAST(ipv4, ether) \
@@ -218,6 +248,8 @@ ipv6_exthdr_len(uint8 *h, uint8 *proto)
 	ether[4] = (ipv4 & 0xff00) >> 8; \
 	ether[5] = (ipv4 & 0xff); \
 }
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* This marks the end of a packed structure section. */
 #include <packed_section_end.h>

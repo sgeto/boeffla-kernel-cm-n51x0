@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsrom_tbl.h 427005 2013-10-02 00:15:10Z $
+=======
+ * $Id: bcmsrom_tbl.h 327694 2012-04-16 13:22:24Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_bcmsrom_tbl_h_
@@ -67,13 +71,15 @@ typedef struct {
  */
 
 static const sromvar_t pci_sromvars[] = {
+<<<<<<< HEAD
 #if defined(CABLECPE)
 	{"devid",	0xffffff00,	SRFL_PRHEX,	PCI_F0DEVID,	0xffff},
 #elif defined(BCMPCIEDEV) && defined(BCMPCIEDEV_ENABLED)
 	{"devid",	0xffffff00,	SRFL_PRHEX, SROM_DEVID_PCIE, 0xffff},
 #else
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{"devid",	0xffffff00,	SRFL_PRHEX|SRFL_NOVAR,	PCI_F0DEVID,	0xffff},
-#endif 
 	{"boardrev",	0x0000000e,	SRFL_PRHEX,	SROM_AABREV,		SROM_BR_MASK},
 	{"boardrev",	0x000000f0,	SRFL_PRHEX,	SROM4_BREV,		0xffff},
 	{"boardrev",	0xffffff00,	SRFL_PRHEX,	SROM8_BREV,		0xffff},
@@ -95,7 +101,7 @@ static const sromvar_t pci_sromvars[] = {
 	{"boardflags2", 0xffffff00,	SRFL_PRHEX|SRFL_MORE,	SROM8_BFL2,	0xffff},
 	{"",		0,		0,		SROM8_BFL3,		0xffff},
 	{"boardtype",	0xfffffffc,	SRFL_PRHEX,	SROM_SSID,		0xffff},
-	{"subvid",	0xfffffffc,	SRFL_PRHEX,	SROM_SVID,		0xffff},
+
 	{"boardnum",	0x00000006,	0,		SROM_MACLO_IL0,		0xffff},
 	{"boardnum",	0x00000008,	0,		SROM3_MACLO,		0xffff},
 	{"boardnum",	0x00000010,	0,		SROM4_MACLO,		0xffff},
@@ -456,8 +462,8 @@ static const sromvar_t pci_sromvars[] = {
 	{"",	0x00000400, SRFL_PRHEX,	SROM10_SWCTRLMAP_2G + 8,			0xffff},
 
 	/* sromrev 11 */
-	{"boardflags3",	0xfffff800,	SRFL_PRHEX|SRFL_MORE,	SROM11_BFL4,	0xffff},
-	{"",		0,		0,			SROM11_BFL5,	0xffff},
+	{"boardflags3",	0xfffff800,	SRFL_PRHEX|SRFL_MORE,	SROM11_BFL3,	0xffff},
+	{"",		0,		0,			SROM11_BFL3,	0xffff},
 	{"boardnum",	0xfffff800,	0,			SROM11_MACLO,	0xffff},
 	{"macaddr",	0xfffff800,	SRFL_ETHADDR,		SROM11_MACHI,	0xffff},
 	{"ccode",	0xfffff800,	SRFL_CCODE,		SROM11_CCODE,	0xffff},
@@ -469,12 +475,12 @@ static const sromvar_t pci_sromvars[] = {
 	{"leddc",	0xfffff800,	SRFL_NOFFS|SRFL_LEDDC,	SROM11_LEDDC,	0xffff},
 	{"aa2g",	0xfffff800,	0,			SROM11_AA,	0x00ff},
 	{"aa5g",	0xfffff800,	0,			SROM11_AA,	0xff00},
-	{"agbg0",	0xfffff800,	0,			SROM11_AGBG10,  0xff00},
-	{"agbg1",	0xfffff800,	0,			SROM11_AGBG10,	0x00ff},
-	{"agbg2",	0xfffff800,	0,			SROM11_AGBG2A0,	0xff00},
-	{"aga0",	0xfffff800,	0,			SROM11_AGBG2A0,	0x00ff},
-	{"aga1",	0xfffff800,	0,			SROM11_AGA21,   0xff00},
-	{"aga2",	0xfffff800,	0,			SROM11_AGA21,	0x00ff},
+	{"agbg0",	0xfffff800,	0,			SROM11_AGBG10,  0x00ff},
+	{"agbg1",	0xfffff800,	0,			SROM11_AGBG10,	0xff00},
+	{"agbg2",	0xfffff800,	0,			SROM11_AGBG2A0,	0x00ff},
+	{"aga0",	0xfffff800,	0,			SROM11_AGBG2A0,	0xff00},
+	{"aga1",	0xfffff800,	0,			SROM11_AGA21,   0x00ff},
+	{"aga2",	0xfffff800,	0,			SROM11_AGA21,	0xff00},
 	{"txchain",	0xfffff800,	SRFL_NOFFS,	SROM11_TXRXC,	SROM4_TXCHAIN_MASK},
 	{"rxchain",	0xfffff800,	SRFL_NOFFS,	SROM11_TXRXC,	SROM4_RXCHAIN_MASK},
 	{"antswitch",	0xfffff800,	SRFL_NOFFS,	SROM11_TXRXC,	SROM4_SWITCH_MASK},
@@ -500,6 +506,7 @@ static const sromvar_t pci_sromvars[] = {
 	{"tempsense_slope",	0xfffff800,	SRFL_PRHEX, 	SROM11_TS_SLP_OPT_CORRX, 0x00ff},
 	{"tempcorrx",		0xfffff800,	SRFL_PRHEX, 	SROM11_TS_SLP_OPT_CORRX, 0xfc00},
 	{"tempsense_option",	0xfffff800,	SRFL_PRHEX,	SROM11_TS_SLP_OPT_CORRX, 0x0300},
+<<<<<<< HEAD
 	{"xtalfreq",		0xfffff800,	0,		SROM11_XTAL_FREQ, 	0xffff},
 	/* Special PA Params for 4350 5G Band, 40/80 MHz BW Ant #1 */
 	{"pa5gbw4080a1", 0xfffff800,	SRFL_PRHEX | SRFL_ARRAY, SROM11_5GB0_4080_W0_A1, 0xffff},
@@ -514,11 +521,14 @@ static const sromvar_t pci_sromvars[] = {
 	{"", 0xfffff800, SRFL_PRHEX | SRFL_ARRAY, SROM11_PATH2 + SROM11_5GB3_4080_PA,     0xffff},
 	{"", 0xfffff800, SRFL_PRHEX | SRFL_ARRAY, SROM11_PATH2 + SROM11_5GB3_4080_PA + 1, 0xffff},
 	{"", 0xfffff800, SRFL_PRHEX,              SROM11_PATH2 + SROM11_5GB3_4080_PA + 2, 0xffff},
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{"phycal_tempdelta",	0xfffff800,	0,		SROM11_PHYCAL_TEMPDELTA, 0x00ff},
 	{"temps_period",	0xfffff800,	0,		SROM11_PHYCAL_TEMPDELTA, 0x0f00},
 	{"temps_hysteresis",	0xfffff800,	0,		SROM11_PHYCAL_TEMPDELTA, 0xf000},
 	{"measpower1", 		0xfffff800,	SRFL_PRHEX,	SROM11_MPWR_1_AND_2, 	0x007f},
 	{"measpower2",		0xfffff800, 	SRFL_PRHEX,	SROM11_MPWR_1_AND_2, 	0x3f80},
+<<<<<<< HEAD
 	{"tssifloor2g",		0xfffff800,	SRFL_PRHEX,	SROM11_TSSIFLOOR_2G,	0x03ff},
 	{"tssifloor5g",	0xfffff800,	SRFL_PRHEX | SRFL_ARRAY, SROM11_TSSIFLOOR_5GL,	0x03ff},
 	{"",		0xfffff800,	SRFL_PRHEX | SRFL_ARRAY, SROM11_TSSIFLOOR_5GM,	0x03ff},
@@ -528,6 +538,8 @@ static const sromvar_t pci_sromvars[] = {
 	{"pdoffset2g40ma1",     0xfffff800, 0,      SROM11_PDOFF_2G_40M,    0x00f0},
 	{"pdoffset2g40ma2",     0xfffff800, 0,      SROM11_PDOFF_2G_40M,    0x0f00},
 	{"pdoffset2g40mvalid",  0xfffff800, 0,      SROM11_PDOFF_2G_40M,    0x8000},
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{"pdoffset40ma0",      	0xfffff800,	0,		SROM11_PDOFF_40M_A0,   	0xffff},
 	{"pdoffset40ma1",      	0xfffff800,	0,		SROM11_PDOFF_40M_A1,   	0xffff},
 	{"pdoffset40ma2",      	0xfffff800,	0,		SROM11_PDOFF_40M_A2,   	0xffff},
@@ -596,22 +608,32 @@ static const sromvar_t pci_sromvars[] = {
 	{"",           		0xfffff800, 	0,     		SROM11_MCSBW405GLPO_1, 	0xffff},
 	{"mcsbw805glpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW805GLPO, 	0xffff},
 	{"",           		0xfffff800, 	0,    		SROM11_MCSBW805GLPO_1, 	0xffff},
+	{"mcsbw1605glpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW1605GLPO, 	0xffff},
+	{"",           		0xfffff800, 	0,    		SROM11_MCSBW1605GLPO_1, 0xffff},
 	{"mcsbw205gmpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW205GMPO, 	0xffff},
 	{"",           		0xfffff800, 	0,     		SROM11_MCSBW205GMPO_1, 	0xffff},
 	{"mcsbw405gmpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW405GMPO, 	0xffff},
 	{"",           		0xfffff800, 	0,     		SROM11_MCSBW405GMPO_1, 	0xffff},
 	{"mcsbw805gmpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW805GMPO, 	0xffff},
 	{"",           		0xfffff800, 	0,   		SROM11_MCSBW805GMPO_1, 	0xffff},
+	{"mcsbw1605gmpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW1605GMPO, 	0xffff},
+	{"",           		0xfffff800, 	0,  		SROM11_MCSBW1605GMPO_1, 0xffff},
 	{"mcsbw205ghpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW205GHPO, 	0xffff},
 	{"",           		0xfffff800, 	0,  		SROM11_MCSBW205GHPO_1, 	0xffff},
 	{"mcsbw405ghpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW405GHPO, 	0xffff},
 	{"",           		0xfffff800, 	0,   		SROM11_MCSBW405GHPO_1, 	0xffff},
 	{"mcsbw805ghpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW805GHPO, 	0xffff},
 	{"",           		0xfffff800, 	0,    		SROM11_MCSBW805GHPO_1, 	0xffff},
+<<<<<<< HEAD
 	{"mcslr5glpo",		0xfffff800,	0,		SROM11_MCSLR5GLPO, 	0x0fff},
+=======
+	{"mcsbw1605ghpo",	0xfffff800,	SRFL_MORE,	SROM11_MCSBW1605GHPO, 	0xffff},
+	{"",           		0xfffff800, 	0,    		SROM11_MCSBW1605GHPO_1, 0xffff},
+	{"mcslr5glpo",		0xfffff800,	0,		SROM11_MCSLR5GLPO, 	0xffff},
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{"mcslr5gmpo",		0xfffff800,	0,		SROM11_MCSLR5GMPO, 	0xffff},
 	{"mcslr5ghpo",		0xfffff800,	0,		SROM11_MCSLR5GHPO, 	0xffff},
-	{"sb20in40hrpo", 	0xfffff800,	0,	SROM11_SB20IN40HRPO,		0xffff},
+	{"sb20in40hrrpo", 	0xfffff800,	0,	SROM11_SB20IN40HRPO,		0xffff},
 	{"sb20in80and160hr5glpo", 0xfffff800, 	0, 	SROM11_SB20IN80AND160HR5GLPO, 	0xffff},
 	{"sb40and80hr5glpo",	  0xfffff800, 	0,	SROM11_SB40AND80HR5GLPO,	0xffff},
 	{"sb20in80and160hr5gmpo", 0xfffff800, 	0,	SROM11_SB20IN80AND160HR5GMPO, 	0xffff},
@@ -629,6 +651,7 @@ static const sromvar_t pci_sromvars[] = {
 	{"dot11agduplrpo",	  0xfffff800, 	0,	SROM11_DOT11AGDUPLRPO,		0xffff},
 
 	/* Misc */
+	{"pcieingress_war",	0xfffff800,	0,	SROM11_PCIEINGRESS_WAR,	0xf},
 	{"sar2g",       	0xfffff800,	0,	SROM11_SAR,          	0x00ff},
 	{"sar5g",           	0xfffff800,	0,	SROM11_SAR,		0xff00},
 
@@ -663,6 +686,7 @@ static const sromvar_t pci_sromvars[] = {
 	{"",      		0xfffff800, 	SRFL_ARRAY,    	SROM11_RXGAINERR_5GM,   0xf800},
 	{"",      		0xfffff800, 	SRFL_ARRAY,    	SROM11_RXGAINERR_5GH,   0xf800},
 	{"",      		0xfffff800, 	0,    		SROM11_RXGAINERR_5GU,   0xf800},
+<<<<<<< HEAD
 	{"rpcal2g",      	0xfffff800, 	0,		SROM11_RPCAL_2G,        0xffff},
 	{"rpcal5gb0",      	0xfffff800, 	0,		SROM11_RPCAL_5GL,       0xffff},
 	{"rpcal5gb1",      	0xfffff800, 	0,		SROM11_RPCAL_5GM,       0xffff},
@@ -673,6 +697,9 @@ static const sromvar_t pci_sromvars[] = {
 	{"pdoffsetcckma0",      0xfffff800,     0,              SROM11_PDOFF_2G_CCK,    0x000f},
 	{"pdoffsetcckma1",      0xfffff800,     0,              SROM11_PDOFF_2G_CCK,    0x00f0},
 	{"pdoffsetcckma2",      0xfffff800,     0,              SROM11_PDOFF_2G_CCK,    0x0f00},
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{NULL,		0,		0,		0,			0}
 };
 
@@ -889,8 +916,12 @@ static const cis_tuple_t cis_hnbuvars[] = {
 	{HNBU_AA,		0xffffffff, 3, "1aa0 1aa1"}, /* backward compatibility */
 	{HNBU_AG,		0xffffffff, 5, "1ag0 1ag1 1ag2 1ag3"},
 	{HNBU_BOARDFLAGS,	0xffffffff, 13, "4boardflags 4boardflags2 4boardflags3"},
+<<<<<<< HEAD
 	{HNBU_LEDS,		0xffffffff, 17, "1ledbh0 1ledbh1 1ledbh2 1ledbh3 1ledbh4 1ledbh5 "
 	"1ledbh6 1ledbh7 1ledbh8 1ledbh9 1ledbh10 1ledbh11 1ledbh12 1ledbh13 1ledbh14 1ledbh15"},
+=======
+	{HNBU_LEDS,		0xffffffff, 5, "1ledbh0 1ledbh1 1ledbh2 1ledbh3"},
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{HNBU_CCODE,		0xffffffff, 4, "2ccode 1cctl"},
 	{HNBU_CCKPO,		0xffffffff, 3, "2cckpo"},
 	{HNBU_OFDMPO,		0xffffffff, 5, "4ofdmpo"},
@@ -973,8 +1004,8 @@ static const cis_tuple_t cis_hnbuvars[] = {
 	"2pdoffset80ma0 2pdoffset80ma1 2pdoffset80ma2"},
 	{HNBU_ACPPR_2GPO,	0xfffff800, 5,	"2dot11agofdmhrbw202gpo 2ofdmlrbw202gpo"},
 	{HNBU_ACPPR_5GPO,	0xfffff800, 31,	"4mcsbw805glpo 4mcsbw1605glpo 4mcsbw805gmpo "
-	"4mcsbw1605gmpo 4mcsbw805ghpo 4mcsbw1605ghpo 2mcslr5glpo 2mcslr5gmpo 2mcslr5ghpo"},
-	{HNBU_ACPPR_SBPO,	0xfffff800, 33,	"2sb20in40hrpo 2sb20in80and160hr5glpo "
+	"4mcsbw1605gmpo 4mcsbw805ghpo 4mcsbw1605ghpo 2mcslr5rlpo 2mcslr5gmpo 2mcslr5ghpo"},
+	{HNBU_ACPPR_SBPO,	0xfffff800, 33,	"2sb20in40hrrpo 2sb20in80and160hr5glpo "
 	"2sb40and80hr5glpo 2sb20in80and160hr5gmpo 2sb40and80hr5gmpo 2sb20in80and160hr5ghpo "
 	"2sb40and80hr5ghpo 2sb20in40lrpo 2sb20in80and160lr5glpo 2sb40and80lr5glpo "
 	"2sb20in80and160lr5gmpo 2sb40and80lr5gmpo 2sb20in80and160lr5ghpo 2sb40and80lr5ghpo "
@@ -998,6 +1029,7 @@ static const cis_tuple_t cis_hnbuvars[] = {
 	"0rxgains5gelnagaina2 0rxgains2gtrelnabypa2 0rxgains2gtrisoa2 0rxgains2gelnagaina2 "
 	"0rxgains5ghtrelnabypa2 0rxgains5ghtrisoa2 0rxgains5ghelnagaina2 0rxgains5gmtrelnabypa2 "
 	"0rxgains5gmtrisoa2 0rxgains5gmelnagaina2"},	/* special case */
+<<<<<<< HEAD
 	{HNBU_TXDUTY, 		0xfffff800, 9,	"2tx_duty_cycle_ofdm_40_5g "
 	"2tx_duty_cycle_thresh_40_5g 2tx_duty_cycle_ofdm_80_5g 2tx_duty_cycle_thresh_80_5g"},
 	{HNBU_PDOFF_2G,		0xfffff800, 3,	"0pdoffset2g40ma0 0pdoffset2g40ma1 "
@@ -1008,6 +1040,8 @@ static const cis_tuple_t cis_hnbuvars[] = {
 	{HNBU_ACPA_4080,	0xfffff800, 49,	"2*12pa5gbw4080a0 2*12pa5gbw4080a1"},
 	{HNBU_SUBBAND5GVER,	0xfffff800, 3,	"2subband5gver"},
 	{HNBU_PAPARAMBWVER,	0xfffff800, 2,	"1paparambwver"},
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{0xFF,			0xffffffff, 0, ""}
 };
 

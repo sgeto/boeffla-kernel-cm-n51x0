@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmutils.h 434656 2013-11-07 01:11:33Z $
+=======
+ * $Id: bcmutils.h 354184 2012-08-30 08:08:08Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_bcmutils_h_
@@ -119,6 +123,7 @@ typedef struct pktq_prec {
 
 #ifdef PKTQ_LOG
 typedef struct {
+<<<<<<< HEAD
 	uint32 requested;    /* packets requested to be stored */
 	uint32 stored;	     /* packets stored */
 	uint32 saved;	     /* packets saved,
@@ -153,6 +158,22 @@ typedef struct {
 	uint32 throughput;     /* actual data transferred successfully */
 	uint32 airtime;        /* cumulative total medium access delay in useconds */
 	uint32  _logtime;      /* timestamp of last counter clear  */
+=======
+	uint32 requested;    
+	uint32 stored;	     
+	uint32 saved;	     
+	uint32 selfsaved;    
+	uint32 full_dropped; 
+	uint32 dropped;      
+	uint32 sacrificed;   
+	uint32 busy;         
+	uint32 retry;        
+	uint32 ps_retry;     
+	uint32 retry_drop;   
+	uint32 max_avail;    
+	uint32 max_used;     
+	uint32 queue_capacity; 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } pktq_counters_t;
 
 typedef struct {
@@ -174,7 +195,11 @@ struct pktq {
 	/* q array must be last since # of elements can be either PKTQ_MAX_PREC or 1 */
 	struct pktq_prec q[PKTQ_MAX_PREC];
 #ifdef PKTQ_LOG
+<<<<<<< HEAD
 	pktq_log_t*      pktqlog;
+=======
+	pktq_counters_t	_prec_cnt[PKTQ_MAX_PREC];		
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif
 };
 
@@ -379,7 +404,6 @@ extern void *pktq_penq(struct pktq *pq, int prec, void *p);
 extern void *pktq_penq_head(struct pktq *pq, int prec, void *p);
 extern void *pktq_pdeq(struct pktq *pq, int prec);
 extern void *pktq_pdeq_prev(struct pktq *pq, int prec, void *prev_p);
-extern void *pktq_pdeq_with_fn(struct pktq *pq, int prec, ifpkt_cb_t fn, int arg);
 extern void *pktq_pdeq_tail(struct pktq *pq, int prec);
 /* Empty the queue at particular precedence level */
 extern void pktq_pflush(osl_t *osh, struct pktq *pq, int prec, bool dir,
@@ -426,8 +450,7 @@ extern uint pkttotlen(osl_t *osh, void *p);
 extern void *pktlast(osl_t *osh, void *p);
 extern uint pktsegcnt(osl_t *osh, void *p);
 extern uint pktsegcnt_war(osl_t *osh, void *p);
-extern uint8 *pktdataoffset(osl_t *osh, void *p,  uint offset);
-extern void *pktoffset(osl_t *osh, void *p,  uint offset);
+extern uint8 *pktoffset(osl_t *osh, void *p,  uint offset);
 
 /* Get priority from a packet and pass it back in scb (or equiv) */
 #define	PKTPRIO_VDSCP	0x100		/* DSCP prio found after VLAN tag */
@@ -711,6 +734,7 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 
 #ifndef MAX
 #define	MAX(a, b)		(((a) > (b)) ? (a) : (b))
+<<<<<<< HEAD
 #endif /* MAX */
 
 /* limit to [min, max] */
@@ -733,6 +757,10 @@ extern int bcm_format_ssid(char* buf, const uchar ssid[], uint ssid_len);
 
 #define DELTA(curr, prev) ((curr) > (prev) ? ((curr) - (prev)) : \
 	(0xffffffff - (prev) + (curr) + 1))
+=======
+#endif 
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define CEIL(x, y)		(((x) + ((y) - 1)) / (y))
 #define ROUNDUP(x, y)		((((x) + ((y) - 1)) / (y)) * (y))
 #define ROUNDDN(p, align)	((p) & ~((align) - 1))
@@ -777,6 +805,7 @@ extern void *_bcmutils_dummy_fn;
 
 /* bit map related macros */
 #ifndef setbit
+<<<<<<< HEAD
 #ifndef NBBY		/* the BSD family defines NBBY */
 #define	NBBY	8	/* 8 bits per byte */
 #endif /* #ifndef NBBY */
@@ -786,14 +815,17 @@ extern void clrbit(void *array, uint bit);
 extern bool isset(const void *array, uint bit);
 extern bool isclr(const void *array, uint bit);
 #else
+=======
+#ifndef NBBY		      
+#define	NBBY	8	
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define	setbit(a, i)	(((uint8 *)a)[(i) / NBBY] |= 1 << ((i) % NBBY))
 #define	clrbit(a, i)	(((uint8 *)a)[(i) / NBBY] &= ~(1 << ((i) % NBBY)))
 #define	isset(a, i)	(((const uint8 *)a)[(i) / NBBY] & (1 << ((i) % NBBY)))
 #define	isclr(a, i)	((((const uint8 *)a)[(i) / NBBY] & (1 << ((i) % NBBY))) == 0)
 #endif
 #endif /* setbit */
-
-#define	isbitset(a, i)	(((a) & (1 << (i))) != 0)
 
 #define	NBITS(type)	(sizeof(type) * 8)
 #define NBITVAL(nbits)	(1 << (nbits))
@@ -884,12 +916,15 @@ DECLARE_MAP_API(4,  3, 2,  7U, 0x000F) /* setbit4() and getbit4() */
 #define MACDBG				"%02x:%02x:%02x"
 #define MAC2STRDBG(ea) (ea)[0], (ea)[4], (ea)[5]
 #endif /* SIMPLE_MAC_PRINT */
+<<<<<<< HEAD
 
 #define IPv4_ADDR_STR "%d.%d.%d.%d"
 #define IPv4_ADDR_TO_STR(addr)	((uint32)addr & 0xff000000) >> 24, \
 								((uint32)addr & 0x00ff0000) >> 16, \
 								((uint32)addr & 0x0000ff00) >> 8, \
 								((uint32)addr & 0x000000ff)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* bcm_format_flags() bit description structure */
 typedef struct bcm_bit_desc {
@@ -897,6 +932,7 @@ typedef struct bcm_bit_desc {
 	const char* name;
 } bcm_bit_desc_t;
 
+<<<<<<< HEAD
 /* bcm_format_field */
 typedef struct bcm_bit_desc_ex {
 	uint32 mask;
@@ -908,6 +944,23 @@ typedef struct bcm_bit_desc_ex {
 
 /* crypto utility function */
 /* 128-bit xor: *dst = *src1 xor *src2. dst1, src1 and src2 may have any alignment */
+=======
+
+typedef struct bcm_tlv {
+	uint8	id;
+	uint8	len;
+	uint8	data[1];
+} bcm_tlv_t;
+
+
+#define bcm_valid_tlv(elt, buflen) ((buflen) >= 2 && (int)(buflen) >= (int)(2 + (elt)->len))
+
+
+#define ETHER_ADDR_STR_LEN	18	
+
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 static INLINE void
 xor_128bit_block(const uint8 *src1, const uint8 *src2, uint8 *dst)
 {
@@ -939,9 +992,12 @@ extern uint32 hndcrc32(uint8 *p, uint nbytes, uint32 crc);
 /* format/print */
 #if defined(DHD_DEBUG) || defined(WLMSG_PRHDRS) || defined(WLMSG_PRPKT) || \
 	defined(WLMSG_ASSOC)
+<<<<<<< HEAD
 /* print out the value a field has: fields may have 1-32 bits and may hold any value */
 extern int bcm_format_field(const bcm_bit_desc_ex_t *bd, uint32 field, char* buf, int len);
 /* print out which bits in flags are set */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern int bcm_format_flags(const bcm_bit_desc_t *bd, uint32 flags, char* buf, int len);
 #endif
 
@@ -981,12 +1037,17 @@ extern bcm_tlv_t *bcm_parse_ordered_tlvs(void *buf, int buflen, uint key);
 extern bcm_tlv_t *bcm_find_vendor_ie(void *tlvs, int tlvs_len, const char *voui, uint8 *type,
 	int type_len);
 
+<<<<<<< HEAD
 extern uint8 *bcm_write_tlv(int type, const void *data, int datalen, uint8 *dst);
 extern uint8 *bcm_write_tlv_safe(int type, const void *data, int datalen, uint8 *dst,
 	int dst_maxlen);
 
 extern uint8 *bcm_copy_tlv(const void *src, uint8 *dst);
 extern uint8 *bcm_copy_tlv_safe(const void *src, uint8 *dst, int dst_maxlen);
+=======
+extern const char *bcmerrorstr(int bcmerror);
+extern bcm_tlv_t *bcm_parse_tlvs(void *buf, int buflen, uint key);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* bcmerror */
 extern const char *bcmerrorstr(int bcmerror);

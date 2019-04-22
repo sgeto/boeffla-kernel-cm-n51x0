@@ -21,7 +21,11 @@
  *
  * Fundamental types and constants relating to 802.11
  *
+<<<<<<< HEAD
  * $Id: 802.11.h 444070 2013-12-18 13:20:12Z $
+=======
+ * $Id: 802.11.h 346820 2012-07-24 13:53:12Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _802_11_H_
@@ -432,6 +436,7 @@ BWL_PRE_PACKED_STRUCT struct dot11y_action_ext_csa {
 	struct dot11_csa_body b;	/* body of the ie */
 } BWL_POST_PACKED_STRUCT;
 
+<<<<<<< HEAD
 /*  Wide Bandwidth Channel Switch IE data structure */
 BWL_PRE_PACKED_STRUCT struct dot11_wide_bw_channel_switch {
 	uint8 id;				/* id DOT11_MNG_WIDE_BW_CHANNEL_SWITCH_ID */
@@ -466,6 +471,8 @@ typedef struct dot11_vht_transmit_power_envelope dot11_vht_transmit_power_envelo
 #define DOT11_VHT_TRANSMIT_PWR_ENVELOPE_IE_LEN_80MHZ	2
 #define DOT11_VHT_TRANSMIT_PWR_ENVELOPE_IE_LEN_160MHZ	3
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct dot11_obss_coex {
 	uint8	id;
 	uint8	len;
@@ -520,6 +527,7 @@ BWL_PRE_PACKED_STRUCT struct dot11_extcap {
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_extcap dot11_extcap_t;
 
+<<<<<<< HEAD
 /* TDLS Capabilities */
 #define DOT11_TDLS_CAP_TDLS			37		/* TDLS support */
 #define DOT11_TDLS_CAP_PU_BUFFER_STA	28		/* TDLS Peer U-APSD buffer STA support */
@@ -561,6 +569,48 @@ typedef struct dot11_extcap dot11_extcap_t;
 #define DOT11_MEASURE_BASIC_MAP_UKNOWN	((uint8)(1<<2))	/* d11 measurement map unknown */
 #define DOT11_MEASURE_BASIC_MAP_RADAR	((uint8)(1<<3))	/* d11 measurement map radar */
 #define DOT11_MEASURE_BASIC_MAP_UNMEAS	((uint8)(1<<4))	/* d11 measurement map unmeasuremnt */
+=======
+
+#define TDLS_CAP_TDLS			37		
+#define TDLS_CAP_PU_BUFFER_STA	28		
+#define TDLS_CAP_PEER_PSM		20		
+#define TDLS_CAP_CH_SW			30		
+#define TDLS_CAP_PROH			38		
+#define TDLS_CAP_CH_SW_PROH		39		
+
+#define TDLS_CAP_MAX_BIT		39		
+
+
+
+#define DOT11_MEASURE_TYPE_BASIC 	0	
+#define DOT11_MEASURE_TYPE_CCA 		1	
+#define DOT11_MEASURE_TYPE_RPI		2	
+#define DOT11_MEASURE_TYPE_CHLOAD		3	
+#define DOT11_MEASURE_TYPE_NOISE		4	
+#define DOT11_MEASURE_TYPE_BEACON		5	
+#define DOT11_MEASURE_TYPE_FRAME	6	
+#define DOT11_MEASURE_TYPE_STATS		7	
+#define DOT11_MEASURE_TYPE_LCI		8	
+#define DOT11_MEASURE_TYPE_TXSTREAM		9	
+#define DOT11_MEASURE_TYPE_PAUSE		255	
+
+
+#define DOT11_MEASURE_MODE_PARALLEL 	(1<<0)	
+#define DOT11_MEASURE_MODE_ENABLE 	(1<<1)	
+#define DOT11_MEASURE_MODE_REQUEST	(1<<2)	
+#define DOT11_MEASURE_MODE_REPORT 	(1<<3)	
+#define DOT11_MEASURE_MODE_DUR 	(1<<4)	
+
+#define DOT11_MEASURE_MODE_LATE 	(1<<0)	
+#define DOT11_MEASURE_MODE_INCAPABLE	(1<<1)	
+#define DOT11_MEASURE_MODE_REFUSED	(1<<2)	
+
+#define DOT11_MEASURE_BASIC_MAP_BSS	((uint8)(1<<0))	
+#define DOT11_MEASURE_BASIC_MAP_OFDM	((uint8)(1<<1))	
+#define DOT11_MEASURE_BASIC_MAP_UKNOWN	((uint8)(1<<2))	
+#define DOT11_MEASURE_BASIC_MAP_RADAR	((uint8)(1<<3))	
+#define DOT11_MEASURE_BASIC_MAP_UNMEAS	((uint8)(1<<4))	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 BWL_PRE_PACKED_STRUCT struct dot11_meas_req {
 	uint8 id;
@@ -633,6 +683,7 @@ BWL_PRE_PACKED_STRUCT struct dot11_ibss_dfs {
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_ibss_dfs dot11_ibss_dfs_t;
 
+<<<<<<< HEAD
 /* WME Elements */
 #define WME_OUI			"\x00\x50\xf2"	/* WME OUI */
 #define WME_OUI_LEN		3
@@ -654,6 +705,29 @@ typedef uint8 ac_bitmap_t;	/* AC bitmap of (1 << AC_xx) */
 
 #define AC_BITMAP_NONE		0x0	/* No ACs */
 #define AC_BITMAP_ALL		0xf	/* All ACs */
+=======
+
+#define WME_OUI			"\x00\x50\xf2"	
+#define WME_OUI_LEN		3
+#define WME_OUI_TYPE		2	
+#define WME_TYPE		2	
+#define WME_SUBTYPE_IE		0	
+#define WME_SUBTYPE_PARAM_IE	1	
+#define WME_SUBTYPE_TSPEC	2	
+#define WME_VER			1	
+
+
+#define AC_BE			0	
+#define AC_BK			1	
+#define AC_VI			2	
+#define AC_VO			3	
+#define AC_COUNT		4	
+
+typedef uint8 ac_bitmap_t;	
+
+#define AC_BITMAP_NONE		0x0	
+#define AC_BITMAP_ALL		0xf	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define AC_BITMAP_TST(ab, ac)	(((ab) & (1 << (ac))) != 0)
 #define AC_BITMAP_SET(ab, ac)	(((ab) |= (1 << (ac))))
 #define AC_BITMAP_RESET(ab, ac) (((ab) &= ~(1 << (ac))))
@@ -1290,6 +1364,7 @@ typedef struct ti_ie ti_ie_t;
  * and 5MHz, {1.5, 2.25, 3, 4.5, 13.5}, which are not supported by Broadcom devices.
  */
 
+<<<<<<< HEAD
 #define DOT11_RATE_1M   2       /* 1  Mbps in 500kbps units */
 #define DOT11_RATE_2M   4       /* 2  Mbps in 500kbps units */
 #define DOT11_RATE_5M5  11      /* 5.5 Mbps in 500kbps units */
@@ -1355,6 +1430,167 @@ typedef struct ti_ie ti_ie_t;
 
 /* Extended capabilities IE bitfields */
 /* 20/40 BSS Coexistence Management support bit position */
+=======
+#define DOT11_SC_SUCCESS		0	
+#define DOT11_SC_FAILURE		1	
+#define DOT11_SC_TDLS_WAKEUP_SCH_ALT 2	
+					
+#define DOT11_SC_TDLS_WAKEUP_SCH_REJ 3	
+#define DOT11_SC_TDLS_SEC_DISABLED	5	
+#define DOT11_SC_LIFETIME_REJ		6	
+#define DOT11_SC_NOT_SAME_BSS		7	
+#define DOT11_SC_CAP_MISMATCH		10	
+#define DOT11_SC_REASSOC_FAIL		11	
+#define DOT11_SC_ASSOC_FAIL		12	
+#define DOT11_SC_AUTH_MISMATCH		13	
+#define DOT11_SC_AUTH_SEQ		14	
+#define DOT11_SC_AUTH_CHALLENGE_FAIL	15	
+#define DOT11_SC_AUTH_TIMEOUT		16	
+#define DOT11_SC_ASSOC_BUSY_FAIL	17	
+#define DOT11_SC_ASSOC_RATE_MISMATCH	18	
+#define DOT11_SC_ASSOC_SHORT_REQUIRED	19	
+#define DOT11_SC_ASSOC_PBCC_REQUIRED	20	
+#define DOT11_SC_ASSOC_AGILITY_REQUIRED	21	
+#define DOT11_SC_ASSOC_SPECTRUM_REQUIRED	22	
+#define DOT11_SC_ASSOC_BAD_POWER_CAP	23	
+#define DOT11_SC_ASSOC_BAD_SUP_CHANNELS	24	
+#define DOT11_SC_ASSOC_SHORTSLOT_REQUIRED	25	
+#define DOT11_SC_ASSOC_ERPBCC_REQUIRED	26	
+#define DOT11_SC_ASSOC_DSSOFDM_REQUIRED	27	
+#define DOT11_SC_ASSOC_R0KH_UNREACHABLE	28	
+#define DOT11_SC_ASSOC_TRY_LATER	30	
+#define DOT11_SC_ASSOC_MFP_VIOLATION	31	
+
+#define	DOT11_SC_DECLINED		37	
+#define	DOT11_SC_INVALID_PARAMS		38	
+#define DOT11_SC_INVALID_PAIRWISE_CIPHER	42 
+#define	DOT11_SC_INVALID_AKMP		43	
+#define DOT11_SC_INVALID_RSNIE_CAP	45	
+#define DOT11_SC_DLS_NOT_ALLOWED	48	
+#define	DOT11_SC_INVALID_PMKID		53	
+#define	DOT11_SC_INVALID_MDID		54	
+#define	DOT11_SC_INVALID_FTIE		55	
+
+#define DOT11_SC_UNEXP_MSG			70	
+#define DOT11_SC_INVALID_SNONCE		71	
+#define DOT11_SC_INVALID_RSNIE		72	
+
+
+#define DOT11_MNG_DS_PARAM_LEN			1	
+#define DOT11_MNG_IBSS_PARAM_LEN		2	
+
+
+#define DOT11_MNG_TIM_FIXED_LEN			3	
+#define DOT11_MNG_TIM_DTIM_COUNT		0	
+#define DOT11_MNG_TIM_DTIM_PERIOD		1	
+#define DOT11_MNG_TIM_BITMAP_CTL		2	
+#define DOT11_MNG_TIM_PVB			3	
+
+
+#define TLV_TAG_OFF		0	
+#define TLV_LEN_OFF		1	
+#define TLV_HDR_LEN		2	
+#define TLV_BODY_OFF		2	
+
+
+#define DOT11_MNG_SSID_ID			0	
+#define DOT11_MNG_RATES_ID			1	
+#define DOT11_MNG_FH_PARMS_ID			2	
+#define DOT11_MNG_DS_PARMS_ID			3	
+#define DOT11_MNG_CF_PARMS_ID			4	
+#define DOT11_MNG_TIM_ID			5	
+#define DOT11_MNG_IBSS_PARMS_ID			6	
+#define DOT11_MNG_COUNTRY_ID			7	
+#define DOT11_MNG_HOPPING_PARMS_ID		8	
+#define DOT11_MNG_HOPPING_TABLE_ID		9	
+#define DOT11_MNG_REQUEST_ID			10	
+#define DOT11_MNG_QBSS_LOAD_ID 			11	
+#define DOT11_MNG_EDCA_PARAM_ID			12	
+#define DOT11_MNG_CHALLENGE_ID			16	
+#define DOT11_MNG_PWR_CONSTRAINT_ID		32	
+#define DOT11_MNG_PWR_CAP_ID			33	
+#define DOT11_MNG_TPC_REQUEST_ID 		34	
+#define DOT11_MNG_TPC_REPORT_ID			35	
+#define DOT11_MNG_SUPP_CHANNELS_ID		36	
+#define DOT11_MNG_CHANNEL_SWITCH_ID		37	
+#define DOT11_MNG_MEASURE_REQUEST_ID		38	
+#define DOT11_MNG_MEASURE_REPORT_ID		39	
+#define DOT11_MNG_QUIET_ID			40	
+#define DOT11_MNG_IBSS_DFS_ID			41	
+#define DOT11_MNG_ERP_ID			42	
+#define DOT11_MNG_TS_DELAY_ID			43	
+#define	DOT11_MNG_HT_CAP			45	
+#define DOT11_MNG_QOS_CAP_ID			46	
+#define DOT11_MNG_NONERP_ID			47	
+#define DOT11_MNG_RSN_ID			48	
+#define DOT11_MNG_EXT_RATES_ID			50	
+#define DOT11_MNG_AP_CHREP_ID		51	
+#define DOT11_MNG_NBR_REP_ID		52	
+#define DOT11_MNG_MDIE_ID		54	
+#define DOT11_MNG_FTIE_ID		55	
+#define DOT11_MNG_FT_TI_ID		56	
+#define	DOT11_MNG_REGCLASS_ID			59	
+#define DOT11_MNG_EXT_CSA_ID			60	
+#define	DOT11_MNG_HT_ADD			61	
+#define	DOT11_MNG_EXT_CHANNEL_OFFSET		62	
+#define DOT11_MNG_WAPI_ID			68	
+#define DOT11_MNG_TIME_ADVERTISE_ID	69	
+#define DOT11_MNG_RRM_CAP_ID		70	
+#define	DOT11_MNG_HT_BSS_COEXINFO_ID		72	
+#define	DOT11_MNG_HT_BSS_CHANNEL_REPORT_ID	73	
+#define	DOT11_MNG_HT_OBSS_ID			74	
+#define DOT11_MNG_CHANNEL_USAGE			97 
+#define DOT11_MNG_TIME_ZONE_ID			98	
+#define DOT11_MNG_LINK_IDENTIFIER_ID	101	
+#define DOT11_MNG_WAKEUP_SCHEDULE_ID	102 
+#define DOT11_MNG_CHANNEL_SWITCH_TIMING_ID	104 
+#define DOT11_MNG_PTI_CONTROL_ID		105	
+#define DOT11_MNG_PU_BUFFER_STATUS_ID	106	
+#define DOT11_MNG_INTERWORKING_ID		107	
+#define DOT11_MNG_ADVERTISEMENT_ID		108	
+#define DOT11_MNG_EXP_BW_REQ_ID			109	
+#define DOT11_MNG_QOS_MAP_ID			110	
+#define DOT11_MNG_ROAM_CONSORT_ID		111	
+#define DOT11_MNG_EMERGCY_ALERT_ID		112	
+#define	DOT11_MNG_EXT_CAP_ID		127	
+#define	DOT11_MNG_VHT_CAP_ID		191	
+#define	DOT11_MNG_VHT_OPERATION_ID	192	
+
+#define DOT11_MNG_WPA_ID			221	
+#define DOT11_MNG_PROPR_ID			221	
+
+#define DOT11_MNG_VS_ID				221	
+
+
+#define DOT11_RATE_BASIC			0x80	
+#define DOT11_RATE_MASK				0x7F	
+
+
+#define DOT11_MNG_ERP_LEN			1	
+#define DOT11_MNG_NONERP_PRESENT		0x01	
+#define DOT11_MNG_USE_PROTECTION		0x02	
+#define DOT11_MNG_BARKER_PREAMBLE		0x04	
+
+#define DOT11_MGN_TS_DELAY_LEN		4	
+#define TS_DELAY_FIELD_SIZE			4	
+
+
+#define DOT11_CAP_ESS				0x0001	
+#define DOT11_CAP_IBSS				0x0002	
+#define DOT11_CAP_POLLABLE			0x0004	
+#define DOT11_CAP_POLL_RQ			0x0008	
+#define DOT11_CAP_PRIVACY			0x0010	
+#define DOT11_CAP_SHORT				0x0020	
+#define DOT11_CAP_PBCC				0x0040	
+#define DOT11_CAP_AGILITY			0x0080	
+#define DOT11_CAP_SPECTRUM			0x0100	
+#define DOT11_CAP_SHORTSLOT			0x0400	
+#define DOT11_CAP_RRM			0x1000	
+#define DOT11_CAP_CCK_OFDM			0x2000	
+
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define DOT11_EXT_CAP_OBSS_COEX_MGMT		0
 /* Extended Channel Switching support bit position */
 #define DOT11_EXT_CAP_EXT_CHAN_SWITCHING	2
@@ -1432,11 +1668,28 @@ BWL_PRE_PACKED_STRUCT struct dot11_oper_mode_notif_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_oper_mode_notif_ie dot11_oper_mode_notif_ie_t;
 
+<<<<<<< HEAD
 #define DOT11_OPER_MODE_NOTIF_IE_LEN 1
+=======
+#define DOT11_EXT_CAP_SPSMP					6
+
+#define DOT11_EXT_CAP_BSS_TRANSITION_MGMT	19
+
+#define DOT11_EXT_CAP_IW						31
+
+#define DOT11_EXT_CAP_SI						41
+#define DOT11_EXT_CAP_SI_MASK					0x0E
+
+
+#define DOT11_ACTION_HDR_LEN		2	
+#define DOT11_ACTION_CAT_OFF		0	
+#define DOT11_ACTION_ACT_OFF		1	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Extended Capability Information Field */
 #define DOT11_OBSS_COEX_MNG_SUPPORT	0x01	/* 20/40 BSS Coexistence Management support */
 
+<<<<<<< HEAD
 /*
  * Action Frame Constants
  */
@@ -1459,6 +1712,21 @@ typedef struct dot11_oper_mode_notif_ie dot11_oper_mode_notif_ie_t;
 #define	DOT11_ACTION_CAT_PDPA		9	/* protected dual of public action */
 #define DOT11_ACTION_CAT_WNM		10	/* category for WNM */
 #define DOT11_ACTION_CAT_UWNM		11	/* category for Unprotected WNM */
+=======
+#define DOT11_ACTION_CAT_ERR_MASK	0x80	
+#define DOT11_ACTION_CAT_MASK		0x7F	
+#define DOT11_ACTION_CAT_SPECT_MNG	0	
+#define DOT11_ACTION_CAT_QOS		1	
+#define DOT11_ACTION_CAT_DLS		2	
+#define DOT11_ACTION_CAT_BLOCKACK	3	
+#define DOT11_ACTION_CAT_PUBLIC		4	
+#define DOT11_ACTION_CAT_RRM		5	
+#define DOT11_ACTION_CAT_FBT	6	
+#define DOT11_ACTION_CAT_HT		7	
+#define	DOT11_ACTION_CAT_SA_QUERY	8	
+#define	DOT11_ACTION_CAT_PDPA		9	
+#define DOT11_ACTION_CAT_BSSMGMT	10	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define DOT11_ACTION_NOTIFICATION	17
 #define DOT11_ACTION_CAT_VHT		21	/* VHT action */
 #define DOT11_ACTION_CAT_VSP		126	/* protected vendor specific */
@@ -2320,10 +2588,15 @@ typedef struct dot11_rde_ie dot11_rde_ie_t;
 
 /* ************* 802.11k related definitions. ************* */
 
+<<<<<<< HEAD
 /* Radio measurements enabled capability ie */
 #define DOT11_RRM_CAP_LEN		5	/* length of rrm cap bitmap */
 #define RCPI_IE_LEN 1
 #define RSNI_IE_LEN 1
+=======
+
+#define DOT11_RRM_CAP_LEN		5	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct dot11_rrm_cap_ie {
 	uint8 cap[DOT11_RRM_CAP_LEN];
 } BWL_POST_PACKED_STRUCT;
@@ -2387,11 +2660,18 @@ typedef struct dot11_rm_action dot11_rm_action_t;
 #define DOT11_RM_ACTION_LEN 3
 
 BWL_PRE_PACKED_STRUCT struct dot11_rmreq {
+<<<<<<< HEAD
 	uint8 category;				/* category of action frame (5) */
 	uint8 action;				/* radio measurement action */
 	uint8 token;				/* dialog token */
 	uint16 reps;				/* no. of repetitions */
 	uint8 data[1];
+=======
+	uint8 category;				
+	uint8 action;				
+	uint8 token;				
+	uint16 reps;				
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_rmreq dot11_rmreq_t;
 #define DOT11_RMREQ_LEN	5
@@ -2469,6 +2749,7 @@ typedef struct dot11_rmrep_bcn dot11_rmrep_bcn_t;
 /* Sub-element IDs for Beacon Report */
 #define DOT11_RMREP_BCN_FRM_BODY	1
 
+<<<<<<< HEAD
 /* Sub-element IDs for Frame Report */
 #define DOT11_RMREP_FRAME_COUNT_REPORT 1
 
@@ -2656,6 +2937,19 @@ typedef struct dot11_rmreq_pause_time dot11_rmreq_pause_time_t;
 #define DOT11_NGBR_BSSTRANS_PREF_SE_ID	3
 #define DOT11_NGBR_BSS_TERM_DUR_SE_ID	4
 #define DOT11_NGBR_BEARING_SE_ID	5
+=======
+
+BWL_PRE_PACKED_STRUCT struct dot11_rmrep_nbr {
+	struct ether_addr	bssid;
+	uint32	bssid_info;
+	uint8 reg;
+	uint8 channel;
+	uint8 phytype;
+	uchar sub_elements[1]; 	
+} BWL_POST_PACKED_STRUCT;
+typedef struct dot11_rmrep_nbr dot11_rmrep_nbr_t;
+#define DOT11_RMREP_NBR_LEN	13
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* Neighbor Report, BSS Transition Candidate Preference subelement */
 BWL_PRE_PACKED_STRUCT struct dot11_ngbr_bsstrans_pref_se {
@@ -2666,6 +2960,7 @@ BWL_PRE_PACKED_STRUCT struct dot11_ngbr_bsstrans_pref_se {
 typedef struct dot11_ngbr_bsstrans_pref_se dot11_ngbr_bsstrans_pref_se_t;
 #define DOT11_NGBR_BSSTRANS_PREF_SE_LEN	1
 
+<<<<<<< HEAD
 /* Neighbor Report, BSS Termination Duration subelement */
 BWL_PRE_PACKED_STRUCT struct dot11_ngbr_bss_term_dur_se {
 	uint8 sub_id;
@@ -2705,6 +3000,13 @@ BWL_PRE_PACKED_STRUCT struct dot11_neighbor_rep_ie {
 typedef struct dot11_neighbor_rep_ie dot11_neighbor_rep_ie_t;
 #define DOT11_NEIGHBOR_REP_IE_FIXED_LEN	13
 
+=======
+#define DOT11_BSSTYPE_INFRASTRUCTURE		0	
+#define DOT11_BSSTYPE_INDEPENDENT		1	
+#define DOT11_BSSTYPE_ANY			2	
+#define DOT11_SCANTYPE_ACTIVE			0	
+#define DOT11_SCANTYPE_PASSIVE			1	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* MLME Enumerations */
 #define DOT11_BSSTYPE_INFRASTRUCTURE		0	/* d11 infrastructure */
@@ -2745,6 +3047,7 @@ typedef struct dot11_lmrep dot11_lmrep_t;
 /* 802.11N PHY constants */
 #define RIFS_11N_TIME		2	/* NPHY RIFS time */
 
+<<<<<<< HEAD
 /* 802.11 HT PLCP format 802.11n-2009, sec 20.3.9.4.3
  * HT-SIG is composed of two 24 bit parts, HT-SIG1 and HT-SIG2
  */
@@ -2791,6 +3094,44 @@ typedef struct dot11_lmrep dot11_lmrep_t;
 #define APHY_SERVICE_NBITS      16      /* APHY service nbits */
 #define APHY_TAIL_NBITS         6       /* APHY tail nbits */
 #define APHY_CWMIN              15      /* APHY cwmin */
+=======
+#define HT_SIG1_MCS_MASK	0x00007F
+#define HT_SIG1_CBW		0x000080
+#define HT_SIG1_HT_LENGTH	0xFFFF00
+
+
+#define HT_SIG2_SMOOTHING	0x000001
+#define HT_SIG2_NOT_SOUNDING	0x000002
+#define HT_SIG2_RESERVED	0x000004
+#define HT_SIG2_AGGREGATION	0x000008
+#define HT_SIG2_STBC_MASK	0x000030
+#define HT_SIG2_STBC_SHIFT	4
+#define HT_SIG2_FEC_CODING	0x000040
+#define HT_SIG2_SHORT_GI	0x000080
+#define HT_SIG2_ESS_MASK	0x000300
+#define HT_SIG2_ESS_SHIFT	8
+#define HT_SIG2_CRC		0x03FC00
+#define HT_SIG2_TAIL		0x1C0000
+
+
+#define APHY_SLOT_TIME		9	
+#define APHY_SIFS_TIME		16	
+#define APHY_DIFS_TIME		(APHY_SIFS_TIME + (2 * APHY_SLOT_TIME))	
+#define APHY_PREAMBLE_TIME	16	
+#define APHY_SIGNAL_TIME	4	
+#define APHY_SYMBOL_TIME	4	
+#define APHY_SERVICE_NBITS	16	
+#define APHY_TAIL_NBITS		6	
+#define	APHY_CWMIN		15	
+
+
+#define BPHY_SLOT_TIME		20	
+#define BPHY_SIFS_TIME		10	
+#define BPHY_DIFS_TIME		50	
+#define BPHY_PLCP_TIME		192	
+#define BPHY_PLCP_SHORT_TIME	96	
+#define	BPHY_CWMIN		31	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* 802.11 B PHY constants */
 #define BPHY_SLOT_TIME          20      /* BPHY slot time */
@@ -2811,38 +3152,38 @@ typedef struct dot11_lmrep dot11_lmrep_t;
 
 typedef int vht_group_id_t;
 
+<<<<<<< HEAD
 /* for VHT-A1 */
 /* SIG-A1 reserved bits */
 #define VHT_SIGA1_CONST_MASK            0x800004
+=======
 
-#define VHT_SIGA1_BW_MASK               0x000003
-#define VHT_SIGA1_20MHZ_VAL             0x000000
-#define VHT_SIGA1_40MHZ_VAL             0x000001
-#define VHT_SIGA1_80MHZ_VAL             0x000002
-#define VHT_SIGA1_160MHZ_VAL            0x000003
 
-#define VHT_SIGA1_STBC                  0x000008
+#define VHT_SIGA1_CONST_MASK 		0x800004
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-#define VHT_SIGA1_GID_MASK              0x0003f0
-#define VHT_SIGA1_GID_SHIFT             4
-#define VHT_SIGA1_GID_TO_AP             0x00
-#define VHT_SIGA1_GID_NOT_TO_AP         0x3f
-#define VHT_SIGA1_GID_MAX_GID           0x3f
+#define VHT_SIGA1_20MHZ_VAL 		0x000000
+#define VHT_SIGA1_40MHZ_VAL 		0x000001
+#define VHT_SIGA1_80MHZ_VAL 		0x000002
+#define VHT_SIGA1_160MHZ_VAL 		0x000003
 
+#define VHT_SIGA1_STBC 			0x000008
+
+#define VHT_SIGA1_GID_MAX_GID 		0x3f
+#define VHT_SIGA1_GID_SHIFT 		4
+#define VHT_SIGA1_GID_TO_AP 		0x00
+#define VHT_SIGA1_GID_NOT_TO_AP 	0x3f
+
+#define VHT_SIGA1_NSTS_SHIFT 		10
 #define VHT_SIGA1_NSTS_SHIFT_MASK_USER0 0x001C00
-#define VHT_SIGA1_NSTS_SHIFT            10
 
-#define VHT_SIGA1_PARTIAL_AID_MASK      0x3fe000
-#define VHT_SIGA1_PARTIAL_AID_SHIFT     13
-
-#define VHT_SIGA1_TXOP_PS_NOT_ALLOWED   0x400000
+#define VHT_SIGA1_PARTIAL_AID_SHIFT 13
 
 /* for VHT-A2 */
 #define VHT_SIGA2_GI_NONE               0x000000
 #define VHT_SIGA2_GI_SHORT              0x000001
 #define VHT_SIGA2_GI_W_MOD10            0x000002
 #define VHT_SIGA2_CODING_LDPC           0x000004
-#define VHT_SIGA2_LDPC_EXTRA_OFDM_SYM   0x000008
 #define VHT_SIGA2_BEAMFORM_ENABLE       0x000100
 #define VHT_SIGA2_MCS_SHIFT             4
 
@@ -2850,6 +3191,7 @@ typedef int vht_group_id_t;
 #define VHT_SIGA2_TAIL_MASK             0xfc0000
 #define VHT_SIGA2_TAIL_VALUE            0x000000
 
+<<<<<<< HEAD
 /* VHT Timing-related parameters (802.11ac D4.0, sec 22.3.6) */
 #define VHT_T_LEG_PREAMBLE      16
 #define VHT_T_L_SIG              4
@@ -2861,6 +3203,11 @@ typedef int vht_group_id_t;
 
 #define VHT_N_SERVICE           16	/* bits in SERVICE field */
 #define VHT_N_TAIL               6	/* tail bits per BCC encoder */
+=======
+#define VHT_SIGA2_SVC_BITS              16
+#define VHT_SIGA2_TAIL_BITS             6
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 
 /* dot11Counters Table - 802.11 spec., Annex D */
@@ -2893,11 +3240,16 @@ typedef struct d11cnt {
 #define PROXD_AF_TYPE			11 /* Wifi proximity action frame type */
 #define BRCM_RELMACST_AF_TYPE	        12 /* RMC action frame type */
 
+<<<<<<< HEAD
 
 /* brcm syscap_ie cap */
 #define BRCM_SYSCAP_WET_TUNNEL	0x0100	/* Device with WET_TUNNEL support */
 
 #define BRCM_OUI		"\x00\x10\x18"	/* Broadcom OUI */
+=======
+#define BRCM_OUI		"\x00\x10\x18"	
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* BRCM info element */
 BWL_PRE_PACKED_STRUCT struct brcm_ie {
@@ -2911,6 +3263,7 @@ BWL_PRE_PACKED_STRUCT struct brcm_ie {
 	uint16	amsdu_mtu_pref;	/* preferred A-MSDU MTU */
 } BWL_POST_PACKED_STRUCT;
 typedef	struct brcm_ie brcm_ie_t;
+<<<<<<< HEAD
 #define BRCM_IE_LEN		11	/* BRCM IE length */
 #define BRCM_IE_VER		2	/* BRCM IE version */
 #define BRCM_IE_LEGACY_AES_VER	1	/* BRCM IE legacy AES version */
@@ -2929,6 +3282,25 @@ typedef	struct brcm_ie brcm_ie_t;
 #define BRF1_DWDS		0x80    /* DWDS capable */
 
 /* Vendor IE structure */
+=======
+#define BRCM_IE_LEN		11	
+#define BRCM_IE_VER		2	
+#define BRCM_IE_LEGACY_AES_VER	1	
+
+
+#define	BRF_LZWDS		0x4	
+#define	BRF_BLOCKACK		0x8	
+
+
+#define	BRF1_AMSDU		0x1	
+#define BRF1_WMEPS		0x4	
+#define BRF1_PSOFIX		0x8	
+#define	BRF1_RX_LARGE_AGG	0x10	
+#define BRF1_RFAWARE_DCS	0x20    
+#define BRF1_SOFTAP		0x40    
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct vndr_ie {
 	uchar id;
 	uchar len;
@@ -3227,12 +3599,15 @@ typedef struct dot11_obss_ie dot11_obss_ie_t;
 #define HT_CTRL_AC_CONSTRAINT	0x40000000	/* AC Constraint */
 #define HT_CTRL_RDG_MOREPPDU	0x80000000	/* RDG/More PPDU */
 
+<<<<<<< HEAD
 /* ************* VHT definitions. ************* */
 
 /*
  * VHT Capabilites IE (sec 8.4.2.160)
  */
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct vht_cap_ie {
 	uint32  vht_cap_info;
 	/* supported MCS set - 64 bit field */
@@ -3243,22 +3618,31 @@ BWL_PRE_PACKED_STRUCT struct vht_cap_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct vht_cap_ie vht_cap_ie_t;
 
+<<<<<<< HEAD
 /* 4B cap_info + 8B supp_mcs */
 #define VHT_CAP_IE_LEN 12
 
 /* VHT Capabilities Info field - 32bit - in VHT Cap IE */
 #define VHT_CAP_INFO_MAX_MPDU_LEN_MASK          0x00000003
+=======
+#define VHT_CAP_IE_LEN 12
+
+#define VHT_CAP_INFO_MAX_MPDU_LEN_MASK			0x00000003
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define VHT_CAP_INFO_SUPP_CHAN_WIDTH_MASK       0x0000000c
 #define VHT_CAP_INFO_LDPC                       0x00000010
 #define VHT_CAP_INFO_SGI_80MHZ                  0x00000020
+
 #define VHT_CAP_INFO_SGI_160MHZ                 0x00000040
 #define VHT_CAP_INFO_TX_STBC                    0x00000080
+
 #define VHT_CAP_INFO_RX_STBC_MASK               0x00000700
 #define VHT_CAP_INFO_RX_STBC_SHIFT              8
 #define VHT_CAP_INFO_SU_BEAMFMR                 0x00000800
 #define VHT_CAP_INFO_SU_BEAMFMEE                0x00001000
 #define VHT_CAP_INFO_NUM_BMFMR_ANT_MASK         0x0000e000
 #define VHT_CAP_INFO_NUM_BMFMR_ANT_SHIFT        13
+
 #define VHT_CAP_INFO_NUM_SOUNDING_DIM_MASK      0x00070000
 #define VHT_CAP_INFO_NUM_SOUNDING_DIM_SHIFT     16
 #define VHT_CAP_INFO_MU_BEAMFMR                 0x00080000
@@ -3267,9 +3651,11 @@ typedef struct vht_cap_ie vht_cap_ie_t;
 #define VHT_CAP_INFO_HTCVHT                     0x00400000
 #define VHT_CAP_INFO_AMPDU_MAXLEN_EXP_MASK      0x03800000
 #define VHT_CAP_INFO_AMPDU_MAXLEN_EXP_SHIFT     23
+
 #define VHT_CAP_INFO_LINK_ADAPT_CAP_MASK        0x0c000000
 #define VHT_CAP_INFO_LINK_ADAPT_CAP_SHIFT       26
 
+<<<<<<< HEAD
 /* VHT Supported MCS Set - 64-bit - in VHT Cap IE */
 #define VHT_CAP_SUPP_MCS_RX_HIGHEST_RATE_MASK   0x1fff
 #define VHT_CAP_SUPP_MCS_RX_HIGHEST_RATE_SHIFT  0
@@ -3290,9 +3676,16 @@ typedef struct vht_cap_ie vht_cap_ie_t;
 	        ((VHT_CAP_MCS_MAP_0_9 << VHT_MCS_MAP_GET_SS_IDX(1)) | \
 	         (VHT_CAP_MCS_MAP_0_9 << VHT_MCS_MAP_GET_SS_IDX(2)) | \
 	         (VHT_CAP_MCS_MAP_0_9 << VHT_MCS_MAP_GET_SS_IDX(3)))
+=======
 
-#define VHT_CAP_MCS_MAP_NSS_MAX                 8
+#define VHT_CAP_SUPP_MCS_RX_HIGHEST_RATE_MASK	0x1fff
+#define VHT_CAP_SUPP_MCS_RX_HIGHEST_RATE_SHIFT	0
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
+#define VHT_CAP_SUPP_MCS_TX_HIGHEST_RATE_MASK	0x1fff
+#define VHT_CAP_SUPP_MCS_TX_HIGHEST_RATE_SHIFT	0
+
+<<<<<<< HEAD
 /* get mcsmap with given mcs for given nss streams */
 #define VHT_CAP_MCS_MAP_CREATE(mcsmap, nss, mcs) \
 	do { \
@@ -3313,21 +3706,30 @@ typedef struct vht_cap_ie vht_cap_ie_t;
 	((mcs_map == 0xff)  ? VHT_CAP_MCS_MAP_0_7 : \
 	 (mcs_map == 0x1ff) ? VHT_CAP_MCS_MAP_0_8 : \
 	 (mcs_map == 0x3ff) ? VHT_CAP_MCS_MAP_0_9 : VHT_CAP_MCS_MAP_NONE)
+=======
+#define VHT_CAP_MCS_MAP_0_7						0
+#define VHT_CAP_MCS_MAP_0_8						1
+#define VHT_CAP_MCS_MAP_0_9						2
+#define VHT_CAP_MCS_MAP_NONE					3
+
+#define VHT_CAP_MCS_MAP_NSS_MAX					8
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* VHT Capabilities Supported Channel Width */
 typedef enum vht_cap_chan_width {
-	VHT_CAP_CHAN_WIDTH_SUPPORT_MANDATORY = 0x00,
-	VHT_CAP_CHAN_WIDTH_SUPPORT_160       = 0x04,
-	VHT_CAP_CHAN_WIDTH_SUPPORT_160_8080  = 0x08
+	VHT_CAP_CHAN_WIDTH_20_40  = 0x00,
+	VHT_CAP_CHAN_WIDTH_80	  = 0x04,
+	VHT_CAP_CHAN_WIDTH_160	  = 0x08
 } vht_cap_chan_width_t;
 
 /* VHT Capabilities Supported max MPDU LEN (sec 8.4.2.160.2) */
 typedef enum vht_cap_max_mpdu_len {
-	VHT_CAP_MPDU_MAX_4K     = 0x00,
-	VHT_CAP_MPDU_MAX_8K     = 0x01,
-	VHT_CAP_MPDU_MAX_11K    = 0x02
+	VHT_CAP_MPDU_MAX_4K		= 0x00,
+	VHT_CAP_MPDU_MAX_8K		= 0x01,
+	VHT_CAP_MPDU_MAX_11K	= 0x02
 } vht_cap_max_mpdu_len_t;
 
+<<<<<<< HEAD
 /* Maximum MPDU Length byte counts for the VHT Capabilities advertised limits */
 #define VHT_MPDU_LIMIT_4K        3895
 #define VHT_MPDU_LIMIT_8K        7991
@@ -3337,6 +3739,8 @@ typedef enum vht_cap_max_mpdu_len {
 /*
  * VHT Operation IE (sec 8.4.2.161)
  */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 BWL_PRE_PACKED_STRUCT struct vht_op_ie {
 	uint8	chan_width;
@@ -3346,7 +3750,10 @@ BWL_PRE_PACKED_STRUCT struct vht_op_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct vht_op_ie vht_op_ie_t;
 
+<<<<<<< HEAD
 /* 3B VHT Op info + 2B Basic MCS */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define VHT_OP_IE_LEN 5
 
 typedef enum vht_op_chan_width {
@@ -3356,6 +3763,7 @@ typedef enum vht_op_chan_width {
 	VHT_OP_CHAN_WIDTH_80_80	= 3
 } vht_op_chan_width_t;
 
+<<<<<<< HEAD
 /* AID length */
 #define AID_IE_LEN		2
 /*
@@ -3384,17 +3792,16 @@ typedef struct vht_features_ie_hdr vht_features_ie_hdr_t;
 
 /* Def for rx & tx basic mcs maps - ea ss num has 2 bits of info */
 #define VHT_MCS_MAP_GET_SS_IDX(nss) (((nss)-1) * VHT_CAP_MCS_MAP_S)
+=======
+
+#define VHT_MCS_MAP_GET_SS_IDX(nss) (((nss)-1)*2)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define VHT_MCS_MAP_GET_MCS_PER_SS(nss, mcsMap) \
-	(((mcsMap) >> VHT_MCS_MAP_GET_SS_IDX(nss)) & VHT_CAP_MCS_MAP_M)
+	(((mcsMap) >> VHT_MCS_MAP_GET_SS_IDX(nss)) & 0x3)
 #define VHT_MCS_MAP_SET_MCS_PER_SS(nss, numMcs, mcsMap) \
-	do { \
-	 (mcsMap) &= (~(VHT_CAP_MCS_MAP_M << VHT_MCS_MAP_GET_SS_IDX(nss))); \
-	 (mcsMap) |= (((numMcs) & VHT_CAP_MCS_MAP_M) << VHT_MCS_MAP_GET_SS_IDX(nss)); \
-	} while (0)
-#define VHT_MCS_SS_SUPPORTED(nss, mcsMap) \
-		 (VHT_MCS_MAP_GET_MCS_PER_SS((nss), (mcsMap)) != VHT_CAP_MCS_MAP_NONE)
+	((mcsMap) |= (((numMcs) & 0x3) << VHT_MCS_MAP_GET_SS_IDX(nss)))
 
-
+<<<<<<< HEAD
 /* ************* WPA definitions. ************* */
 #define WPA_OUI			"\x00\x50\xF2"	/* WPA OUI */
 #define WPA_OUI_LEN		3		/* WPA OUI length */
@@ -3408,6 +3815,21 @@ typedef struct vht_features_ie_hdr vht_features_ie_hdr_t;
 /* ************* WPS definitions. ************* */
 #define WPS_OUI			"\x00\x50\xF2"	/* WPS OUI */
 #define WPS_OUI_LEN		3		/* WPS OUI length */
+=======
+
+#define WPA_OUI			"\x00\x50\xF2"	
+#define WPA_OUI_LEN		3		
+#define WPA_OUI_TYPE		1
+#define WPA_VERSION		1		
+#define WPA2_OUI		"\x00\x0F\xAC"	
+#define WPA2_OUI_LEN		3		
+#define WPA2_VERSION		1		
+#define WPA2_VERSION_LEN	2		
+
+
+#define WPS_OUI			"\x00\x50\xF2"	
+#define WPS_OUI_LEN		3		
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define WPS_OUI_TYPE		4
 
 /* ************* WFA definitions. ************* */
@@ -3427,6 +3849,7 @@ typedef struct vht_features_ie_hdr vht_features_ie_hdr_t;
 
 #define WFA_OUI_TYPE_TPC	8
 #ifdef WLTDLS
+<<<<<<< HEAD
 #define WFA_OUI_TYPE_TPQ	4	/* WFD Tunneled Probe ReQuest */
 #define WFA_OUI_TYPE_TPS	5	/* WFD Tunneled Probe ReSponse */
 #define WFA_OUI_TYPE_WFD	10
@@ -3478,6 +3901,47 @@ typedef struct vht_features_ie_hdr vht_features_ie_hdr_t;
 /* WCN */
 #define WCN_OUI			"\x00\x50\xf2"	/* WCN OUI */
 #define WCN_TYPE		4	/* WCN type */
+=======
+#define WFA_OUI_TYPE_WFD	10
+#endif 
+
+
+#define RSN_AKM_NONE		0	
+#define RSN_AKM_UNSPECIFIED	1	
+#define RSN_AKM_PSK		2	
+#define RSN_AKM_FBT_1X		3	
+#define RSN_AKM_FBT_PSK		4	
+#define RSN_AKM_MFP_1X		5	
+#define RSN_AKM_MFP_PSK		6	
+#define RSN_AKM_TPK			7	
+
+
+#define DOT11_MAX_DEFAULT_KEYS	4	
+#define DOT11_MAX_KEY_SIZE	32	
+#define DOT11_MAX_IV_SIZE	16	
+#define DOT11_EXT_IV_FLAG	(1<<5)	
+#define DOT11_WPA_KEY_RSC_LEN   8       
+
+#define WEP1_KEY_SIZE		5	
+#define WEP1_KEY_HEX_SIZE	10	
+#define WEP128_KEY_SIZE		13	
+#define WEP128_KEY_HEX_SIZE	26	
+#define TKIP_MIC_SIZE		8	
+#define TKIP_EOM_SIZE		7	
+#define TKIP_EOM_FLAG		0x5a	
+#define TKIP_KEY_SIZE		32	
+#define TKIP_MIC_AUTH_TX	16	
+#define TKIP_MIC_AUTH_RX	24	
+#define TKIP_MIC_SUP_RX		TKIP_MIC_AUTH_TX	
+#define TKIP_MIC_SUP_TX		TKIP_MIC_AUTH_RX	
+#define AES_KEY_SIZE		16	
+#define AES_MIC_SIZE		8	
+#define BIP_KEY_SIZE		16	
+
+
+#define WCN_OUI			"\x00\x50\xf2"	
+#define WCN_TYPE		4	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef BCMWAPI_WPI
 #define SMS4_KEY_LEN		16
@@ -3521,7 +3985,12 @@ BWL_PRE_PACKED_STRUCT struct dot11_timeout_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_timeout_ie dot11_timeout_ie_t;
 
+<<<<<<< HEAD
 /* GTK ie */
+=======
+
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 BWL_PRE_PACKED_STRUCT struct dot11_gtk_ie {
 	uint8 id;
 	uint8 len;
@@ -3532,6 +4001,7 @@ BWL_PRE_PACKED_STRUCT struct dot11_gtk_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct dot11_gtk_ie dot11_gtk_ie_t;
 
+<<<<<<< HEAD
 /* Management MIC ie */
 BWL_PRE_PACKED_STRUCT struct mmic_ie {
 	uint8   id;					/* IE ID: DOT11_MNG_MMIE_ID */
@@ -3542,6 +4012,8 @@ BWL_PRE_PACKED_STRUCT struct mmic_ie {
 } BWL_POST_PACKED_STRUCT;
 typedef struct mmic_ie mmic_ie_t;
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define BSSID_INVALID           "\x00\x00\x00\x00\x00\x00"
 #define BSSID_BROADCAST         "\xFF\xFF\xFF\xFF\xFF\xFF"
 

@@ -21,21 +21,16 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wl_android.h 454971 2014-02-12 14:56:41Z $
+=======
+ * $Id: wl_android.h 307885 2012-01-12 23:30:48Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #include <linux/module.h>
 #include <linux/netdevice.h>
 #include <wldev_common.h>
-
-/* If any feature uses the Generic Netlink Interface, put it here to enable WL_GENL
- * automatically
- */
-
-
-#ifdef WL_GENL
-#include <net/genetlink.h>
-#endif
 
 /**
  * Android platform dependent functions, feel free to add Android specific functions here
@@ -54,6 +49,7 @@ int wl_android_wifi_on(struct net_device *dev);
 int wl_android_wifi_off(struct net_device *dev);
 int wl_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd);
 
+<<<<<<< HEAD
 #ifdef WL_GENL
 typedef struct bcm_event_hdr {
 	u16 event_type;
@@ -97,3 +93,15 @@ s32 wl_genl_send_msg(struct net_device *ndev, u32 event_type,
 #ifdef WLAIBSS
 s32 wl_netlink_send_msg(int pid, int seq, void *data, size_t size);
 #endif /* WLAIBSS */
+=======
+#if defined(CONFIG_WIFI_CONTROL_FUNC)
+int wl_android_wifictrl_func_add(void);
+void wl_android_wifictrl_func_del(void);
+void* wl_android_prealloc(int section, unsigned long size);
+
+int wifi_get_irq_number(unsigned long *irq_flags_ptr);
+int wifi_set_power(int on, unsigned long msec);
+int wifi_get_mac_addr(unsigned char *buf);
+void *wifi_get_country_code(char *ccode);
+#endif /* CONFIG_WIFI_CONTROL_FUNC */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

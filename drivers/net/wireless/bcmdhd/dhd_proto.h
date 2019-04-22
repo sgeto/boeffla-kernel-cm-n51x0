@@ -24,7 +24,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd_proto.h 464559 2014-03-25 08:26:34Z $
+=======
+ * $Id: dhd_proto.h 343390 2012-07-06 22:34:19Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _dhd_proto_h_
@@ -58,6 +62,10 @@ extern int dhd_prot_init(dhd_pub_t *dhdp);
 
 /* Stop protocol: sync w/dongle state. */
 extern void dhd_prot_stop(dhd_pub_t *dhdp);
+#ifdef PROP_TXSTATUS
+extern int dhd_wlfc_init(dhd_pub_t *dhd);
+extern void dhd_wlfc_deinit(dhd_pub_t *dhd);
+#endif /* PROP_TXSTATUS */
 
 /* Add any protocol-specific data header.
  * Caller must reserve prot_hdrlen prepend space.
@@ -87,6 +95,15 @@ extern int dhd_ioctl(dhd_pub_t * dhd_pub, dhd_ioctl_t *ioc, void * buf, uint buf
 
 extern int dhd_preinit_ioctls(dhd_pub_t *dhd);
 
+<<<<<<< HEAD
+=======
+#ifdef PROP_TXSTATUS
+extern int dhd_wlfc_enque_sendq(void* state, int prec, void* p);
+extern int dhd_wlfc_commit_packets(void* state, f_commitpkt_t fcommit, void* commit_ctx);
+extern void dhd_wlfc_cleanup(dhd_pub_t *dhd);
+#endif /* PROP_TXSTATUS */
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 extern int dhd_process_pkt_reorder_info(dhd_pub_t *dhd, uchar *reorder_info_buf,
 	uint reorder_info_len, void **pkt, uint32 *free_buf_count);
 
@@ -110,6 +127,8 @@ extern int dhdmsgbuf_dmaxfer_req(dhd_pub_t *dhd, uint len, uint srcdelay, uint d
 #define DHD_PROTOCOL "bdc"
 #elif defined(CDC)
 #define DHD_PROTOCOL "cdc"
+#elif defined(RNDIS)
+#define DHD_PROTOCOL "rndis"
 #else
 #define DHD_PROTOCOL "unknown"
 #endif /* proto */

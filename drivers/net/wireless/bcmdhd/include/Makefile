@@ -10,10 +10,14 @@
 #
 # Copyright 2005, Broadcom, Inc.
 #
+<<<<<<< HEAD
 # $Id: Makefile 347587 2012-07-27 09:13:31Z $
+=======
+# $Id: Makefile 241686 2011-02-19 00:22:45Z prakashd $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #
 
-export SRCBASE:=..
+SRCBASE := ..
 
 TARGETS := epivers.h
 
@@ -23,11 +27,11 @@ endif
 
 all release: epivers compvers
 
-# Generate epivers.h for native branch url
+# Generate epivers.h for native branch version
 epivers:
 	bash epivers.sh
 
-# Generate component versions based on component url
+# Generate epivers.h for native branch version
 compvers:
 	@if [ -s "compvers.sh" ]; then \
 		echo "Generating component versions, if any"; \

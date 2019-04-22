@@ -18,16 +18,28 @@
 *      Notwithstanding the above, under no circumstances may you combine this
 * software in any way with any other Broadcom software provided under a license
 * other than the GPL, without Broadcom's express prior written consent.
+<<<<<<< HEAD
 * $Id: dhd_wlfc.h 464247 2014-03-24 07:21:40Z $
+=======
+* $Id: dhd_wlfc.h 341930 2012-06-29 04:51:25Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 *
 */
 #ifndef __wlfc_host_driver_definitions_h__
 #define __wlfc_host_driver_definitions_h__
 
 
+<<<<<<< HEAD
 /* #define OOO_DEBUG */
 
 #define WLFC_UNSUPPORTED -9999
+=======
+#define WLFC_HANGER_ITEM_STATE_FREE		1
+#define WLFC_HANGER_ITEM_STATE_INUSE	2
+#define WLFC_HANGER_ITEM_STATE_INUSE_SUPPRESSED	3
+#define WLFC_PKTID_HSLOT_MASK			0xffff /* allow 16 bits only */
+#define WLFC_PKTID_HSLOT_SHIFT			8
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define WLFC_NO_TRAFFIC	-1
 #define WLFC_MULTI_TRAFFIC 0
@@ -80,7 +92,6 @@ typedef struct wlfc_hanger {
 	uint32 failed_to_push;
 	uint32 failed_to_pop;
 	uint32 failed_slotfind;
-	uint32 slot_pos;
 	wlfc_hanger_item_t items[1];
 } wlfc_hanger_t;
 
@@ -95,10 +106,16 @@ typedef struct wlfc_hanger {
 
 #define WLFC_PSQ_LEN			2048
 
+#define WLFC_SENDQ_LEN			256
+
+
 #define WLFC_FLOWCONTROL_HIWATER	(2048 - 256)
 #define WLFC_FLOWCONTROL_LOWATER	256
 
+<<<<<<< HEAD
 #define WLFC_LOG_BUF_SIZE		(1024*1024)
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 typedef struct wlfc_mac_descriptor {
 	uint8 occupied;
@@ -125,13 +142,20 @@ typedef struct wlfc_mac_descriptor {
 	/* 1= send on next opportunity */
 	uint8 send_tim_signal;
 	uint8 mac_handle;
+<<<<<<< HEAD
 	/* Number of packets at dongle for this entry. */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	uint transit_count;
-	/* Numbe of suppression to wait before evict from delayQ */
 	uint suppr_transit_count;
+<<<<<<< HEAD
 	/* flag. TRUE when in suppress state */
 	uint8 suppressed;
 
+=======
+	uint suppress_count;
+    uint8 suppressed;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef PROP_TXSTATUS_DEBUG
 	uint32 dstncredit_sent_packets;
@@ -165,6 +189,7 @@ typedef struct athost_wl_stat_counters {
 	uint32	tlv_parse_failed;
 	uint32	rollback;
 	uint32	rollback_failed;
+	uint32	sendq_full_error;
 	uint32	delayq_full_error;
 	uint32	credit_request_failed;
 	uint32	packet_request_failed;
@@ -189,9 +214,13 @@ typedef struct athost_wl_stat_counters {
 	uint32	dhd_hdrpulls;
 	uint32	generic_error;
 	/* an extra one for bc/mc traffic */
+<<<<<<< HEAD
 	uint32	send_pkts[AC_COUNT + 1];
 	uint32	drop_pkts[WLFC_PSQ_PREC_COUNT];
 	uint32	ooo_pkts[AC_COUNT + 1];
+=======
+	uint32	sendq_pkts[AC_COUNT + 1];
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef PROP_TXSTATUS_DEBUG
 	/* all pkt2bus -> txstatus latency accumulated */
 	uint32	latency_sample_count;
@@ -255,6 +284,8 @@ typedef struct athost_wl_status_info {
 
 	/* Credit borrow counts for each FIFO from each of the other FIFOs */
 	int		credits_borrowed[AC_COUNT + 2][AC_COUNT + 2];
+
+	struct  pktq SENDQ;
 
 	/* packet hanger and MAC->handle lookup table */
 	void*	hanger;

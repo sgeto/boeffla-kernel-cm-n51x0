@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh_linux.c 455573 2014-02-14 17:49:31Z $
+=======
+ * $Id: bcmsdh_linux.c 347638 2012-07-27 11:39:03Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 /**
@@ -44,7 +48,42 @@ extern void dhdsdio_isr(void * args);
 #include <bcmutils.h>
 #include <dngl_stats.h>
 #include <dhd.h>
+<<<<<<< HEAD
 #include <dhd_linux.h>
+=======
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+
+#if defined(CUSTOMER_HW4) && defined(CONFIG_PM_SLEEP) && defined(PLATFORM_SLP)
+/* SLP_wakelock_alternative_code */
+struct device *pm_dev;
+#endif /* CUSTOMER_HW4 && CONFIG_PM_SLEEP && PLATFORM_SLP */
+
+/**
+ * SDIO Host Controller info
+ */
+typedef struct bcmsdh_hc bcmsdh_hc_t;
+
+struct bcmsdh_hc {
+	bcmsdh_hc_t *next;
+#ifdef BCMPLATFORM_BUS
+	struct device *dev;			/* platform device handle */
+#else
+	struct pci_dev *dev;		/* pci device handle */
+#endif /* BCMPLATFORM_BUS */
+	osl_t *osh;
+	void *regs;			/* SDIO Host Controller address */
+	bcmsdh_info_t *sdh;		/* SDIO Host Controller handle */
+	void *ch;
+	unsigned int oob_irq;
+	unsigned long oob_flags; /* OOB Host specifiction as edge and etc */
+	bool oob_irq_registered;
+	bool oob_irq_enable_flag;
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+	spinlock_t irq_lock;
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+};
+static bcmsdh_hc_t *sdhcinfo = NULL;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* driver info, initialized when bcmsdh_register is called */
 static bcmsdh_driver_t drvinfo = {NULL, NULL, NULL, NULL};
@@ -133,6 +172,7 @@ bcmsdh_chipmatch(uint16 vendor, uint16 device)
 void* bcmsdh_probe(osl_t *osh, void *dev, void *sdioh, void *adapter_info, uint bus_type,
 	uint bus_num, uint slot_num)
 {
+<<<<<<< HEAD
 	ulong regs;
 	bcmsdh_info_t *bcmsdh;
 	uint32 vendevid;
@@ -141,6 +181,49 @@ void* bcmsdh_probe(osl_t *osh, void *dev, void *sdioh, void *adapter_info, uint 
 	bcmsdh = bcmsdh_attach(osh, sdioh, &regs);
 	if (bcmsdh == NULL) {
 		SDLX_MSG(("%s: bcmsdh_attach failed\n", __FUNCTION__));
+=======
+	osl_t *osh = NULL;
+	bcmsdh_hc_t *sdhc = NULL;
+	ulong regs = 0;
+	bcmsdh_info_t *sdh = NULL;
+#if !defined(BCMLXSDMMC) && defined(BCMPLATFORM_BUS) && !defined(BCMSPI_ANDROID)
+	struct platform_device *pdev;
+	struct resource *r;
+#endif /* !defined(BCMLXSDMMC) && defined(BCMPLATFORM_BUS) && !defined(BCMSPI_ANDROID) */
+	int irq = 0;
+	uint32 vendevid;
+	unsigned long irq_flags = 0;
+#if defined(CUSTOMER_HW4) && defined(CONFIG_PM_SLEEP) && defined(PLATFORM_SLP)
+	int ret = 0;
+#endif /* CUSTOMER_HW4 && CONFIG_PM_SLEEP && PLATFORM_SLP */
+
+#if !defined(BCMLXSDMMC) && defined(BCMPLATFORM_BUS) && !defined(BCMSPI_ANDROID)
+	pdev = to_platform_device(dev);
+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	irq = platform_get_irq(pdev, 0);
+	if (!r || irq == NO_IRQ)
+		return -ENXIO;
+#endif /* !defined(BCMLXSDMMC) && defined(BCMPLATFORM_BUS) && !defined(BCMSPI_ANDROID) */
+
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+#ifdef HW_OOB
+	irq_flags =
+		IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL | IORESOURCE_IRQ_SHAREABLE;
+#else
+	 irq_flags = IRQF_TRIGGER_FALLING;
+#endif /* HW_OOB */
+
+	/* Get customer specific OOB IRQ parametres: IRQ number as IRQ type */
+	irq = dhd_customer_oob_irq_map(&irq_flags);
+	if  (irq < 0) {
+		SDLX_MSG(("%s: Host irq is not defined\n", __FUNCTION__));
+		return 1;
+	}
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+	/* allocate SDIO Host Controller state info */
+	if (!(osh = osl_attach(dev, PCI_BUS, FALSE))) {
+		SDLX_MSG(("%s: osl_attach failed\n", __FUNCTION__));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		goto err;
 	}
 	bcmsdh_osinfo = MALLOC(osh, sizeof(bcmsdh_os_info_t));
@@ -168,7 +251,30 @@ void* bcmsdh_probe(osl_t *osh, void *dev, void *sdioh, void *adapter_info, uint 
 		SDLX_MSG(("%s: Host OOB irq is not defined\n", __FUNCTION__));
 		goto err;
 	}
+<<<<<<< HEAD
 #endif /* defined(BCMLXSDMMC) */
+=======
+#endif /* defined(BCMLXSDMMC) || defined(BCMSPI_ANDROID) */
+	sdhc->sdh = sdh;
+	sdhc->oob_irq = irq;
+	sdhc->oob_flags = irq_flags;
+	sdhc->oob_irq_registered = FALSE;	/* to make sure.. */
+	sdhc->oob_irq_enable_flag = FALSE;
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+	spin_lock_init(&sdhc->irq_lock);
+#endif /* defined(BCMLXSDMMC) || defined(BCMSPI_ANDROID) */
+
+	/* chain SDIO Host Controller info together */
+	sdhc->next = sdhcinfo;
+	sdhcinfo = sdhc;
+
+#if defined(CUSTOMER_HW4) && defined(CONFIG_PM_SLEEP) && defined(PLATFORM_SLP)
+	/* SLP_wakelock_alternative_code */
+	pm_dev = sdhc->dev;
+	ret = device_init_wakeup(pm_dev, 1);
+	printf("%s : device_init_wakeup(pm_dev) enable, ret = %d\n", __func__, ret);
+#endif /* CUSTOMER_HW4 && CONFIG_PM_SLEEP && PLATFORM_SLP */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	/* Read the vendor/device ID from the CIS */
 	vendevid = bcmsdh_query_device(bcmsdh);
@@ -184,15 +290,27 @@ void* bcmsdh_probe(osl_t *osh, void *dev, void *sdioh, void *adapter_info, uint 
 
 	/* error handling */
 err:
+<<<<<<< HEAD
 	if (bcmsdh != NULL)
 		bcmsdh_detach(osh, bcmsdh);
 	if (bcmsdh_osinfo != NULL)
 		MFREE(osh, bcmsdh_osinfo, sizeof(bcmsdh_os_info_t));
 	return NULL;
+=======
+	if (sdhc) {
+		if (sdhc->sdh)
+			bcmsdh_detach(sdhc->osh, sdhc->sdh);
+		MFREE(osh, sdhc, sizeof(bcmsdh_hc_t));
+	}
+	if (osh)
+		osl_detach(osh);
+	return -ENODEV;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 int bcmsdh_remove(bcmsdh_info_t *bcmsdh)
 {
+<<<<<<< HEAD
 	bcmsdh_os_info_t *bcmsdh_osinfo = bcmsdh->os_cxt;
 
 #if !defined(CONFIG_HAS_WAKELOCK) && (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 36))
@@ -204,13 +322,160 @@ int bcmsdh_remove(bcmsdh_info_t *bcmsdh)
 	drvinfo.remove(bcmsdh_osinfo->context);
 	MFREE(bcmsdh->osh, bcmsdh->os_cxt, sizeof(bcmsdh_os_info_t));
 	bcmsdh_detach(bcmsdh->osh, bcmsdh);
+=======
+	bcmsdh_hc_t *sdhc, *prev;
+	osl_t *osh;
+
+	sdhc = sdhcinfo;
+#if defined(CUSTOMER_HW4) && defined(CONFIG_PM_SLEEP) && defined(PLATFORM_SLP)
+	/* SLP_wakelock_alternative_code */
+	device_init_wakeup(pm_dev, 0);
+	printf("%s : device_init_wakeup(pm_dev) disable\n", __func__);
+#endif /* CUSTOMER_HW4 && CONFIG_PM_SLEEP && PLATFORM_SLP */
+	drvinfo.detach(sdhc->ch);
+	bcmsdh_detach(sdhc->osh, sdhc->sdh);
+
+	/* find the SDIO Host Controller state for this pdev and take it out from the list */
+	for (sdhc = sdhcinfo, prev = NULL; sdhc; sdhc = sdhc->next) {
+		if (sdhc->dev == (void *)dev) {
+			if (prev)
+				prev->next = sdhc->next;
+			else
+				sdhcinfo = NULL;
+			break;
+		}
+		prev = sdhc;
+	}
+	if (!sdhc) {
+		SDLX_MSG(("%s: failed\n", __FUNCTION__));
+		return 0;
+	}
+
+	/* release SDIO Host Controller info */
+	osh = sdhc->osh;
+	MFREE(osh, sdhc, sizeof(bcmsdh_hc_t));
+	osl_detach(osh);
+
+#if !defined(BCMLXSDMMC) || defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
+	dev_set_drvdata(dev, NULL);
+#endif /* !defined(BCMLXSDMMC) || defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	return 0;
 }
 
 int bcmsdh_suspend(bcmsdh_info_t *bcmsdh)
 {
+<<<<<<< HEAD
 	bcmsdh_os_info_t *bcmsdh_osinfo = bcmsdh->os_cxt;
+=======
+	osl_t *osh = NULL;
+	bcmsdh_hc_t *sdhc = NULL;
+	ulong regs;
+	bcmsdh_info_t *sdh = NULL;
+	int rc;
+
+	if (sd_pci_slot != 0xFFFFffff) {
+		if (pdev->bus->number != (sd_pci_slot>>16) ||
+			PCI_SLOT(pdev->devfn) != (sd_pci_slot&0xffff)) {
+			SDLX_MSG(("%s: %s: bus %X, slot %X, vend %X, dev %X\n",
+				__FUNCTION__,
+				bcmsdh_chipmatch(pdev->vendor, pdev->device)
+				?"Found compatible SDIOHC"
+				:"Probing unknown device",
+				pdev->bus->number, PCI_SLOT(pdev->devfn), pdev->vendor,
+				pdev->device));
+			return -ENODEV;
+		}
+		SDLX_MSG(("%s: %s: bus %X, slot %X, vendor %X, device %X (good PCI location)\n",
+			__FUNCTION__,
+			bcmsdh_chipmatch(pdev->vendor, pdev->device)
+			?"Using compatible SDIOHC"
+			:"WARNING, forced use of unkown device",
+			pdev->bus->number, PCI_SLOT(pdev->devfn), pdev->vendor, pdev->device));
+	}
+
+	if ((pdev->vendor == VENDOR_TI) && ((pdev->device == PCIXX21_FLASHMEDIA_ID) ||
+	    (pdev->device == PCIXX21_FLASHMEDIA0_ID))) {
+		uint32 config_reg;
+
+		SDLX_MSG(("%s: Disabling TI FlashMedia Controller.\n", __FUNCTION__));
+		if (!(osh = osl_attach(pdev, PCI_BUS, FALSE))) {
+			SDLX_MSG(("%s: osl_attach failed\n", __FUNCTION__));
+			goto err;
+		}
+
+		config_reg = OSL_PCI_READ_CONFIG(osh, 0x4c, 4);
+
+		/*
+		 * Set MMC_SD_DIS bit in FlashMedia Controller.
+		 * Disbling the SD/MMC Controller in the FlashMedia Controller
+		 * allows the Standard SD Host Controller to take over control
+		 * of the SD Slot.
+		 */
+		config_reg |= 0x02;
+		OSL_PCI_WRITE_CONFIG(osh, 0x4c, 4, config_reg);
+		osl_detach(osh);
+	}
+	/* match this pci device with what we support */
+	/* we can't solely rely on this to believe it is our SDIO Host Controller! */
+	if (!bcmsdh_chipmatch(pdev->vendor, pdev->device)) {
+		return -ENODEV;
+	}
+
+	/* this is a pci device we might support */
+	SDLX_MSG(("%s: Found possible SDIO Host Controller: bus %d slot %d func %d irq %d\n",
+		__FUNCTION__,
+		pdev->bus->number, PCI_SLOT(pdev->devfn),
+		PCI_FUNC(pdev->devfn), pdev->irq));
+
+	/* use bcmsdh_query_device() to get the vendor ID of the target device so
+	 * it will eventually appear in the Broadcom string on the console
+	 */
+
+	/* allocate SDIO Host Controller state info */
+	if (!(osh = osl_attach(pdev, PCI_BUS, FALSE))) {
+		SDLX_MSG(("%s: osl_attach failed\n", __FUNCTION__));
+		goto err;
+	}
+	if (!(sdhc = MALLOC(osh, sizeof(bcmsdh_hc_t)))) {
+		SDLX_MSG(("%s: out of memory, allocated %d bytes\n",
+			__FUNCTION__,
+			MALLOCED(osh)));
+		goto err;
+	}
+	bzero(sdhc, sizeof(bcmsdh_hc_t));
+	sdhc->osh = osh;
+
+	sdhc->dev = pdev;
+
+	/* map to address where host can access */
+	pci_set_master(pdev);
+	rc = pci_enable_device(pdev);
+	if (rc) {
+		SDLX_MSG(("%s: Cannot enable PCI device\n", __FUNCTION__));
+		goto err;
+	}
+	if (!(sdh = bcmsdh_attach(osh, (void *)(uintptr)pci_resource_start(pdev, 0),
+	                          (void **)&regs, pdev->irq))) {
+		SDLX_MSG(("%s: bcmsdh_attach failed\n", __FUNCTION__));
+		goto err;
+	}
+
+	sdhc->sdh = sdh;
+
+	/* try to attach to the target device */
+	if (!(sdhc->ch = drvinfo.attach(VENDOR_BROADCOM, /* pdev->vendor, */
+	                                bcmsdh_query_device(sdh) & 0xFFFF, 0, 0, 0, 0,
+	                                (void *)regs, NULL, sdh))) {
+		SDLX_MSG(("%s: device attach failed\n", __FUNCTION__));
+		goto err;
+	}
+
+	/* chain SDIO Host Controller info together */
+	sdhc->next = sdhcinfo;
+	sdhcinfo = sdhc;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (drvinfo.suspend && drvinfo.suspend(bcmsdh_osinfo->context))
 		return -EBUSY;
@@ -417,10 +682,14 @@ module_param(sd_f2_blocksize, int, 0);
 #ifdef BCMSDIOH_STD
 extern int sd_uhsimode;
 module_param(sd_uhsimode, int, 0);
+<<<<<<< HEAD
 extern uint sd_tuning_period;
 module_param(sd_tuning_period, uint, 0);
 extern int sd_delay_value;
 module_param(sd_delay_value, uint, 0);
+=======
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* SDIO Drive Strength for UHSI mode specific to SDIO3.0 */
 extern char dhd_sdiod_uhsi_ds_override[2];

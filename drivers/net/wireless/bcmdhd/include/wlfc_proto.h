@@ -18,7 +18,11 @@
 *      Notwithstanding the above, under no circumstances may you combine this
 * software in any way with any other Broadcom software provided under a license
 * other than the GPL, without Broadcom's express prior written consent.
+<<<<<<< HEAD
 * $Id: wlfc_proto.h 431159 2013-10-22 19:40:51Z $
+=======
+* $Id: wlfc_proto.h 347585 2012-07-27 09:02:53Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 *
 */
 #ifndef __wlfc_proto_definitions_h__
@@ -63,9 +67,17 @@
 	|  13  |   3  | (count, handle, prec_bmp)| One time request for packet to a specific
 	|      |      |                          | MAC destination.
 	 ---------------------------------------------------------------------------
+<<<<<<< HEAD
 	|  15  |  12  | (pkttag, timestamps)     | Send TX timestamp at reception from host
 	 ---------------------------------------------------------------------------
 	|  16  |  12  | (pkttag, timestamps)     | Send WLAN RX timestamp along with RX frame
+=======
+	|  15  |   1  | interface ID             | NIC period start
+	 ---------------------------------------------------------------------------
+	|  16  |   1  | interface ID             | NIC period end
+	 ---------------------------------------------------------------------------
+	|  17  |   3  | (ifid, txs)              | Action frame tx status
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	 ---------------------------------------------------------------------------
 	| 255  |  N/A |  N/A                     | FILLER - This is a special type
 	|      |      |                          | that has no length or value.
@@ -81,7 +93,7 @@
 
 #define WLFC_CTL_TYPE_MACDESC_ADD		6
 #define WLFC_CTL_TYPE_MACDESC_DEL		7
-#define WLFC_CTL_TYPE_RSSI			8
+#define WLFC_CTL_TYPE_RSSI					8
 
 #define WLFC_CTL_TYPE_INTERFACE_OPEN		9
 #define WLFC_CTL_TYPE_INTERFACE_CLOSE		10
@@ -92,6 +104,7 @@
 #define WLFC_CTL_TYPE_MAC_REQUEST_PACKET	13
 #define WLFC_CTL_TYPE_HOST_REORDER_RXPKTS	14
 
+<<<<<<< HEAD
 
 #define WLFC_CTL_TYPE_TX_ENTRY_STAMP		15
 #define WLFC_CTL_TYPE_RX_STAMP			16
@@ -99,6 +112,12 @@
 #define WLFC_CTL_TYPE_TRANS_ID			18
 #define WLFC_CTL_TYPE_COMP_TXSTATUS		19
 
+=======
+#define WLFC_CTL_TYPE_NIC_PRD_START		15
+#define WLFC_CTL_TYPE_NIC_PRD_END		16
+#define WLFC_CTL_TYPE_AF_TXS			17
+#define WLFC_CTL_TYPE_TRANS_ID                  18
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define WLFC_CTL_TYPE_FILLER			255
 
@@ -120,6 +139,10 @@
 
 #define WLFC_CTL_VALUE_LEN_REQUEST_CREDIT	3	/* credit, MAC-handle, prec_bitmap */
 #define WLFC_CTL_VALUE_LEN_REQUEST_PACKET	3	/* credit, MAC-handle, prec_bitmap */
+
+#define WLFC_CTL_VALUE_LEN_NIC_PRD_START	1
+#define WLFC_CTL_VALUE_LEN_NIC_PRD_END		1
+#define WLFC_CTL_VALUE_LEN_AF_TXS		3
 
 
 #define WLFC_PKTFLAG_PKTFROMHOST	0x01
@@ -274,8 +297,8 @@
 #define WLHOST_REORDERDATA_CURIDX_VALID		0x04
 #define WLHOST_REORDERDATA_EXPIDX_VALID		0x08
 #define WLHOST_REORDERDATA_NEW_HOLE		0x10
-
 /* transaction id data len byte 0: rsvd, byte 1: seqnumber, byte 2-5 will be used for timestampe */
+<<<<<<< HEAD
 #define WLFC_CTL_TRANS_ID_LEN			6
 #define WLFC_TYPE_TRANS_ID_LEN			6
 
@@ -300,5 +323,8 @@
 	((x) & ~(1 << WLFC_MODE_REORDERSUPP_SHIFT)) | \
 	(((val) & 1) << WLFC_MODE_REORDERSUPP_SHIFT))
 #define WLFC_GET_REORDERSUPP(x)	(((x) >> WLFC_MODE_REORDERSUPP_SHIFT) & 1)
+=======
+#define WLFC_CTL_TRANS_ID_LEN                   6
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #endif /* __wlfc_proto_definitions_h__ */

@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: osl.h 424562 2013-09-18 10:57:30Z $
+=======
+ * $Id: osl.h 320905 2012-03-13 15:33:25Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _osl_h_
@@ -68,6 +72,7 @@ typedef void  (*osl_wreg_fn_t)(void *ctx, volatile void *reg, unsigned int val, 
 #define OSL_SYSUPTIME_SUPPORT FALSE
 #else
 #define OSL_SYSUPTIME_SUPPORT TRUE
+<<<<<<< HEAD
 #endif /* OSL_SYSUPTIME */
 
 #if !defined(PKTC) && !defined(PKTC_DONGLE)
@@ -140,3 +145,25 @@ do { \
 #define PKTFRAGISCHAINED(osh, i)	(0)
 
 #endif	/* _osl_h_ */
+=======
+#endif 
+
+#if !defined(PKTC)
+#define	PKTCCNT(skb)		(0)
+#define	PKTCLEN(skb)		(0)
+#define	PKTCFLAGS(skb)		(0)
+#define	PKTCSETCNT(skb, c)
+#define	PKTCSETLEN(skb, l)
+#define	PKTCSETFLAG(skb, fb)
+#define	PKTCCLRFLAG(skb, fb)
+#define	PKTCLINK(skb)		PKTLINK(skb)
+#define	PKTSETCLINK(skb, x)	PKTSETLINK((skb), (x))
+#define	PKTISCHAINED(skb)	FALSE
+#define FOREACH_CHAINED_PKT(skb, nskb) \
+	for ((nskb) = NULL; (skb) != NULL; (skb) = (nskb))
+#define	PKTCFREE		PKTFREE
+#endif
+
+
+#endif	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

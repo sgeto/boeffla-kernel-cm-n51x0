@@ -1,7 +1,11 @@
 /*
  * Customer HW 4 dependant file
  *
+<<<<<<< HEAD
  * Copyright (C) 1999-2014, Broadcom Corporation
+=======
+ * Copyright (C) 1999-2012, Broadcom Corporation
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  * 
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -51,8 +55,15 @@ struct cntry_locales_custom {
 
 /* Locale table for sec */
 const struct cntry_locales_custom translate_custom_table[] = {
+<<<<<<< HEAD
 #if defined(BCM4330_CHIP) || defined(BCM4334_CHIP) || defined(BCM43241_CHIP)
 	/* 4330/4334/43241 */
+=======
+#ifdef BCM4334_CHIP
+	{"",   "XZ", 11},  /* Universal if Country code is unknown or empty */
+#endif
+	{"AE", "AE", 1},
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	{"AR", "AR", 1},
 	{"AT", "AT", 1},
 	{"AU", "AU", 2},
@@ -61,6 +72,7 @@ const struct cntry_locales_custom translate_custom_table[] = {
 	{"BN", "BN", 1},
 	{"CA", "CA", 2},
 	{"CH", "CH", 1},
+	{"CN", "CN", 0},
 	{"CY", "CY", 1},
 	{"CZ", "CZ", 1},
 	{"DE", "DE", 3},
@@ -83,6 +95,7 @@ const struct cntry_locales_custom translate_custom_table[] = {
 	{"LT", "LT", 1},
 	{"LU", "LU", 1},
 	{"LV", "LV", 1},
+	{"MA", "MA", 1},
 	{"MT", "MT", 1},
 	{"NL", "NL", 1},
 	{"NO", "NO", 1},
@@ -94,7 +107,10 @@ const struct cntry_locales_custom translate_custom_table[] = {
 	{"SE", "SE", 1},
 	{"SI", "SI", 1},
 	{"SK", "SK", 1},
+	{"TR", "TR", 7},
+	{"UA", "UA", 2},
 	{"TW", "TW", 2},
+<<<<<<< HEAD
 #ifdef BCM4330_CHIP
 	{"",   "XZ", 1},	/* Universal if Country code is unknown or empty */
 	{"IR", "XZ", 1},	/* Universal if Country code is IRAN, (ISLAMIC REPUBLIC OF) */
@@ -303,6 +319,25 @@ const struct cntry_locales_custom translate_custom_table[] = {
 	{"NI", "NI", 2},
 	{"UZ", "MA", 2},
 #endif /* default ccode/regrev */
+=======
+	{"IR", "XZ", 11},	/* Universal if Country code is IRAN, (ISLAMIC REPUBLIC OF) */
+	{"SD", "XZ", 11},	/* Universal if Country code is SUDAN */
+	{"SY", "XZ", 11},	/* Universal if Country code is SYRIAN ARAB REPUBLIC */
+	{"GL", "XZ", 11},	/* Universal if Country code is GREENLAND */
+	{"PS", "XZ", 11},	/* Universal if Country code is PALESTINIAN TERRITORY, OCCUPIED */
+	{"TL", "XZ", 11},	/* Universal if Country code is TIMOR-LESTE (EAST TIMOR) */
+	{"MH", "XZ", 11},	/* Universal if Country code is MARSHALL ISLANDS */
+	{"PK", "XZ", 11},	/* Universal if Country code is PAKISTAN */
+#ifdef BCM4334_CHIP
+	{"RU", "RU", 5},
+	{"SG", "SG", 4},
+	{"US", "US", 46}
+#endif
+#ifdef BCM4330_CHIP
+	{"RU", "RU", 1},
+	{"US", "US", 5}
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 };
 
 /* Customized Locale convertor
@@ -347,6 +382,7 @@ void get_customized_country_code(void *adapter, char *country_iso_code, wl_count
 #define PSMINFO "/data/.psm.info"
 #endif /* SLP_PATH */
 
+<<<<<<< HEAD
 #ifdef BCM4330_CHIP
 #define CIS_BUF_SIZE            128
 #elif defined(BCM4334_CHIP)
@@ -362,6 +398,8 @@ void get_customized_country_code(void *adapter, char *country_iso_code, wl_count
 
 #define MACBUFFER_SZ (sizeof("00:11:22:33:44:55\n"))
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef READ_MACADDR
 int dhd_read_macaddr(struct dhd_info *dhd, struct ether_addr *mac)
 {
@@ -371,38 +409,66 @@ int dhd_read_macaddr(struct dhd_info *dhd, struct ether_addr *mac)
 	char randommac[3]    = {0};
 	char buf[MACBUFFER_SZ]         = {0};
 	char *filepath_efs       = MACINFO_EFS;
+#ifdef CONFIG_TARGET_LOCALE_VZW
+	char *nvfilepath       = "/data/misc/wifi/.nvmac.info";
+#else
+	char *nvfilepath       = NVMACINFO;
+#endif
 	int ret = 0;
 
-	fp = filp_open(filepath_efs, O_RDONLY, 0);
-	if (IS_ERR(fp)) {
-start_readmac:
-		/* File Doesn't Exist. Create and write mac addr. */
-		fp = filp_open(filepath_efs, O_RDWR | O_CREAT, 0666);
+		fp = filp_open(filepath_efs, O_RDONLY, 0);
 		if (IS_ERR(fp)) {
+<<<<<<< HEAD
 			DHD_ERROR(("[WIFI_SEC] %s: File open error\n", filepath_efs));
 			return -1;
 		}
 		oldfs = get_fs();
 		set_fs(get_ds());
+=======
+start_readmac:
+			/* File Doesn't Exist. Create and write mac addr. */
+			fp = filp_open(filepath_efs, O_RDWR | O_CREAT, 0666);
+			if (IS_ERR(fp)) {
+			DHD_ERROR(("[WIFI] %s: File open error\n", filepath_efs));
+				return -1;
+			}
+			oldfs = get_fs();
+			set_fs(get_ds());
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-		/* Generating the Random Bytes for 3 last octects of the MAC address */
-		get_random_bytes(randommac, 3);
+			/* Generating the Random Bytes for 3 last octects of the MAC address */
+			get_random_bytes(randommac, 3);
 
+<<<<<<< HEAD
 		sprintf(macbuffer, "%02X:%02X:%02X:%02X:%02X:%02X\n",
 			0x00, 0x12, 0x34, randommac[0], randommac[1], randommac[2]);
 		DHD_ERROR(("[WIFI_SEC] The Random Generated MAC ID: %s\n", macbuffer));
+=======
+			sprintf(macbuffer, "%02X:%02X:%02X:%02X:%02X:%02X\n",
+				0x00, 0x12, 0x34, randommac[0], randommac[1], randommac[2]);
+			DHD_ERROR(("[WIFI]The Random Generated MAC ID: %s\n", macbuffer));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
-		if (fp->f_mode & FMODE_WRITE) {
+			if (fp->f_mode & FMODE_WRITE) {
 			ret = fp->f_op->write(fp, (const char *)macbuffer,
+<<<<<<< HEAD
 			sizeof(macbuffer) - 1 /* skip null byte */, &fp->f_pos);
 			if (ret < 0)
 				DHD_ERROR(("[WIFI_SEC] MAC address [%s] Failed to write into File:"
 					" %s\n", macbuffer, filepath_efs));
 			else
 				DHD_ERROR(("[WIFI_SEC] MAC address [%s] written into File: %s\n",
+=======
+				sizeof(macbuffer), &fp->f_pos);
+				if (ret < 0)
+				DHD_ERROR(("[WIFI]MAC address [%s] Failed to write into File: %s\n",
 					macbuffer, filepath_efs));
-		}
-		set_fs(oldfs);
+				else
+				DHD_ERROR(("[WIFI]MAC address [%s] written into File: %s\n",
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+					macbuffer, filepath_efs));
+			}
+			set_fs(oldfs);
 		/* Reading the MAC Address from .mac.info file
 		   ( the existed file or just created file)
 		 */
@@ -412,9 +478,7 @@ start_readmac:
 		   .mac.info file( the existed file or just created file)
 		 */
 		ret = kernel_read(fp, 0, buf, 18);
-		/* to prevent abnormal string display
-		* when mac address is displayed on the screen.
-		*/
+/* to prevent abnormal string display when mac address is displayed on the screen. */
 		buf[17] = '\0';
 		if (strncmp(buf, "00:00:00:00:00:00", 17) < 1) {
 			DHD_ERROR(("[WIFI_SEC] goto start_readmac \r\n"));
@@ -473,8 +537,8 @@ int dhd_write_rdwr_macaddr(struct ether_addr *mac)
 		mac->octet[0], mac->octet[1], mac->octet[2],
 		mac->octet[3], mac->octet[4], mac->octet[5]);
 
-	/* /efs/wifi/.mac.info will be created */
-	fp_mac = filp_open(filepath_efs, O_RDWR | O_CREAT, 0666);
+	/* /data/.mac.info will be created */
+	fp_mac = filp_open(filepath_data, O_RDWR | O_CREAT, 0666);
 	if (IS_ERR(fp_mac)) {
 		DHD_ERROR(("[WIFI_SEC] %s: File open error\n", filepath_data));
 		return -1;
@@ -495,8 +559,8 @@ int dhd_write_rdwr_macaddr(struct ether_addr *mac)
 		set_fs(oldfs);
 		filp_close(fp_mac, NULL);
 	}
-	/* /data/.mac.info will be created */
-	fp_mac = filp_open(filepath_data, O_RDWR | O_CREAT, 0666);
+	/* /efs/wifi/.mac.info will be created */
+	fp_mac = filp_open(filepath_efs, O_RDWR | O_CREAT, 0666);
 	if (IS_ERR(fp_mac)) {
 		DHD_ERROR(("[WIFI_SEC] %s: File open error\n", filepath_efs));
 		return -1;
@@ -535,7 +599,7 @@ int dhd_check_rdwr_macaddr(struct dhd_info *dhd, dhd_pub_t *dhdp,
 #ifdef CONFIG_TARGET_LOCALE_NA
 	char *nvfilepath       = "/data/misc/wifi/.nvmac.info";
 #else
-	char *nvfilepath = "/efs/wifi/.nvmac.info";
+	char *nvfilepath = NVMACINFO;
 #endif
 	char cur_mac[128]   = {0};
 	char dummy_mac[ETHER_ADDR_LEN] = {0x00, 0x90, 0x4C, 0xC5, 0x12, 0x38};
@@ -546,6 +610,11 @@ int dhd_check_rdwr_macaddr(struct dhd_info *dhd, dhd_pub_t *dhdp,
 
 	fp_nvm = filp_open(nvfilepath, O_RDONLY, 0);
 	if (IS_ERR(fp_nvm)) { /* file does not exist */
+
+		/* Create the .nvmac.info */
+		fp_nvm = filp_open(nvfilepath, O_RDWR | O_CREAT, 0666);
+		if (!IS_ERR(fp_nvm))
+			filp_close(fp_nvm, NULL);
 
 		/* read MAC Address */
 		strcpy(cur_mac, "cur_etheraddr");
@@ -830,16 +899,20 @@ int dhd_write_rdwr_korics_macaddr(struct dhd_info *dhd, struct ether_addr *mac)
 #endif /* RDWR_KORICS_MACADDR */
 
 #ifdef USE_CID_CHECK
-static int dhd_write_cid_file(const char *filepath_cid, const char *buf, int buf_len)
+static int dhd_write_cid_file(const char *filepath_efs, const char *buf, int buf_len)
 {
 	struct file *fp = NULL;
 	mm_segment_t oldfs = {0};
 	int ret = 0;
 
 	/* File is always created. */
-	fp = filp_open(filepath_cid, O_RDWR | O_CREAT, 0666);
+	fp = filp_open(filepath_efs, O_RDWR | O_CREAT, 0666);
 	if (IS_ERR(fp)) {
+<<<<<<< HEAD
 		DHD_ERROR(("[WIFI_SEC] %s: File open error\n", filepath_cid));
+=======
+		DHD_ERROR(("[WIFI] %s: File open error\n", filepath_efs));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		return -1;
 	} else {
 		oldfs = get_fs();
@@ -848,11 +921,19 @@ static int dhd_write_cid_file(const char *filepath_cid, const char *buf, int buf
 		if (fp->f_mode & FMODE_WRITE) {
 			ret = fp->f_op->write(fp, buf, buf_len, &fp->f_pos);
 			if (ret < 0)
+<<<<<<< HEAD
 				DHD_ERROR(("[WIFI_SEC] Failed to write CIS[%s]"
 					" into '%s'\n", buf, filepath_cid));
 			else
 				DHD_ERROR(("[WIFI_SEC] CID [%s] written into"
 					" '%s'\n", buf, filepath_cid));
+=======
+				DHD_ERROR(("[WIFI] Failed to write CIS[%s]"
+					" into '%s'\n", buf, filepath_efs));
+			else
+				DHD_ERROR(("[WIFI] CID [%s] written into"
+					" '%s'\n", buf, filepath_efs));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
 		set_fs(oldfs);
 	}
@@ -873,6 +954,7 @@ static void dhd_dump_cis(const unsigned char *buf, int size)
 }
 #endif /* DUMP_CIS */
 
+<<<<<<< HEAD
 #define MAX_VID_LEN		8
 #define MAX_VNAME_LEN		16
 
@@ -922,27 +1004,29 @@ vid_info_t vid_info[] = {
 	{ 0, { 0x00, }, { "samsung" } }			/* Default: Not specified yet */
 };
 #endif /* BCM_CHIP_ID */
+=======
+#ifdef BCM4334_CHIP
+#define CIS_CID_OFFSET 43
+#else
+#define CIS_CID_OFFSET 31
+#endif /* BCM4334_CHIP */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 int dhd_check_module_cid(dhd_pub_t *dhd)
 {
 	int ret = -1;
-	unsigned char cis_buf[CIS_BUF_SIZE] = {0};
-	const char *cidfilepath = CIDINFO;
-	cis_rw_t *cish = (cis_rw_t *)&cis_buf[8];
-	int idx, max;
-	vid_info_t *cur_info;
-	unsigned char *vid_start;
-	unsigned char vid_length;
-#if defined(BCM4334_CHIP) || defined(BCM4335_CHIP)
-	const char *revfilepath = REVINFO;
 #ifdef BCM4334_CHIP
-	int flag_b3;
+	unsigned char cis_buf[250] = {0};
+	const char *revfilepath = REVINFO;
+	int flag_b3 = 0;
 #else
-	char rev_str[10] = {0};
-#endif /* BCM4334_CHIP */
-#endif /* BCM4334_CHIP || BCM4335_CHIP */
+	unsigned char cis_buf[128] = {0};
+#endif
+	const char *cidfilepath = CIDINFO;
 
 	/* Try reading out from CIS */
+	cis_rw_t *cish = (cis_rw_t *)&cis_buf[8];
+
 	cish->source = 0;
 	cish->byteoff = 0;
 	cish->nbytes = sizeof(cis_buf);
@@ -951,16 +1035,30 @@ int dhd_check_module_cid(dhd_pub_t *dhd)
 	ret = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, cis_buf,
 		sizeof(cis_buf), 0, 0);
 	if (ret < 0) {
+<<<<<<< HEAD
 		DHD_ERROR(("[WIFI_SEC] %s: CIS reading failed, ret=%d\n",
+=======
+		DHD_TRACE(("%s: CIS reading failed, err=%d\n",
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 			__FUNCTION__, ret));
 		return ret;
-	}
+	} else {
+#ifdef BCM4334_CHIP
+		unsigned char semco_id[4] = {0x00, 0x00, 0x33, 0x33};
 
+<<<<<<< HEAD
 	DHD_ERROR(("[WIFI_SEC] %s: CIS reading success, ret=%d\n",
 		__FUNCTION__, ret));
+=======
+		/* for SHARP FEM(new) */
+		unsigned char semco_id_sh[4] = {0x00, 0x00, 0xFB, 0x50};
+		DHD_ERROR(("%s: CIS reading success, ret=%d\n",
+			__FUNCTION__, ret));
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifdef DUMP_CIS
-	dhd_dump_cis(cis_buf, 48);
+		dump_cis(cis_buf, 48);
 #endif
+<<<<<<< HEAD
 
 	max = sizeof(cis_buf) - 4;
 	for (idx = 0; idx < max; idx++) {
@@ -974,20 +1072,35 @@ int dhd_check_module_cid(dhd_pub_t *dhd)
 				/* Go to next tuple if tuple value is not vendor type */
 				idx += (cis_buf[idx + 1] + 1);
 			}
+=======
+		if (memcmp(&cis_buf[CIS_CID_OFFSET], semco_id, 4) == 0) {
+			DHD_ERROR(("CID MATCH FOUND : Semco, "
+				"0x%02X 0x%02X 0x%02X 0x%02X\n",
+				cis_buf[CIS_CID_OFFSET],
+				cis_buf[CIS_CID_OFFSET+1], cis_buf[CIS_CID_OFFSET+2],
+				cis_buf[CIS_CID_OFFSET+3]));
+			dhd_write_cid_file(cidfilepath, "semco", 5);
+		} else if (memcmp(&cis_buf[CIS_CID_OFFSET], semco_id_sh, 4) == 0) {
+			DHD_ERROR(("CIS MATCH FOUND : Semco_sh, "
+				"0x%02X 0x%02X 0x%02X 0x%02X\n",
+				cis_buf[CIS_CID_OFFSET],
+				cis_buf[CIS_CID_OFFSET+1], cis_buf[CIS_CID_OFFSET+2],
+				cis_buf[CIS_CID_OFFSET+3]));
+			dhd_write_cid_file(cidfilepath, "semcosh", 7);
+		} else {
+			DHD_ERROR(("CID MATCH FOUND : Murata, "
+				"0x%02X 0x%02X 0x%02X 0x%02X\n", cis_buf[CIS_CID_OFFSET],
+				cis_buf[CIS_CID_OFFSET+1], cis_buf[CIS_CID_OFFSET+2],
+				cis_buf[CIS_CID_OFFSET+3]));
+			dhd_write_cid_file(cidfilepath, "murata", 6);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		}
-	}
 
-	if (idx < max) {
-		max = sizeof(vid_info) / sizeof(vid_info_t);
-		for (idx = 0; idx < max; idx++) {
-			cur_info = &vid_info[idx];
-			if ((cur_info->vid_length == vid_length) &&
-				(cur_info->vid_length != 0) &&
-				(memcmp(cur_info->vid, vid_start, cur_info->vid_length - 1) == 0))
-				goto write_cid;
-		}
-	}
+		/* Try reading out from OTP to distinguish B2 or B3 */
+		memset(cis_buf, 0, sizeof(cis_buf));
+		cish = (cis_rw_t *)&cis_buf[8];
 
+<<<<<<< HEAD
 	/* find default nvram, if exist */
 	DHD_ERROR(("[WIFI_SEC] %s: cannot find CIS TUPLE set as default\n", __FUNCTION__));
 	max = sizeof(vid_info) / sizeof(vid_info_t);
@@ -1041,9 +1154,55 @@ write_cid:
 		} else {
 			DHD_ERROR(("[WIFI_SEC] REV MATCH FOUND : 4335B0\n"));
 			dhd_write_cid_file(revfilepath, "BCM4335B0", 9);
+=======
+		cish->source = 0;
+		cish->byteoff = 0;
+		cish->nbytes = sizeof(cis_buf);
+
+		strcpy(cis_buf, "otpdump");
+		ret = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, cis_buf,
+			sizeof(cis_buf), 0, 0);
+		if (ret < 0) {
+			DHD_ERROR(("%s: OTP reading failed, err=%d\n",
+				__FUNCTION__, ret));
+			return ret;
 		}
+
+		/* otp 33th character is identifier for 4334B3 */
+		cis_buf[34] = '\0';
+		flag_b3 = bcm_atoi(&cis_buf[33]);
+		if (flag_b3 & 0x1) {
+			DHD_ERROR(("REV MATCH FOUND : 4334B3, %c\n", cis_buf[33]));
+			dhd_write_cid_file(revfilepath, "4334B3", 6);
+		}
+
+#else /* BCM4330_CHIP */
+		unsigned char murata_id[4] = {0x80, 0x06, 0x81, 0x00};
+		unsigned char semco_ve[4] = {0x80, 0x02, 0x81, 0x99};
+#ifdef DUMP_CIS
+		dhd_dump_cis(cis_buf, 48);
+#endif
+		if (memcmp(&cis_buf[CIS_CID_OFFSET], murata_id, 4) == 0) {
+			DHD_ERROR(("CID MATCH FOUND : Murata\n"));
+			dhd_write_cid_file(cidfilepath, "murata", 6);
+		} else if (memcmp(&cis_buf[CIS_CID_OFFSET], semco_ve, 4)
+			== 0) {
+			DHD_ERROR(("CID MATCH FOUND : Semco VE\n"));
+			dhd_write_cid_file(cidfilepath, "semcove", 7);
+		} else {
+			DHD_ERROR(("CID MISMATCH"
+				" 0x%02X 0x%02X 0x%02X 0x%02X\n",
+				cis_buf[CIS_CID_OFFSET],
+				cis_buf[CIS_CID_OFFSET + 1],
+				cis_buf[CIS_CID_OFFSET + 2],
+				cis_buf[CIS_CID_OFFSET + 3]));
+			dhd_write_cid_file(cidfilepath, "samsung", 7);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+		}
+#endif /* BCM4334_CHIP */
+		DHD_ERROR(("%s: CIS write success, err=%d\n",
+			__FUNCTION__, ret));
 	}
-#endif /* BCM4335_CHIP */
 
 	return ret;
 }
@@ -1079,10 +1238,15 @@ static int dhd_write_mac_file(const char *filepath, const char *buf, int buf_len
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#define CIS_MAC_OFFSET 33
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 int dhd_check_module_mac(dhd_pub_t *dhd, struct ether_addr *mac)
 {
 	int ret = -1;
-	unsigned char cis_buf[CIS_BUF_SIZE] = {0};
+	unsigned char cis_buf[250] = {0};
 	unsigned char mac_buf[20] = {0};
 	unsigned char otp_mac_buf[20] = {0};
 	const char *macfilepath = MACINFO_EFS;
@@ -1112,7 +1276,7 @@ int dhd_check_module_mac(dhd_pub_t *dhd, struct ether_addr *mac)
 		int index = 0;
 		uint8 *mac_addr = NULL;
 #ifdef DUMP_CIS
-		dhd_dump_cis(cis_buf, 48);
+		dump_cis(cis_buf, 48);
 #endif
 
 		/* Find a new tuple tag */
@@ -1286,10 +1450,13 @@ void sec_control_pm(dhd_pub_t *dhd, uint *power_mode)
 	char *filepath = PSMINFO;
 	char power_val = 0;
 	char iovbuf[WL_EVENTING_MASK_LEN + 12];
+<<<<<<< HEAD
 #ifdef DHD_ENABLE_LPC
 	int ret = 0;
 	uint32 lpc = 0;
 #endif /* DHD_ENABLE_LPC */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	g_pm_control = FALSE;
 
@@ -1327,6 +1494,7 @@ void sec_control_pm(dhd_pub_t *dhd, uint *power_mode)
 			dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf,
 				sizeof(iovbuf), TRUE, 0);
 #endif
+<<<<<<< HEAD
 #ifdef DHD_ENABLE_LPC
 			/* Set lpc 0 */
 			bcm_mkiovar("lpc", (char *)&lpc, 4, iovbuf, sizeof(iovbuf));
@@ -1336,6 +1504,8 @@ void sec_control_pm(dhd_pub_t *dhd, uint *power_mode)
 				__FUNCTION__, ret));
 			}
 #endif /* DHD_ENABLE_LPC */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		} else {
 			dhd_wl_ioctl_cmd(dhd, WLC_SET_PM, (char *)power_mode,
 				sizeof(uint), TRUE, 0);
@@ -1353,7 +1523,6 @@ int dhd_sel_ant_from_file(dhd_pub_t *dhd)
 	struct file *fp = NULL;
 	int ret = -1;
 	uint32 ant_val = 0;
-	uint32 btc_mode = 0;
 	char *filepath = "/data/.ant.info";
 	char iovbuf[WLC_IOCTL_SMLEN];
 	uint chip_id = dhd_bus_chip_id(dhd);
@@ -1393,6 +1562,7 @@ int dhd_sel_ant_from_file(dhd_pub_t *dhd)
 		}
 	}
 
+<<<<<<< HEAD
 	/* bt coex mode off */
 	if (dhd_get_fw_mode(dhd->info) == DHD_FLAG_MFG_MODE) {
 		bcm_mkiovar("btc_mode", (char *)&btc_mode, 4, iovbuf, sizeof(iovbuf));
@@ -1405,6 +1575,8 @@ int dhd_sel_ant_from_file(dhd_pub_t *dhd)
 		}
 	}
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Select Antenna */
 	bcm_mkiovar("txchain", (char *)&ant_val, 4, iovbuf, sizeof(iovbuf));
 	ret = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0);
@@ -1425,6 +1597,7 @@ int dhd_sel_ant_from_file(dhd_pub_t *dhd)
 	return 0;
 }
 #endif /* MIMO_ANTENNA_SETTING */
+<<<<<<< HEAD
 
 #ifdef USE_WFA_CERT_CONF
 int sec_get_param(dhd_pub_t *dhd, int mode)
@@ -1647,4 +1820,6 @@ uint32 sec_save_wlinfo(char *firm_ver, char *dhd_ver, char *nvram_p)
 	return ret;
 }
 #endif /* WRITE_WLANINFO */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif /* CUSTOMER_HW4 */

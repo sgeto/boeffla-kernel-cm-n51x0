@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsrom_fmt.h 427005 2013-10-02 00:15:10Z $
+=======
+ * $Id: bcmsrom_fmt.h 327439 2012-04-13 17:44:48Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_bcmsrom_fmt_h_
@@ -43,7 +47,6 @@
 #define SROM3_SWRGN_OFF		28	/* s/w region offset in words */
 
 #define	SROM_SSID		2
-#define	SROM_SVID		3
 
 #define	SROM_WL1LHMAXP		29
 
@@ -454,8 +457,11 @@
 #define SROM11_THERMAL			87
 #define SROM11_MPWR_RAWTS		88
 #define SROM11_TS_SLP_OPT_CORRX		89
+<<<<<<< HEAD
 #define SROM11_XTAL_FREQ		90
 #define SROM11_5GB0_4080_W0_A1          91
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define SROM11_PHYCAL_TEMPDELTA  	92
 #define SROM11_MPWR_1_AND_2 		93
 #define SROM11_5GB0_4080_W1_A1          94
@@ -475,6 +481,7 @@
 #define SROM11_TEMPSENSE_OPTION_MASK	0x3
 #define SROM11_TEMPSENSE_OPTION_SHIFT	0
 
+<<<<<<< HEAD
 #define SROM11_PDOFF_2G_40M_A0_MASK     0x000f
 #define SROM11_PDOFF_2G_40M_A0_SHIFT    0
 #define SROM11_PDOFF_2G_40M_A1_MASK     0x00f0
@@ -485,6 +492,8 @@
 #define SROM11_PDOFF_2G_40M_VALID_SHIFT 15
 
 #define SROM11_PDOFF_2G_40M     	100
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define SROM11_PDOFF_40M_A0		101
 #define SROM11_PDOFF_40M_A1		102
 #define SROM11_PDOFF_40M_A2		103
@@ -558,24 +567,30 @@
 #define SROM11_MCSBW405GLPO_1		179
 #define SROM11_MCSBW805GLPO 		180
 #define SROM11_MCSBW805GLPO_1		181
-#define SROM11_RPCAL_2G			182
-#define SROM11_RPCAL_5GL		183
+#define SROM11_MCSBW1605GLPO		182
+#define SROM11_MCSBW1605GLPO_1		183
 #define SROM11_MCSBW205GMPO 		184
 #define SROM11_MCSBW205GMPO_1		185
 #define SROM11_MCSBW405GMPO 		186
 #define SROM11_MCSBW405GMPO_1		187
 #define SROM11_MCSBW805GMPO 		188
 #define SROM11_MCSBW805GMPO_1		189
-#define SROM11_RPCAL_5GM		190
-#define SROM11_RPCAL_5GH		191
+#define SROM11_MCSBW1605GMPO		190
+#define SROM11_MCSBW1605GMPO_1		191
 #define SROM11_MCSBW205GHPO 		192
 #define SROM11_MCSBW205GHPO_1		193
 #define SROM11_MCSBW405GHPO 		194
 #define SROM11_MCSBW405GHPO_1		195
 #define SROM11_MCSBW805GHPO 		196
 #define SROM11_MCSBW805GHPO_1		197
+<<<<<<< HEAD
 #define SROM11_RPCAL_5GU		198
 #define SROM11_PDOFF_2G_CCK	        199
+=======
+#define SROM11_MCSBW1605GHPO		198
+#define SROM11_MCSBW1605GHPO_1		199
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #define SROM11_MCSLR5GLPO		200
 #define SROM11_MCSLR5GMPO		201
 #define SROM11_MCSLR5GHPO		202

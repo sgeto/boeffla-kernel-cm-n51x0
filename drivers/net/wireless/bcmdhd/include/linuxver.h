@@ -22,7 +22,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: linuxver.h 431983 2013-10-25 06:53:27Z $
+=======
+ * $Id: linuxver.h 353905 2012-08-29 07:33:08Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _linuxver_h_
@@ -596,18 +600,43 @@ static inline bool binary_sema_up(tsk_ctl_t *tsk)
 #define SMP_RD_BARRIER_DEPENDS(x) smp_rmb(x)
 #endif
 
+<<<<<<< HEAD
 #define PROC_START(thread_func, owner, tsk_ctl, flags, name) \
+=======
+
+#define PROC_START(thread_func, owner, tsk_ctl, flags) \
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 { \
 	sema_init(&((tsk_ctl)->sema), 0); \
 	init_completion(&((tsk_ctl)->completed)); \
 	(tsk_ctl)->parent = owner; \
 	(tsk_ctl)->proc_name = name;  \
 	(tsk_ctl)->terminated = FALSE; \
+<<<<<<< HEAD
 	(tsk_ctl)->p_task  = kthread_run(thread_func, tsk_ctl, (char*)name); \
 	(tsk_ctl)->thr_pid = (tsk_ctl)->p_task->pid; \
 	spin_lock_init(&((tsk_ctl)->spinlock)); \
 	DBG_THR(("%s(): thread:%s:%lx started\n", __FUNCTION__, \
 		(tsk_ctl)->proc_name, (tsk_ctl)->thr_pid)); \
+=======
+	(tsk_ctl)->thr_pid = kernel_thread(thread_func, tsk_ctl, flags); \
+	DBG_THR(("%s thr:%lx created\n", __FUNCTION__, (tsk_ctl)->thr_pid)); \
+	if ((tsk_ctl)->thr_pid > 0) \
+		wait_for_completion(&((tsk_ctl)->completed)); \
+	DBG_THR(("%s thr:%lx started\n", __FUNCTION__, (tsk_ctl)->thr_pid)); \
+}
+
+#ifdef USE_KTHREAD_API
+#define PROC_START2(thread_func, owner, tsk_ctl, flags, name) \
+{ \
+	sema_init(&((tsk_ctl)->sema), 0); \
+	init_completion(&((tsk_ctl)->completed)); \
+	(tsk_ctl)->parent = owner; \
+	(tsk_ctl)->terminated = FALSE; \
+	(tsk_ctl)->p_task  = kthread_run(thread_func, tsk_ctl, (char*)name); \
+	(tsk_ctl)->thr_pid = (tsk_ctl)->p_task->pid; \
+	DBG_THR(("%s thr:%lx created\n", __FUNCTION__, (tsk_ctl)->thr_pid)); \
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 }
 
 #define PROC_STOP(tsk_ctl) \

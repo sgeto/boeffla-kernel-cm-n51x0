@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: pcicfg.h 413666 2013-07-20 01:16:40Z $
+=======
+ * $Id: pcicfg.h 309193 2012-01-19 00:03:57Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_h_pcicfg_
@@ -58,6 +62,7 @@
 #define	PCI_CFG_PIN		0x3d
 #define	PCI_CFG_MINGNT		0x3e
 #define	PCI_CFG_MAXLAT		0x3f
+<<<<<<< HEAD
 #define	PCI_CFG_DEVCTRL		0xd8
 #define	PCI_BAR0_WIN		0x80	/* backplane addres space accessed by BAR0 */
 #define	PCI_BAR1_WIN		0x84	/* backplane addres space accessed by BAR1 */
@@ -73,6 +78,27 @@
 #define	PCI_GPIO_IN		0xb0	/* pci config space gpio input (>=rev3) */
 #define	PCI_GPIO_OUT		0xb4	/* pci config space gpio output (>=rev3) */
 #define	PCI_GPIO_OUTEN		0xb8	/* pci config space gpio output enable (>=rev3) */
+=======
+#define	PCI_BAR0_WIN		0x80	
+#define	PCI_BAR1_WIN		0x84	
+#define	PCI_SPROM_CONTROL	0x88	
+#define	PCI_BAR1_CONTROL	0x8c	
+#define	PCI_INT_STATUS		0x90	
+#define	PCI_INT_MASK		0x94	
+#define PCI_TO_SB_MB		0x98	
+#define PCI_BACKPLANE_ADDR	0xa0	
+#define PCI_BACKPLANE_DATA	0xa4	
+#define	PCI_CLK_CTL_ST		0xa8	
+#define	PCI_BAR0_WIN2		0xac	
+#define	PCI_GPIO_IN		0xb0	
+#define	PCI_GPIO_OUT		0xb4	
+#define	PCI_GPIO_OUTEN		0xb8	
+
+#define	PCI_BAR0_SHADOW_OFFSET	(2 * 1024)	
+#define	PCI_BAR0_SPROM_OFFSET	(4 * 1024)	
+#define	PCI_BAR0_PCIREGS_OFFSET	(6 * 1024)	
+#define	PCI_BAR0_PCISBR_OFFSET	(4 * 1024)	
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define	PCI_BAR0_SHADOW_OFFSET	(2 * 1024)	/* bar0 + 2K accesses sprom shadow (in pci core) */
 #define	PCI_BAR0_SPROM_OFFSET	(4 * 1024)	/* bar0 + 4K accesses external sprom */

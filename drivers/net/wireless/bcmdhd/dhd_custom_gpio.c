@@ -20,7 +20,11 @@
 * software in any way with any other Broadcom software provided under a license
 * other than the GPL, without Broadcom's express prior written consent.
 *
+<<<<<<< HEAD
 * $Id: dhd_custom_gpio.c 447089 2014-01-08 04:05:58Z $
+=======
+* $Id: dhd_custom_gpio.c 353167 2012-08-24 22:11:30Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 */
 
 #include <typedefs.h>

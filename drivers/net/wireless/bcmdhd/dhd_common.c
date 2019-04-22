@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd_common.c 451346 2014-01-24 22:19:39Z $
+=======
+ * $Id: dhd_common.c 356374 2012-09-12 10:37:44Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 #include <typedefs.h>
 #include <osl.h>
@@ -288,12 +292,12 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 
 		ret = dhd_prot_ioctl(dhd_pub, ifindex, ioc, buf, len);
 #if defined(CUSTOMER_HW4)
-		if ((ret || ret == -ETIMEDOUT) && (dhd_pub->up))
+	if ((ret || ret == -ETIMEDOUT) && (dhd_pub->up))
 #else
-		if ((ret) && (dhd_pub->up))
+	if ((ret) && (dhd_pub->up))
 #endif /* CUSTOMER_HW4 */
-			/* Send hang event only if dhd_open() was success */
-			dhd_os_check_hang(dhd_pub, ifindex, ret);
+		/* Send hang event only if dhd_open() was success */
+		dhd_os_check_hang(dhd_pub, ifindex, ret);
 
 		if (ret == -ETIMEDOUT && !dhd_pub->up) {
 			DHD_ERROR(("%s: 'resumed on timeout' error is "
@@ -305,6 +309,7 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 		dhd_os_proto_unblock(dhd_pub);
 
 #if defined(CUSTOMER_HW4)
+<<<<<<< HEAD
 		if (ret < 0) {
 			if (ioc->cmd == WLC_GET_VAR)
 				DHD_ERROR(("%s: WLC_GET_VAR: %s, ret = %d\n",
@@ -317,6 +322,20 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 					__FUNCTION__, ioc->cmd, ret));
 		}
 #endif /* OEM_ANDROID && CUSTOMER_HW4 */
+=======
+	if (ret < 0) {
+		if (ioc->cmd == WLC_GET_VAR)
+			DHD_ERROR(("%s: WLC_GET_VAR: %s, ret = %d\n",
+				__FUNCTION__, (char *)ioc->buf, ret));
+		else if (ioc->cmd == WLC_SET_VAR)
+			DHD_ERROR(("%s: WLC_SET_VAR: %s, ret = %d\n",
+				__FUNCTION__, (char *)ioc->buf, ret));
+		else
+			DHD_ERROR(("%s: WLC_IOCTL: cmd: %d, ret = %d\n",
+				__FUNCTION__, ioc->cmd, ret));
+	}
+#endif 
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	}
 
@@ -644,8 +663,7 @@ dhd_prec_enq(dhd_pub_t *dhdp, struct pktq *q, void *pkt, int prec)
 	if (pktq_pfull(q, prec))
 		eprec = prec;
 	else if (pktq_full(q)) {
-		p = pktq_peek_tail(q, &eprec);
-		ASSERT(p);
+		pktq_peek_tail(q, &eprec);
 		if (eprec > prec || eprec < 0)
 			return FALSE;
 	}
@@ -671,8 +689,7 @@ dhd_prec_enq(dhd_pub_t *dhdp, struct pktq *q, void *pkt, int prec)
 	}
 
 	/* Enqueue */
-	p = pktq_penq(q, prec, pkt);
-	ASSERT(p);
+	pktq_penq(q, prec, pkt);
 
 	return TRUE;
 }
@@ -837,7 +854,7 @@ dhd_ioctl(dhd_pub_t * dhd_pub, dhd_ioctl_t *ioc, void * buf, uint buflen)
 
 	case DHD_GET_VERSION:
 		if (buflen < sizeof(int))
-			bcmerror = BCME_BUFTOOSHORT;
+			bcmerror = -BCME_BUFTOOSHORT;
 		else
 			*(int*)buf = DHD_IOCTL_VERSION;
 		break;
@@ -1165,12 +1182,6 @@ wl_show_host_event(wl_event_msg_t *event, void *event_data)
 		DHD_EVENT(("MACEVENT: %s %d\n", event_name, ntoh32(*((int *)event_data))));
 		break;
 
-	case WLC_E_SERVICE_FOUND:
-	case WLC_E_P2PO_ADD_DEVICE:
-	case WLC_E_P2PO_DEL_DEVICE:
-		DHD_EVENT(("MACEVENT: %s, MAC %s\n", event_name, eabuf));
-		break;
-
 	default:
 		DHD_EVENT(("MACEVENT: %s %d, MAC %s, status %d, reason %d, auth %d\n",
 		       event_name, event_type, eabuf, (int)status, (int)reason,
@@ -1248,6 +1259,7 @@ wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata, size_t pktlen,
 		break;
 #endif
 
+<<<<<<< HEAD
 	case WLC_E_IF: {
 		struct wl_event_data_if *ifevent = (struct wl_event_data_if *)event_data;
 
@@ -1256,6 +1268,30 @@ wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata, size_t pktlen,
 			DHD_ERROR(("WLC_E_IF: NO_IF set, event Ignored\r\n"));
 			return (BCME_OK);
 		}
+=======
+	case WLC_E_IF:
+		{
+		dhd_if_event_t *ifevent = (dhd_if_event_t *)event_data;
+#ifdef PROP_TXSTATUS
+			{
+		uint8* ea = pvt_data->eth.ether_dhost;
+		WLFC_DBGMESG(("WLC_E_IF: idx:%d, action:%s, iftype:%s, "
+		              "[%02x:%02x:%02x:%02x:%02x:%02x]\n",
+		              ifevent->ifidx,
+		              ((ifevent->action == WLC_E_IF_ADD) ? "ADD":"DEL"),
+		              ((ifevent->is_AP == 0) ? "STA":"AP "),
+		              ea[0], ea[1], ea[2], ea[3], ea[4], ea[5]));
+		(void)ea;
+		if (ifevent->action == WLC_E_IF_CHANGE)
+			dhd_wlfc_interface_event(dhd_pub->info,
+				eWLFC_MAC_ENTRY_ACTION_UPDATE,
+				ifevent->ifidx, ifevent->is_AP, ea);
+		else
+			dhd_wlfc_interface_event(dhd_pub->info,
+				((ifevent->action == WLC_E_IF_ADD) ?
+				eWLFC_MAC_ENTRY_ACTION_ADD : eWLFC_MAC_ENTRY_ACTION_DEL),
+				ifevent->ifidx, ifevent->is_AP, ea);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef PROP_TXSTATUS
 		{
@@ -1681,10 +1717,10 @@ dhd_arp_offload_set(dhd_pub_t * dhd, int arp_mode)
 	retcode = retcode >= 0 ? 0 : retcode;
 	if (retcode)
 		DHD_TRACE(("%s: failed to set ARP offload mode to 0x%x, retcode = %d\n",
-			__FUNCTION__, arp_mode, retcode));
+		__FUNCTION__, arp_mode, retcode));
 	else
 		DHD_TRACE(("%s: successfully set ARP offload mode to 0x%x\n",
-			__FUNCTION__, arp_mode));
+		__FUNCTION__, arp_mode));
 }
 
 void
@@ -1705,76 +1741,66 @@ dhd_arp_offload_enable(dhd_pub_t * dhd, int arp_enable)
 	retcode = retcode >= 0 ? 0 : retcode;
 	if (retcode)
 		DHD_TRACE(("%s: failed to enabe ARP offload to %d, retcode = %d\n",
-			__FUNCTION__, arp_enable, retcode));
+		__FUNCTION__, arp_enable, retcode));
 	else
 		DHD_TRACE(("%s: successfully enabed ARP offload to %d\n",
-			__FUNCTION__, arp_enable));
-	if (arp_enable) {
-		uint32 version;
-		bcm_mkiovar("arp_version", 0, 0, iovbuf, sizeof(iovbuf));
-		retcode = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, iovbuf, sizeof(iovbuf), FALSE, 0);
-		if (retcode) {
-			DHD_INFO(("%s: fail to get version (maybe version 1:retcode = %d\n",
-				__FUNCTION__, retcode));
-			dhd->arp_version = 1;
-		}
-		else {
-			memcpy(&version, iovbuf, sizeof(version));
-			DHD_INFO(("%s: ARP Version= %x\n", __FUNCTION__, version));
-			dhd->arp_version = version;
-		}
-	}
+		__FUNCTION__, arp_enable));
 }
 
 void
-dhd_aoe_arp_clr(dhd_pub_t *dhd, int idx)
+dhd_aoe_arp_clr(dhd_pub_t *dhd)
 {
 	int ret = 0;
 	int iov_len = 0;
 	char iovbuf[DHD_IOVAR_BUF_SIZE];
 
 	if (dhd == NULL) return;
-	if (dhd->arp_version == 1)
-		idx = 0;
 
 	iov_len = bcm_mkiovar("arp_table_clear", 0, 0, iovbuf, sizeof(iovbuf));
+<<<<<<< HEAD
 	if (!iov_len) {
 		DHD_ERROR(("%s: Insufficient iovar buffer size %zu \n",
 			__FUNCTION__, sizeof(iovbuf)));
 		return;
 	}
 	if ((ret  = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, idx)) < 0)
+=======
+	if ((ret  = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, 0) < 0))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		DHD_ERROR(("%s failed code %d\n", __FUNCTION__, ret));
 }
 
 void
-dhd_aoe_hostip_clr(dhd_pub_t *dhd, int idx)
+dhd_aoe_hostip_clr(dhd_pub_t *dhd)
 {
 	int ret = 0;
 	int iov_len = 0;
 	char iovbuf[DHD_IOVAR_BUF_SIZE];
 
 	if (dhd == NULL) return;
-	if (dhd->arp_version == 1)
-		idx = 0;
 
 	iov_len = bcm_mkiovar("arp_hostip_clear", 0, 0, iovbuf, sizeof(iovbuf));
+<<<<<<< HEAD
 	if (!iov_len) {
 		DHD_ERROR(("%s: Insufficient iovar buffer size %zu \n",
 			__FUNCTION__, sizeof(iovbuf)));
 		return;
 	}
 	if ((ret  = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, idx)) < 0)
+=======
+	if ((ret  = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, 0)) < 0)
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 		DHD_ERROR(("%s failed code %d\n", __FUNCTION__, ret));
 }
 
 void
-dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr, int idx)
+dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr)
 {
 	int iov_len = 0;
 	char iovbuf[DHD_IOVAR_BUF_SIZE];
 	int retcode;
 
+<<<<<<< HEAD
 
 	if (dhd == NULL) return;
 	if (dhd->arp_version == 1)
@@ -1787,6 +1813,10 @@ dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr, int idx)
 		return;
 	}
 	retcode = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, idx);
+=======
+	iov_len = bcm_mkiovar("arp_hostip", (char *)&ipaddr, 4, iovbuf, sizeof(iovbuf));
+	retcode = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, iov_len, TRUE, 0);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	if (retcode)
 		DHD_TRACE(("%s: ARP ip addr add failed, retcode = %d\n",
@@ -1797,7 +1827,7 @@ dhd_arp_offload_add_ip(dhd_pub_t *dhd, uint32 ipaddr, int idx)
 }
 
 int
-dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen, int idx)
+dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen)
 {
 	int retcode, i;
 	int iov_len;
@@ -1806,13 +1836,10 @@ dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen, int idx)
 
 	if (!buf)
 		return -1;
-	if (dhd == NULL) return -1;
-	if (dhd->arp_version == 1)
-		idx = 0;
 
 	iov_len = bcm_mkiovar("arp_hostip", 0, 0, buf, buflen);
 	BCM_REFERENCE(iov_len);
-	retcode = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, buf, buflen, FALSE, idx);
+	retcode = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, buf, buflen, FALSE, 0);
 
 	if (retcode) {
 		DHD_TRACE(("%s: ioctl WLC_GET_VAR error %d\n",
@@ -2176,19 +2203,30 @@ bool dhd_is_associated(dhd_pub_t *dhd, void *bss_buf, int *retval)
 
 /* Function to estimate possible DTIM_SKIP value */
 int
-dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
+dhd_get_dtim_skip(dhd_pub_t *dhd)
 {
-	int bcn_li_dtim = 1; /* deafult no dtim skip setting */
+	int bcn_li_dtim;
 	int ret = -1;
+<<<<<<< HEAD
 	int dtim_period = 0;
 	int ap_beacon = 0;
 	int allowed_skip_dtim_cnt = 0;
+=======
+	int dtim_assoc = 0;
+
+	if ((dhd->dtim_skip == 0) || (dhd->dtim_skip == 1))
+		bcn_li_dtim = 3;
+	else
+		bcn_li_dtim = dhd->dtim_skip;
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	/* Check if associated */
 	if (dhd_is_associated(dhd, NULL, NULL) == FALSE) {
 		DHD_TRACE(("%s NOT assoc ret %d\n", __FUNCTION__, ret));
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	/* read associated AP beacon interval */
 	if ((ret = dhd_wl_ioctl_cmd(dhd, WLC_GET_BCNPRD,
 		&ap_beacon, sizeof(ap_beacon), FALSE, 0)) < 0) {
@@ -2203,19 +2241,22 @@ dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
 	}
 
 	/* read associated ap's dtim setup */
+=======
+	/* if assoc grab ap's dtim value */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	if ((ret = dhd_wl_ioctl_cmd(dhd, WLC_GET_DTIMPRD,
 		&dtim_period, sizeof(dtim_period), FALSE, 0)) < 0) {
 		DHD_ERROR(("%s failed code %d\n", __FUNCTION__, ret));
 		goto exit;
 	}
 
+	DHD_ERROR(("%s bcn_li_dtim=%d DTIM=%d Listen=%d\n",
+		__FUNCTION__, bcn_li_dtim, dtim_assoc, LISTEN_INTERVAL));
+
 	/* if not assocated just eixt */
 	if (dtim_period == 0) {
 		goto exit;
 	}
-
-	/* attemp to use platform defined dtim skip interval */
-	bcn_li_dtim = dhd->suspend_bcn_li_dtim;
 
 	/* check if sta listen interval fits into AP dtim */
 	if (dtim_period > CUSTOM_LISTEN_INTERVAL) {
@@ -2237,9 +2278,12 @@ dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
 		DHD_TRACE(("%s agjust dtim_skip as %d\n", __FUNCTION__, bcn_li_dtim));
 	}
 
+<<<<<<< HEAD
 	DHD_ERROR(("%s beacon=%d bcn_li_dtim=%d DTIM=%d Listen=%d\n",
 		__FUNCTION__, ap_beacon, bcn_li_dtim, dtim_period, CUSTOM_LISTEN_INTERVAL));
 
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 exit:
 	return bcn_li_dtim;
 }
@@ -2256,12 +2300,223 @@ bool dhd_support_sta_mode(dhd_pub_t *dhd)
 		return TRUE;
 }
 
+<<<<<<< HEAD
 #if defined(KEEP_ALIVE)
 int dhd_keep_alive_onoff(dhd_pub_t *dhd)
 {
 	char				buf[256];
 	const char			*str;
 	wl_mkeep_alive_pkt_t	mkeep_alive_pkt = {0};
+=======
+#if defined(PNO_SUPPORT)
+int
+dhd_pno_clean(dhd_pub_t *dhd)
+{
+	char iovbuf[128];
+	int pfn_enabled = 0;
+	int iov_len = 0;
+	int ret;
+
+	/* Disable pfn */
+	iov_len = bcm_mkiovar("pfn", (char *)&pfn_enabled, 4, iovbuf, sizeof(iovbuf));
+	if ((ret = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0)) >= 0) {
+		/* clear pfn */
+		iov_len = bcm_mkiovar("pfnclear", 0, 0, iovbuf, sizeof(iovbuf));
+		if (iov_len) {
+			if ((ret = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf,
+			                            iov_len, TRUE, 0)) < 0) {
+				DHD_ERROR(("%s failed code %d\n", __FUNCTION__, ret));
+			}
+		}
+		else {
+			ret = -1;
+			DHD_ERROR(("%s failed code %d\n", __FUNCTION__, iov_len));
+		}
+	}
+	else
+		DHD_ERROR(("%s failed code %d\n", __FUNCTION__, ret));
+
+	return ret;
+}
+
+int
+dhd_pno_enable(dhd_pub_t *dhd, int pfn_enabled)
+{
+	char iovbuf[128];
+	int ret = -1;
+
+	if ((!dhd) && ((pfn_enabled != 0) || (pfn_enabled != 1))) {
+		DHD_ERROR(("%s error exit\n", __FUNCTION__));
+		return ret;
+	}
+
+#ifndef WL_SCHED_SCAN
+	if (!dhd_support_sta_mode(dhd))
+		return (ret);
+
+	memset(iovbuf, 0, sizeof(iovbuf));
+
+	if ((pfn_enabled) && (dhd_is_associated(dhd, NULL, NULL) == TRUE)) {
+		DHD_ERROR(("%s pno is NOT enable : called in assoc mode , ignore\n", __FUNCTION__));
+		return ret;
+	}
+#endif /* !WL_SCHED_SCAN */
+
+	/* Enable/disable PNO */
+	if ((ret = bcm_mkiovar("pfn", (char *)&pfn_enabled, 4, iovbuf, sizeof(iovbuf))) > 0) {
+		if ((ret = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR,
+			iovbuf, sizeof(iovbuf), TRUE, 0)) < 0) {
+			DHD_ERROR(("%s failed for error=%d\n", __FUNCTION__, ret));
+			return ret;
+		}
+		else {
+			dhd->pno_enable = pfn_enabled;
+			DHD_TRACE(("%s set pno as %s\n",
+				__FUNCTION__, dhd->pno_enable ? "Enable" : "Disable"));
+		}
+	}
+	else DHD_ERROR(("%s failed err=%d\n", __FUNCTION__, ret));
+
+	return ret;
+}
+
+/* Function to execute combined scan */
+int
+dhd_pno_set(dhd_pub_t *dhd, wlc_ssid_t* ssids_local, int nssid, ushort scan_fr,
+	int pno_repeat, int pno_freq_expo_max)
+{
+	int err = -1;
+	char iovbuf[128];
+	int k, i;
+	wl_pfn_param_t pfn_param;
+	wl_pfn_t	pfn_element;
+	uint len = 0;
+
+	DHD_TRACE(("%s nssid=%d nchan=%d\n", __FUNCTION__, nssid, scan_fr));
+
+	if ((!dhd) || (!ssids_local)) {
+		DHD_ERROR(("%s error exit(%s %s)\n", __FUNCTION__,
+		(!dhd)?"dhd is null":"", (!ssids_local)?"ssid is null":""));
+		err = -1;
+		return err;
+	}
+
+#ifndef WL_SCHED_SCAN
+	if (!dhd_support_sta_mode(dhd))
+		return err;
+#endif /* !WL_SCHED_SCAN */
+
+	/* Check for broadcast ssid */
+	for (k = 0; k < nssid; k++) {
+		if (!ssids_local[k].SSID_len) {
+			DHD_ERROR(("%d: Broadcast SSID is ilegal for PNO setting\n", k));
+			return err;
+		}
+	}
+/* #define  PNO_DUMP 1 */
+#ifdef PNO_DUMP
+	{
+		int j;
+		for (j = 0; j < nssid; j++) {
+			DHD_ERROR(("%d: scan  for  %s size =%d\n", j,
+				ssids_local[j].SSID, ssids_local[j].SSID_len));
+		}
+	}
+#endif /* PNO_DUMP */
+
+	/* clean up everything */
+	if  ((err = dhd_pno_clean(dhd)) < 0) {
+		DHD_ERROR(("%s failed error=%d\n", __FUNCTION__, err));
+		return err;
+	}
+	memset(iovbuf, 0, sizeof(iovbuf));
+	memset(&pfn_param, 0, sizeof(pfn_param));
+	memset(&pfn_element, 0, sizeof(pfn_element));
+
+	/* set pfn parameters */
+	pfn_param.version = htod32(PFN_VERSION);
+	pfn_param.flags = htod16((PFN_LIST_ORDER << SORT_CRITERIA_BIT));
+
+	/* check and set extra pno params */
+	if ((pno_repeat != 0) || (pno_freq_expo_max != 0)) {
+		pfn_param.flags |= htod16(ENABLE << ENABLE_ADAPTSCAN_BIT);
+		pfn_param.repeat = (uchar) (pno_repeat);
+		pfn_param.exp = (uchar) (pno_freq_expo_max);
+	}
+	/* set up pno scan fr */
+	if (scan_fr  != 0)
+		pfn_param.scan_freq = htod32(scan_fr);
+
+	if (pfn_param.scan_freq > PNO_SCAN_MAX_FW_SEC) {
+		DHD_ERROR(("%s pno freq above %d sec\n", __FUNCTION__, PNO_SCAN_MAX_FW_SEC));
+		return err;
+	}
+	if (pfn_param.scan_freq < PNO_SCAN_MIN_FW_SEC) {
+		DHD_ERROR(("%s pno freq less %d sec\n", __FUNCTION__, PNO_SCAN_MIN_FW_SEC));
+		return err;
+	}
+
+	len = bcm_mkiovar("pfn_set", (char *)&pfn_param, sizeof(pfn_param), iovbuf, sizeof(iovbuf));
+	if ((err = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, len, TRUE, 0)) < 0) {
+				DHD_ERROR(("%s pfn_set failed for error=%d\n",
+					__FUNCTION__, err));
+				return err;
+	}
+
+	/* set all pfn ssid */
+	for (i = 0; i < nssid; i++) {
+
+		pfn_element.infra = htod32(DOT11_BSSTYPE_INFRASTRUCTURE);
+		pfn_element.auth = (DOT11_OPEN_SYSTEM);
+		pfn_element.wpa_auth = htod32(WPA_AUTH_PFN_ANY);
+		pfn_element.wsec = htod32(0);
+		pfn_element.infra = htod32(1);
+		pfn_element.flags = htod32(ENABLE << WL_PFN_HIDDEN_BIT);
+		memcpy((char *)pfn_element.ssid.SSID, ssids_local[i].SSID, ssids_local[i].SSID_len);
+		pfn_element.ssid.SSID_len = ssids_local[i].SSID_len;
+
+		if ((len =
+		bcm_mkiovar("pfn_add", (char *)&pfn_element,
+			sizeof(pfn_element), iovbuf, sizeof(iovbuf))) > 0) {
+			if ((err =
+			dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, len, TRUE, 0)) < 0) {
+				DHD_ERROR(("%s failed for i=%d error=%d\n",
+					__FUNCTION__, i, err));
+				return err;
+			}
+			else
+				DHD_TRACE(("%s set OK with PNO time=%d repeat=%d max_adjust=%d\n",
+					__FUNCTION__, pfn_param.scan_freq,
+					pfn_param.repeat, pfn_param.exp));
+		}
+		else DHD_ERROR(("%s failed err=%d\n", __FUNCTION__, err));
+	}
+
+	/* Enable PNO */
+	/* dhd_pno_enable(dhd, 1); */
+	return err;
+}
+
+int
+dhd_pno_get_status(dhd_pub_t *dhd)
+{
+	int ret = -1;
+
+	if (!dhd)
+		return ret;
+	else
+		return (dhd->pno_enable);
+}
+
+#endif /* OEM_ANDROID && PNO_SUPPORT */
+
+#if defined(KEEP_ALIVE)
+int dhd_keep_alive_onoff(dhd_pub_t *dhd)
+{
+	char 				buf[256];
+	const char 			*str;
+	wl_mkeep_alive_pkt_t	mkeep_alive_pkt;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	wl_mkeep_alive_pkt_t	*mkeep_alive_pktp;
 	int					buf_len;
 	int					str_len;
@@ -2277,7 +2532,7 @@ int dhd_keep_alive_onoff(dhd_pub_t *dhd)
 	strncpy(buf, str, str_len);
 	buf[ str_len ] = '\0';
 	mkeep_alive_pktp = (wl_mkeep_alive_pkt_t *) (buf + str_len + 1);
-	mkeep_alive_pkt.period_msec = CUSTOM_KEEP_ALIVE_SETTING;
+	mkeep_alive_pkt.period_msec = KEEP_ALIVE_PERIOD;
 	buf_len = str_len + 1;
 	mkeep_alive_pkt.version = htod16(WL_MKEEP_ALIVE_VERSION);
 	mkeep_alive_pkt.length = htod16(WL_MKEEP_ALIVE_FIXED_LEN);

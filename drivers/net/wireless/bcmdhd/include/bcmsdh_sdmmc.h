@@ -21,23 +21,31 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: bcmsdh_sdmmc.h 444019 2013-12-18 08:36:54Z $
+=======
+ * $Id: bcmsdh_sdmmc.h 355594 2012-09-07 10:22:02Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef __BCMSDH_SDMMC_H__
 #define __BCMSDH_SDMMC_H__
 
-#define sd_err(x)
+#define sd_err(x) do {printf x;} while (0)
 #define sd_trace(x)
 #define sd_info(x)
 #define sd_debug(x)
 #define sd_data(x)
 #define sd_ctrl(x)
 
+<<<<<<< HEAD
 #ifdef CUSTOMER_HW4
 #undef sd_err
 #define sd_err(x) do {printf x;} while (0)
 #endif
+=======
+#define sd_trace_hw4	sd_trace
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define sd_sync_dma(sd, read, nbytes)
 #define sd_init_dma(sd)
@@ -60,22 +68,37 @@
 
 /* private bus modes */
 #define SDIOH_MODE_SD4		2
+<<<<<<< HEAD
 #define CLIENT_INTR			0x100	/* Get rid of this! */
 #define SDIOH_SDMMC_MAX_SG_ENTRIES	(SDPCM_MAXGLOM_SIZE+2)
 
 struct sdioh_info {
 	osl_t		*osh;			/* osh handler */
 	void		*bcmsdh;		/* upper layer handle */
+=======
+#define CLIENT_INTR 		0x100	/* Get rid of this! */
+
+struct sdioh_info {
+	osl_t 		*osh;			/* osh handler */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	bool		client_intr_enabled;	/* interrupt connnected flag */
 	bool		intr_handler_valid;	/* client driver interrupt handler valid */
 	sdioh_cb_fn_t	intr_handler;		/* registered interrupt handler */
 	void		*intr_handler_arg;	/* argument to call interrupt handler */
 	uint16		intmask;		/* Current active interrupts */
+<<<<<<< HEAD
+=======
+	void		*sdos_info;		/* Pointer to per-OS private data */
+
+	uint 		irq;			/* Client irq */
+	int 		intrcount;		/* Client interrupts */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 	int		intrcount;		/* Client interrupts */
 	bool		sd_use_dma;		/* DMA on CMD53 */
-	bool		sd_blockmode;		/* sd_blockmode == FALSE => 64 Byte Cmd 53s. */
+	bool 		sd_blockmode;		/* sd_blockmode == FALSE => 64 Byte Cmd 53s. */
 						/*  Must be on for sd_multiblock to be effective */
+<<<<<<< HEAD
 	bool		use_client_ints;	/* If this is false, make sure to restore */
 	int		sd_mode;		/* SD1/SD4/SPI */
 	int		client_block_size[SDIOD_MAX_IOFUNCS];		/* Blocksize */
@@ -87,6 +110,18 @@ struct sdioh_info {
 	struct sdio_func	fake_func0;
 	struct sdio_func	*func[SDIOD_MAX_IOFUNCS];
 
+=======
+	bool 		use_client_ints;	/* If this is false, make sure to restore */
+	int 		sd_mode;		/* SD1/SD4/SPI */
+	int 		client_block_size[SDIOD_MAX_IOFUNCS];		/* Blocksize */
+	uint8 		num_funcs;		/* Supported funcs on client */
+	uint32 		com_cis_ptr;
+	uint32 		func_cis_ptr[SDIOD_MAX_IOFUNCS];
+
+#define SDIOH_SDMMC_MAX_SG_ENTRIES	32
+	struct scatterlist sg_list[SDIOH_SDMMC_MAX_SG_ENTRIES];
+	bool		use_rxchain;
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 };
 
 /************************************************************

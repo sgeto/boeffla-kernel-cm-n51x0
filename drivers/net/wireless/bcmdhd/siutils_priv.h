@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: siutils_priv.h 431423 2013-10-23 16:07:35Z $
+=======
+ * $Id: siutils_priv.h 309193 2012-01-19 00:03:57Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_siutils_priv_h_
@@ -168,7 +172,6 @@ typedef struct si_info {
 #define	ILP_DIV_5MHZ		0		/* ILP = 5 MHz */
 #define	ILP_DIV_1MHZ		4		/* ILP = 1 MHz */
 
-/* Force fast clock for 4360b0 */
 #define PCI_FORCEHT(si)	\
 	(((PCIE_GEN1(si)) && (si->pub.chip == BCM4311_CHIP_ID) && ((si->pub.chiprev <= 1))) || \
 	((PCI(si) || PCIE_GEN1(si)) && (si->pub.chip == BCM4321_CHIP_ID)) || \

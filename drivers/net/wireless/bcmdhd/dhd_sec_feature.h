@@ -1,7 +1,14 @@
-/*
- * Customer HW 4 dependant file
+﻿/*
+ * Header file describing the internal (inter-module) DHD interfaces.
  *
+ * Provides type definitions and function prototypes used to link the
+ * DHD OS, bus, and protocol modules.
+ *
+<<<<<<< HEAD
  * Copyright (C) 1999-2014, Broadcom Corporation
+=======
+ * Copyright (C) 1999-2012, Broadcom Corporation
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  *
  *      Unless you and Broadcom execute a separate written software license
  * agreement governing use of this software, this software is licensed to you
@@ -21,9 +28,10 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_sec_feature.h$
+ * $Id: dhd_sec_feature.h 309548 2012-01-20 01:13:08Z $
  */
 
+<<<<<<< HEAD
 
 /*
  * ** Desciption ***
@@ -66,13 +74,16 @@
 #define READ_MACADDR
 #endif  /* CONFIG_WIFI_BROADCOM_COB */
 
+=======
+/* PROJECTS */
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 /* PROJECTS START */
 
 #if defined(CONFIG_MACH_SAMSUNG_ESPRESSO) || defined(CONFIG_MACH_SAMSUNG_ESPRESSO_10)
 #define READ_MACADDR
 #define HW_OOB
-#endif /* CONFIG_MACH_SAMSUNG_ESPRESSO && CONFIG_MACH_SAMSUNG_ESPRESSO_10 */
+#endif
 
 #if defined(CONFIG_MACH_HL3G) || defined(CONFIG_MACH_HLLTE) || \
 	defined(CONFIG_MACH_M2LTE) || defined(CONFIG_MACH_UNIVERSAL5422) || \
@@ -88,16 +99,17 @@
 #if defined(CONFIG_MACH_U1) || defined(CONFIG_MACH_TRATS)
 #ifdef CONFIG_MACH_Q1_BD
 #define HW_OOB
-#endif /* CONFIG_MACH_Q1_BD */
+#endif
 #define USE_CID_CHECK
 #define WRITE_MACADDR
-#endif /* CONFIG_MACH_U1 || CONFIG_MACH_TRATS */
+#endif
 
 #ifdef CONFIG_ARCH_MSM7X30
 #define HW_OOB
 #define READ_MACADDR
-#endif /* CONFIG_ARCH_MSM7X30 */
+#endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_MACH_GC1) || defined(CONFIG_MACH_U1_NA_SPR) || \
 	defined(CONFIG_MACH_VIENNAEUR) || defined(CONFIG_MACH_LT03EUR) || \
 	defined(CONFIG_MACH_LT03SKT) || defined(CONFIG_MACH_LT03KTT) || \
@@ -111,10 +123,16 @@
 	 * CONFIG_N1A || CONFIG_N2A || CONFIG_V2A ||
 	 * CONFIG_MACH_VIENNAEUR
 	 */
+=======
+#if defined CONFIG_MACH_GC1 || defined CONFIG_MACH_U1_NA_SPR
+#undef USE_CID_CHECK
+#define READ_MACADDR
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #ifdef CONFIG_MACH_P10
 #define READ_MACADDR
-#endif /* CONFIG_MACH_P10 */
+#endif
 
 #if defined(CONFIG_MACH_M0) ||defined(CONFIG_MACH_C1) ||defined(CONFIG_MACH_T0)
 #define WL11U
@@ -123,6 +141,7 @@
 #ifdef CONFIG_ARCH_MSM8960
 #undef WIFI_TURNOFF_DELAY
 #define WIFI_TURNOFF_DELAY	200
+<<<<<<< HEAD
 #endif /* CONFIG_ARCH_MSM8960 */
 
 /* PROJECTS END */
@@ -136,35 +155,49 @@
 
 #if (CONFIG_WLAN_REGION_CODE >= 100) && (CONFIG_WLAN_REGION_CODE < 200) /* EUR */
 #if (CONFIG_WLAN_REGION_CODE == 101) /* EUR ORG */
-/* GAN LITE NAT KEEPALIVE FILTER */
-#define GAN_LITE_NAT_KEEPALIVE_FILTER
-#endif /* CONFIG_WLAN_REGION_CODE == 101 */
-#endif /* CONFIG_WLAN_REGION_CODE >= 100 && CONFIG_WLAN_REGION_CODE < 200 */
+=======
+#endif
 
+/* REGION CODE */
+
+//#if (WLAN_REGION_CODE >= 100) && (WLAN_REGION_CODE < 200) /*EUR*/
+//#if (WLAN_REGION_CODE == 101) /*EUR ORG*/
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+/* GAN LITE NAT KEEPALIVE FILTER */
+//#define GAN_LITE_NAT_KEEPALIVE_FILTER
+//#endif
+//#endif
+
+<<<<<<< HEAD
 #if defined(CONFIG_V1A) || defined(CONFIG_V2A) || defined(CONFIG_MACH_VIENNAEUR)
 #define SUPPORT_MULTIPLE_CHIPS
 #endif /* CONFIG_V1A || CONFIG_V2A || CONFIG_MACH_VIENNAEUR */
 
 #if (CONFIG_WLAN_REGION_CODE >= 200) && (CONFIG_WLAN_REGION_CODE < 300) /* KOR */
 #undef USE_INITIAL_2G_SCAN
+=======
+#if (WLAN_REGION_CODE >= 200) && (WLAN_REGION_CODE < 300) /* KOR */
+#undef USE_INITIAL_2G_SCAN_ORG
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #ifndef ROAM_ENABLE
 #define ROAM_ENABLE
-#endif /* ROAM_ENABLE */
+#endif
 #ifndef ROAM_API
 #define ROAM_API
-#endif /* ROAM_API */
+#endif
 #ifndef ROAM_CHANNEL_CACHE
 #define ROAM_CHANNEL_CACHE
-#endif /* ROAM_CHANNEL_CACHE */
+#endif
 #ifndef OKC_SUPPORT
 #define OKC_SUPPORT
-#endif /* OKC_SUPPORT */
+#endif
 
 #ifndef ROAM_AP_ENV_DETECTION
 #define ROAM_AP_ENV_DETECTION
-#endif /* ROAM_AP_ENV_DETECTION */
+#endif
 
 #undef WRITE_MACADDR
+<<<<<<< HEAD
 #ifndef READ_MACADDR
 #define READ_MACADDR
 #endif /* READ_MACADDR */
@@ -210,10 +243,38 @@
 
 #if !defined(READ_MACADDR) && !defined(WRITE_MACADDR) && !defined(RDWR_KORICS_MACADDR) \
 	&& !defined(RDWR_MACADDR)
+=======
+#undef READ_MACADDR
+#ifdef CONFIG_BCM4334
+#define READ_MACADDR
+#else
+#define RDWR_MACADDR
+#endif
+
+#if (WLAN_REGION_CODE == 201) /* SKT */
+#endif
+
+#if (WLAN_REGION_CODE == 202) /* KTT */
+#define VLAN_MODE_OFF
+#define KEEP_ALIVE_PACKET_PERIOD_30_SEC
+#define FULL_ROAMING_SCAN_PERIOD_60_SEC
+#endif
+
+#if (WLAN_REGION_CODE == 203) /* LGT */
+#endif
+#endif
+
+#if (WLAN_REGION_CODE >= 300) && (WLAN_REGION_CODE < 400) /* CHN */
+#define BCMWAPI_WPI
+#define BCMWAPI_WAI
+#endif
+
+#if !defined(READ_MACADDR) && !defined(WRITE_MACADDR) && !defined(RDWR_KORICS_MACADDR) && !defined(RDWR_MACADDR)
 #define GET_MAC_FROM_OTP
-#define SHOW_NVRAM_TYPE
-#endif /* !READ_MACADDR && !WRITE_MACADDR && !RDWR_KORICS_MACADDR && !RDWR_MACADDR */
+#endif
 
 #define WRITE_WLANINFO
 
 #endif /* _dhd_sec_feature_h_ */
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source

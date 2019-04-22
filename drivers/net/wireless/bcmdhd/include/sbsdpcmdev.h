@@ -22,7 +22,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: sbsdpcmdev.h 416730 2013-08-06 09:33:19Z $
+=======
+ * $Id: sbsdpcmdev.h 347614 2012-07-27 10:24:51Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef	_sbsdpcmdev_h_

@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: wl_cfg80211.h 457855 2014-02-25 01:27:41Z $
+=======
+ * $Id: wl_cfg80211.h 358186 2012-09-21 14:36:14Z $
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
  */
 
 #ifndef _wl_cfg80211_h_
@@ -62,25 +66,19 @@ struct wl_ibss;
 /* 0 invalidates all debug messages.  default is 1 */
 #define WL_DBG_LEVEL 0xFF
 
-#ifdef CUSTOMER_HW4
-#define CFG80211_ERROR_TEXT		"CFG80211-INFO2) "
-#else
-#define CFG80211_ERROR_TEXT		"CFG80211-ERROR) "
-#endif
-
 #if defined(DHD_DEBUG)
 #define	WL_ERR(args)									\
 do {										\
 	if (wl_dbg_level & WL_DBG_ERR) {				\
-			printk(KERN_INFO CFG80211_ERROR_TEXT "%s : ", __func__);	\
+			printk(KERN_INFO "CFG80211-INFO2) %s : ", __func__);	\
 			printk args;						\
-		}								\
+		} 								\
 } while (0)
 #else /* defined(DHD_DEBUG) */
 #define	WL_ERR(args)									\
 do {										\
 	if ((wl_dbg_level & WL_DBG_ERR) && net_ratelimit()) {				\
-			printk(KERN_INFO CFG80211_ERROR_TEXT "%s : ", __func__);	\
+			printk(KERN_INFO "CFG80211-INFO2) %s : ", __func__);	\
 			printk args;						\
 		}								\
 } while (0)
@@ -141,8 +139,6 @@ do {									\
 #else				/* !(WL_DBG_LEVEL > 0) */
 #define	WL_DBG(args)
 #endif				/* (WL_DBG_LEVEL > 0) */
-#define WL_PNO(x)
-#define WL_SD(x)
 
 
 #define WL_SCAN_RETRY_MAX	3
@@ -158,7 +154,7 @@ do {									\
 #define WL_AP_MAX		256
 #define WL_FILE_NAME_MAX	256
 #define WL_DWELL_TIME 		200
-#define WL_MED_DWELL_TIME       400
+#define WL_MED_DWELL_TIME	400
 #define WL_MIN_DWELL_TIME	100
 #define WL_LONG_DWELL_TIME 	1000
 #define IFACE_MAX_CNT 		2
@@ -167,9 +163,12 @@ do {									\
 #define WL_SCAN_JOIN_ACTIVE_DWELL_TIME_MS 	320
 #define WL_SCAN_JOIN_PASSIVE_DWELL_TIME_MS 	400
 #define WL_AF_TX_MAX_RETRY 	5
+<<<<<<< HEAD
 
 #define WL_AF_SEARCH_TIME_MAX           450
 #define WL_AF_TX_EXTRA_TIME_MAX         200
+=======
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define WL_SCAN_TIMER_INTERVAL_MS	10000 /* Scan timeout */
 #define WL_CHANNEL_SYNC_RETRY 	5
@@ -177,7 +176,7 @@ do {									\
 
 /* Bring down SCB Timeout to 20secs from 60secs default */
 #ifndef WL_SCB_TIMEOUT
-#define WL_SCB_TIMEOUT 20
+#define WL_SCB_TIMEOUT	20
 #endif
 
 /* SCAN_SUPPRESS timer values in ms */
@@ -366,9 +365,7 @@ struct net_info {
 	s32 mode;
 	s32 roam_off;
 	unsigned long sme_state;
-	bool pm_restore;
 	bool pm_block;
-	s32 pm;
 	struct list_head list; /* list of all net_info structure */
 };
 
@@ -410,23 +407,27 @@ struct escan_info {
 #if defined(STATIC_WL_PRIV_STRUCT)
 #ifndef CONFIG_DHD_USE_STATIC_BUF
 #error STATIC_WL_PRIV_STRUCT should be used with CONFIG_DHD_USE_STATIC_BUF
-#endif /* CONFIG_DHD_USE_STATIC_BUF */
-#if defined(CUSTOMER_HW4) && defined(DUAL_ESCAN_RESULT_BUFFER)
+#endif
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
 	u8 *escan_buf[2];
 #else
 	u8 *escan_buf;
-#endif /* CUSTOMER_HW4 && DUAL_ESCAN_RESULT_BUFFER */
+#endif
 #else
-#if defined(CUSTOMER_HW4) && defined(DUAL_ESCAN_RESULT_BUFFER)
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
 	u8 escan_buf[2][ESCAN_BUF_SIZE];
 #else
 	u8 escan_buf[ESCAN_BUF_SIZE];
-#endif /* CUSTOMER_HW4 && DUAL_ESCAN_RESULT_BUFFER */
+#endif
 #endif /* STATIC_WL_PRIV_STRUCT */
-#if defined(CUSTOMER_HW4) && defined(DUAL_ESCAN_RESULT_BUFFER)
+#if defined(DUAL_ESCAN_RESULT_BUFFER)
 	u8 cur_sync_id;
+<<<<<<< HEAD
 	u8 escan_type[2];
 #endif /* CUSTOMER_HW4 && DUAL_ESCAN_RESULT_BUFFER */
+=======
+#endif
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	struct wiphy *wiphy;
 	struct net_device *ndev;
 };
@@ -474,7 +475,6 @@ struct parsed_ies {
 	bcm_tlv_t *wpa2_ie;
 	u32 wpa2_ie_len;
 };
-
 
 #ifdef WL11U
 /* Max length of Interworking element */
@@ -536,9 +536,13 @@ struct bcm_cfg80211 {
 #else
 	struct wl_connect_info conn_info;
 #endif
+<<<<<<< HEAD
 #ifdef DEBUGFS_CFG80211
 	struct dentry		*debugfs;
 #endif /* DEBUGFS_CFG80211 */
+=======
+
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	struct wl_pmk_list *pmk_list;	/* wpa2 pmk list */
 	tsk_ctl_t event_tsk;  		/* task of main event handler thread */
 	void *pub;
@@ -562,7 +566,7 @@ struct bcm_cfg80211 {
 	bool wlfc_on;
 	bool vsdb_mode;
 	bool roamoff_on_concurrent;
-	u8 *ioctl_buf;		/* ioctl buffer */
+	u8 *ioctl_buf;	/* ioctl buffer */
 	struct mutex ioctl_buf_sync;
 	u8 *escan_ioctl_buf;
 	u8 *extra_buf;	/* maily to grab assoc information */
@@ -643,8 +647,6 @@ wl_alloc_netinfo(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		_net_info->mode = mode;
 		_net_info->ndev = ndev;
 		_net_info->wdev = wdev;
-		_net_info->pm_restore = 0;
-		_net_info->pm = 0;
 		_net_info->pm_block = pm_block;
 		_net_info->roam_off = WL_INVALID;
 		cfg->iface_cnt++;
@@ -714,8 +716,8 @@ wl_set_status_all(struct bcm_cfg80211 *cfg, s32 status, u32 op)
 				return; /* change all status is not allowed */
 			default:
 				return; /* unknown operation */
+			}
 		}
-	}
 }
 static inline void
 wl_set_status_by_netdev(struct bcm_cfg80211 *cfg, s32 status,
@@ -865,6 +867,7 @@ wl_get_netinfo_by_netdev(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 #define wl_to_conn(w) (&w->conn_info)
 #endif
 #define wiphy_from_scan(w) (w->escan_info.wiphy)
+<<<<<<< HEAD
 #define wl_get_drv_status_all(cfg, stat) \
 	(wl_get_status_all(cfg, WL_STATUS_ ## stat))
 #define wl_get_drv_status(cfg, stat, ndev)  \
@@ -877,6 +880,20 @@ wl_get_netinfo_by_netdev(struct bcm_cfg80211 *cfg, struct net_device *ndev)
 	(wl_set_status_all(cfg, WL_STATUS_ ## stat, 2))
 #define wl_chg_drv_status(cfg, stat, ndev)  \
 	(wl_set_status_by_netdev(cfg, WL_STATUS_ ## stat, ndev, 4))
+=======
+#define wl_get_drv_status_all(wl, stat) \
+	(wl_get_status_all(wl, WL_STATUS_ ## stat))
+#define wl_get_drv_status(wl, stat, ndev)  \
+	(wl_get_status_by_netdev(wl, WL_STATUS_ ## stat, ndev))
+#define wl_set_drv_status(wl, stat, ndev)  \
+	(wl_set_status_by_netdev(wl, WL_STATUS_ ## stat, ndev, 1))
+#define wl_clr_drv_status(wl, stat, ndev)  \
+	(wl_set_status_by_netdev(wl, WL_STATUS_ ## stat, ndev, 2))
+#define wl_clr_drv_status_all(wl, stat) \
+	(wl_set_status_all(wl, WL_STATUS_ ## stat, 2))
+#define wl_chg_drv_status(wl, stat, ndev)  \
+	(wl_set_status_by_netdev(wl, WL_STATUS_ ## stat, ndev, 4))
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 
 #define for_each_bss(list, bss, __i)	\
 	for (__i = 0; __i < list->count && __i < WL_AP_MAX; __i++, bss = next_bss(list, bss))
@@ -950,6 +967,7 @@ extern s32 wl_set_tx_power(struct net_device *dev,
 	enum nl80211_tx_power_setting type, s32 dbm);
 extern s32 wl_get_tx_power(struct net_device *dev, s32 *dbm);
 extern s32 wl_add_remove_eventmsg(struct net_device *ndev, u16 event, bool add);
+<<<<<<< HEAD
 extern void wl_stop_wait_next_action_frame(struct bcm_cfg80211 *cfg, struct net_device *ndev);
 #ifdef WL_HOST_BAND_MGMT
 extern s32 wl_cfg80211_set_band(struct net_device *ndev, int band);
@@ -1034,4 +1052,9 @@ struct net_device *wl_cfg80211_get_remain_on_channel_ndev(struct bcm_cfg80211 *c
 
 extern int wl_cfg80211_get_ioctl_version(void);
 
+=======
+extern void wl_stop_wait_next_action_frame(struct wl_priv *wl, struct net_device *ndev);
+extern s32 wl_cfg80211_set_band(struct net_device *ndev, int band);
+extern int wl_cfg80211_update_power_mode(struct net_device *dev);
+>>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #endif				/* _wl_cfg80211_h_ */
