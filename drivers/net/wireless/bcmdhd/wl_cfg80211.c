@@ -1100,11 +1100,15 @@ static void swap_key_to_BE(struct wl_wsec_key *key)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)) && !defined(WL_COMPAT_WIRELESS)
 =======
 //#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
 #if 0
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 /* For debug: Dump the contents of the encoded wps ie buffe */
 static void
 wl_validate_wps_ie(char *wps_ie, s32 wps_ie_len, bool *pbc)
@@ -6311,6 +6315,7 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 	bool channel_type_valid, unsigned int wait,
 	const u8* buf, size_t len,
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)) || defined(WL_COMPAT_WIRELESS)
 	bool no_cck,
 #endif
@@ -6323,6 +6328,12 @@ wl_cfg80211_mgmt_tx(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev,
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
 #if 1
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)
+	bool no_cck,
+#endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 	bool dont_wait_for_ack,
 #endif
 	u64 *cookie)
@@ -7080,11 +7091,15 @@ wl_cfg80211_bcn_validate_sec(
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 =======
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #if 1
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 static s32 wl_cfg80211_bcn_set_params(
 	struct cfg80211_ap_settings *info,
 	struct net_device *dev,
@@ -7277,11 +7292,15 @@ exit:
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 =======
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #if 1
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 s32
 wl_cfg80211_parse_set_ies(
 	struct net_device *dev,
@@ -7578,9 +7597,13 @@ wl_cfg80211_change_station(
 	return 0;
 }
 
+<<<<<<< HEAD
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #if 1
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 static s32
 wl_cfg80211_start_ap(
 	struct wiphy *wiphy,
@@ -8110,12 +8133,16 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 6, 0)) || defined(WL_COMPAT_WIRELESS)
 	.set_channel = wl_cfg80211_set_channel,
 <<<<<<< HEAD
+<<<<<<< HEAD
 #endif /* ((LINUX_VERSION < VERSION(3, 6, 0)) || WL_COMPAT_WIRELESS */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)) && !defined(WL_COMPAT_WIRELESS)
 =======
 //#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
 #if 0
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 	.set_beacon = wl_cfg80211_add_set_beacon,
 	.add_beacon = wl_cfg80211_add_set_beacon,
 #else
@@ -8281,21 +8308,23 @@ static s32 wl_setup_wiphy(struct wireless_dev *wdev, struct device *sdiofunc_dev
 	 * disconnection of connected network before suspend. So a dummy wowlan
 	 * filter is configured for kernels linux-3.8 and above.
 	 */
+<<<<<<< HEAD
 	wdev->wiphy->wowlan.flags = WIPHY_WOWLAN_ANY;
 #endif /* CONFIG_PM && WL_CFG80211_P2P_DEV_IF */
 
 =======
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)
 #if 1
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 2, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 /*	wdev->wiphy->flags |= WIPHY_FLAG_SUPPORTS_FW_ROAM; */
 #endif
-//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
-#if 1
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 3, 0)
 	wdev->wiphy->flags |= WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL |
 		WIPHY_FLAG_OFFCHAN_TX;
 #endif
-//#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
-#if 1
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 		/* From 3.4 kernel ownards AP_SME flag can be advertised
 		  * to remove the patch from supplicant
 		  */
@@ -8593,12 +8622,16 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	u32 len = ntoh32(e->datalen);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT) \
 	&& !defined(WL_COMPAT_WIRELESS)
 =======
 //#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
 #if 0
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
+=======
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 	bool isfree = false;
 	u8 *mgmt_frame;
 	u8 bsscfgidx = e->bsscfgidx;
@@ -8631,6 +8664,7 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (event == WLC_E_DISASSOC_IND || event == WLC_E_DEAUTH_IND || event == WLC_E_DEAUTH) {
 		WL_ERR(("event %s(%d) status %d reason %d\n",
 		bcmevent_names[event].name, event, ntoh32(e->status), reason));
@@ -8641,6 +8675,9 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 =======
 //#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
 #if 0
+=======
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 2, 0)) && !defined(WL_CFG80211_STA_EVENT)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 	body = kzalloc(len, GFP_KERNEL);
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 	WL_DBG(("Enter \n"));
@@ -9986,11 +10023,15 @@ wl_notify_rx_mgmt_frame(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 	cfg80211_rx_mgmt(cfgdev, freq, 0, mgmt_frame, mgmt_frame_len, GFP_ATOMIC);
 =======
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
 #if 1
+=======
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)
+>>>>>>> parent of 4465558... WIFI: Use kernel version 3.4 ifdef's.
 	cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, mgmt_frame_len, GFP_ATOMIC);
 >>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
 #else
@@ -13982,7 +14023,6 @@ static s32
 wl_cfg80211_mgmt_tx_cancel_wait(struct wiphy *wiphy,
 	struct net_device *dev, u64 cookie)
 {
-<<<<<<< HEAD
 	struct bcm_cfg80211 *cfg = g_bcm_cfg;
 	int ret = 0;
 	char ioctl_buf[50];
@@ -14141,7 +14181,6 @@ wl_cfg80211_get_fbt_key(uint8 *key)
 	memcpy(key, g_bcm_cfg->fbt_key, FBT_KEYLEN);
 }
 #endif /* WLFBT */
-=======
 	/* CFG80211 checks for tx_cancel_wait callback when ATTR_DURATION
 	 * is passed with CMD_FRAME. This callback is supposed to cancel
 	 * the OFFCHANNEL Wait. Since we are already taking care of that
@@ -14150,4 +14189,3 @@ wl_cfg80211_get_fbt_key(uint8 *key)
 
 	return 0;
 }
->>>>>>> parent of c421809... update bcmdhd driver from GT-9505 Source
