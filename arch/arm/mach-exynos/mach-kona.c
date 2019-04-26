@@ -155,6 +155,10 @@ struct s3cfb_extdsp_lcd {
 #include <mach/kona-sensor.h>
 #endif
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <asm/kexec.h>
+#endif
+
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define SMDK4212_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
 				 S3C2410_UCON_RXILEVEL |	\
@@ -772,6 +776,10 @@ static int __init setup_ram_console_mem(char *str)
 		pr_err("%s: %x at %llx\n", __func__, size, base);
 	}
 	return 0;
+
+#ifdef CONFIG_KEXEC_HARDBOOT
+	memblock_remove(KEXEC_HB_PAGE_ADDR, SZ_4K);
+#endif
 }
 
 __setup("ram_console=", setup_ram_console_mem);
