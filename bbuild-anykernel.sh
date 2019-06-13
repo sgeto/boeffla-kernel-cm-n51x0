@@ -1,16 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Boeffla Kernel Universal Build Script
 #
-# Version 1.3, 11.10.2016
+# Version 1.4, 04.06.2019
 #
-# (C) Lord Boeffla (aka andip71)
+# (C) 1998 - 2016 Lord Boeffla (aka andip71)
+# (C) 2019 and later Ali Abdulkadir <sgeto@ettercap-project.org>
 
 #######################################
 # Parameters to be configured manually
 #######################################
 
-BOEFFLA_VERSION="4.0-alpha-Lineage14.1-n5100"
+DEBUG=0
+
+if [ -z "$DEBUG" ]; then
+    set -xve
+fi
+BOEFFLA_VERSION="4.1-alpha-Lineage14.1-n5100"
 
 TOOLCHAIN="/opt/toolchains/arm-eabi-4.8/bin/arm-eabi-"
 ARCHITECTURE=arm
@@ -24,12 +30,14 @@ DTBTOOL_CMD=""
 MODULES_IN_SYSTEM="y"
 OUTPUT_FOLDER=""
 
-DEFCONFIG="boeffla_defconfig"
+# DEFCONFIG="boeffla_defconfig"
+DEFCONFIG="boeffla_twrp_defconfig"
 DEFCONFIG_VARIANT=""
 
 KERNEL_NAME="Boeffla-Kernel"
+COMPILE_HOST=$(hostname) #fixme
 
-FINISH_MAIL_TO=""
+FINISH_MAIL_TO="$APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL"
 
 SMB_SHARE_KERNEL=""
 SMB_FOLDER_KERNEL=""
@@ -39,7 +47,9 @@ SMB_SHARE_BACKUP=""
 SMB_FOLDER_BACKUP=""
 SMB_AUTH_BACKUP=""
 
-NUM_CPUS=""   # number of cpu cores used for build (leave empty for auto detection)
+
+# GNU make's -j option works best when it is number of CPUs + 1
+NUM_CPUS=$(echo "$(grep 'processor' /proc/cpuinfo | wc -l ) + 1" | bc)   # number of cpu cores used for build (leave empty for auto detection)
 
 #######################################
 # automatic parameters, do not touch !
@@ -71,8 +81,8 @@ if [ -f $ROOT_PATH/x-settings.sh ]; then
 fi
 
 # overwrite settings with user specific custom file, if it exists
-if [ -f ~/x-settings.sh ]; then
-	. ~/x-settings.sh
+if [ -f $HOME/x-settings.sh ]; then
+	. $HOME/x-settings.sh
 fi
 
 BOEFFLA_FILENAME="${KERNEL_NAME,,}-$BOEFFLA_VERSION"
@@ -95,11 +105,19 @@ step0_copy_code()
 
 	# copy code from source folder to build folder
 	# (usage of * prevents .git folder to be copied)
-	cp -r $SOURCE_PATH/* $BUILD_PATH
+    cp -avr $SOURCE_PATH/* $BUILD_PATH\
+  | pv -l -s $(find $SOURCE_PATH/*\
+  | wc -l) > /dev/null\
+  && touch /tmp/.boeffla.copied
 
-	# Replace version information in mkcompile_h with the one from x-settings.sh
+	# Replace version information in mkcompile_h
+    # You may also be interested in KBUILD_BUILD_TIMESTAMP (changes
+    # "Thu May 1 18:56:23 UTC 2019")
+    # and KBUILD_BUILD_VERSION (changes "#1").
 	sed "s/\`echo \$LINUX_COMPILE_BY | \$UTS_TRUNCATE\`/$KERNEL_NAME-$BOEFFLA_VERSION-$BOEFFLA_DATE/g" -i $BUILD_PATH/scripts/mkcompile_h
-	sed "s/\`echo \$LINUX_COMPILE_HOST | \$UTS_TRUNCATE\`/andip71/g" -i $BUILD_PATH/scripts/mkcompile_h
+    if [ -z "$COMPILE_HOST" ]; then
+	  sed "s/\`echo \$LINUX_COMPILE_HOST | \$UTS_TRUNCATE\`/$COMPILE_HOST/g" -i $BUILD_PATH/scripts/mkcompile_h
+    fi
 }
 
 step1_make_clean()
@@ -266,10 +284,10 @@ step4_prepare_anykernel()
 
 step5_create_anykernel_zip()
 {
-	echo -e $COLOR_GREEN"\n5 - create anykernel zip\n"$COLOR_NEUTRAL
+	echo -e $COLOR_GREEN"\n5 - Create anykernel zip\n"$COLOR_NEUTRAL
 
 	# Creating recovery flashable zip
-	echo -e ">>> create flashable zip\n"
+	echo -e ">>> Create flashable zip\n"
 
 	# create zip file
 	cd $REPACK_PATH
@@ -288,8 +306,8 @@ step5_create_anykernel_zip()
 	# Creating additional files for load&flash
 	echo -e ">>> create load&flash files\n"
 
-	cp $BOEFFLA_FILENAME.recovery.zip cm-kernel.zip
-	md5sum cm-kernel.zip > checksum
+	cp $BOEFFLA_FILENAME.recovery.zip los-kernel.zip
+	md5sum los-kernel.zip > checksum
 }
 
 step7_analyse_log()
@@ -319,7 +337,7 @@ step8_transfer_kernel()
 		smbclient $SMB_SHARE_KERNEL -U $SMB_AUTH_KERNEL -c "put $REPACK_PATH/$BOEFFLA_FILENAME.recovery.zip $SMB_FOLDER_KERNEL\\$BOEFFLA_VERSION\\$BOEFFLA_FILENAME.recovery.zip"
 		smbclient $SMB_SHARE_KERNEL -U $SMB_AUTH_KERNEL -c "put $REPACK_PATH/$BOEFFLA_FILENAME.recovery.zip.md5 $SMB_FOLDER_KERNEL\\$BOEFFLA_VERSION\\$BOEFFLA_FILENAME.recovery.zip.md5"
 		smbclient $SMB_SHARE_KERNEL -U $SMB_AUTH_KERNEL -c "put $REPACK_PATH/checksum $SMB_FOLDER_KERNEL\\$BOEFFLA_VERSION\\checksum"
-		smbclient $SMB_SHARE_KERNEL -U $SMB_AUTH_KERNEL -c "put $REPACK_PATH/cm-kernel.zip $SMB_FOLDER_KERNEL\\$BOEFFLA_VERSION\\cm-kernel.zip"
+		smbclient $SMB_SHARE_KERNEL -U $SMB_AUTH_KERNEL -c "put $REPACK_PATH/los-kernel.zip $SMB_FOLDER_KERNEL\\$BOEFFLA_VERSION\\los-kernel.zip"
 		return
 	fi
 
@@ -333,7 +351,7 @@ step8_transfer_kernel()
 		cp $REPACK_PATH/$BOEFFLA_FILENAME.recovery.zip ~/bbuild_transfer/$BOEFFLA_VERSION
 		cp $REPACK_PATH/$BOEFFLA_FILENAME.recovery.zip.md5 ~/bbuild_transfer/$BOEFFLA_VERSION
 		cp $REPACK_PATH/checksum ~/bbuild_transfer/$BOEFFLA_VERSION
-		cp $REPACK_PATH/cm-kernel.zip ~/bbuild_transfer/$BOEFFLA_VERSION
+		cp $REPACK_PATH/los-kernel.zip ~/bbuild_transfer/$BOEFFLA_VERSION
 
 		sync
 		sleep 1
