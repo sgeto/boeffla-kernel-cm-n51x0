@@ -1,0 +1,11 @@
+*.sh text eol=lf
+uci text eol=lf
+
+# Define binary file attributes.
+# - Do not treat them as text.
+system/* binary
+data/* binary
+modules/* binary
+tools/* binary
+ramdisk/sbin/* binary
+ramdisk/res/misc/* binary
