@@ -4,7 +4,7 @@
 #
 # Modified by Lord Boeffla, 30.06.2016 
 #
-# Adapted for GT-N5100 by ZaneZam
+# Adapted for GT-N5100 by ZaneZam & sgeto
 
 ############### AnyKernel setup start ############### 
 
@@ -347,15 +347,22 @@ dump_boot;
 # AnyKernel permissions
 chmod 775 $ramdisk/sbin
 chmod 755 $ramdisk/sbin/busybox
+chmod 755 $ramdisk/sbin/tinyplay
+chmod 755 $ramdisk/sbin/mount.exfat
+chmod 775 $ramdisk/sbin/uci
 
 chmod 775 $ramdisk/res
 chmod -R 755 $ramdisk/res/bc
 chmod -R 755 $ramdisk/res/misc
+chmod -R 755 $ramdisk/res/synapse/actions
 
 # ramdisk changes
 backup_file default.prop;
 replace_string default.prop "ro.adb.secure=0" "ro.adb.secure=1" "ro.adb.secure=0";
 replace_string default.prop "ro.secure=0" "ro.secure=1" "ro.secure=0";
+
+backup_file fstab.smdk4x12
+comment_line fstab.smdk4x12 "/dev/block/zram0"
 
 ############### Ramdisk customization end ###############
 

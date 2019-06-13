@@ -18,13 +18,13 @@
 # ********************************
 
 # kernel specification (hardware; type; target; url)
-KERNEL_SPECS="n5100;cm;cm14.1;http://kernel.boeffla.de/zanezam/n5100/boeffla-kernel/;boeffla-kernel-#VERSION#-Lineage14.1-n5100-anykernel.recovery.zip"
+KERNEL_SPECS="n5100;cm;cm14.1;http://kernel.boeffla.de/sgeto/n5100/boeffla-kernel/;boeffla-kernel-#VERSION#-Lineage14.1-n5100-anykernel.recovery.zip"
 
 # kernel features
 # (1=enable-busybox,2=enable-frandom,3=wipe-cache,4=disable-zram-control)
 # (5=enable-default-zram-control,6=enable-selinux-switch, 7=enable-selinux-control)
 # (8=no-hotplugging,9=enable-doze-control)
-KERNEL_FEATURES="-3-6-7-9-"
+KERNEL_FEATURES="-2-3-6-7-9-"
 
 # path to kernel libraries
 LIBPATH="/system/lib/modules"
@@ -36,6 +36,7 @@ DATA_DEVICE="/dev/block/mmcblk0p12"
 BOOT_DEVICE="/dev/block/mmcblk0p5"
 RADIO_DEVICE="/dev/block/mmcblk0p7"
 RECOVERY_DEVICE="/dev/block/mmcblk0p6"
+PRELOAD_DEVICE="/dev/block/mmcblk0p10"
 
 
 # *******************
@@ -1161,7 +1162,7 @@ fi
 if [ "apply_usb_ethernet" == "$1" ]; then
 	if [ "1" == "$2" ]; then
 		busybox insmod $LIBPATH/asix.ko
-		netcfg eth0 up
+		ifconfig eth0 up
 		dhcpcd eth0
 		DNS=`getprop net.eth0.dns1`
 		ndc resolver setifdns eth0 "" $DNS  8.8.8.8
