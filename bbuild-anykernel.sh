@@ -31,7 +31,7 @@ MODULES_IN_SYSTEM="y"
 OUTPUT_FOLDER=""
 
 # DEFCONFIG="boeffla_defconfig"
-DEFCONFIG="boeffla_twrp_defconfig"
+DEFCONFIG="boeffla_defconfig"
 DEFCONFIG_VARIANT=""
 
 KERNEL_NAME="Boeffla-Kernel"
@@ -81,8 +81,8 @@ if [ -f $ROOT_PATH/x-settings.sh ]; then
 fi
 
 # overwrite settings with user specific custom file, if it exists
-if [ -f $HOME/x-settings.sh ]; then
-	. $HOME/x-settings.sh
+if [ -f $HOME/.x-settings.sh ]; then
+	. $HOME/.x-settings.sh
 fi
 
 BOEFFLA_FILENAME="${KERNEL_NAME,,}-$BOEFFLA_VERSION"
